@@ -10,7 +10,8 @@ class Scene : public GameObject {
 
 public:
 
-     Scene();
+    Scene();
+    Scene(unsigned id, std::string name);
     ~Scene();
 
 };

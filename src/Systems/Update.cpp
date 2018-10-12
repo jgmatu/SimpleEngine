@@ -8,11 +8,11 @@ Update::~Update() {
     std::cout << "Destroy system update... " << '\n';
 }
 
-void Update::init(std::vector<GameObject*> _GameObjects) {
+void Update::init(Scene *scene) {
     std::cout << "Init system update... " << '\n';
 }
 
-void Update::update(float dt, std::vector<GameObject*> _GameObjects) {
+void Update::update(float dt, Scene *scene) {
     std::cout << "Update system update... " << '\n';
 }
 

@@ -14,6 +14,11 @@ public:
     // Método que realiza transformaciones, cálculos de cosas.
     virtual void update() = 0;
 
+protected:
+
+    friend class GameObject;
+    unsigned _id;
+
 };
 
 #endif // COMPONENT_H

@@ -4,6 +4,10 @@ Material::Material() {
     std::cout << "Create component material" << '\n';
 }
 
+Material::Material(MeshRender *meshRender, Program *program) {
+    std::cout << "Create component material" << '\n';
+}
+
 Material::~Material() {
     std::cout << "Delete component material" << '\n';
 }

@@ -10,6 +10,7 @@ class Material : public Component {
 public:
 
     Material();
+    Material(MeshRender *meshRender, Program *program);
     ~Material();
 
     void start();
@@ -18,6 +19,7 @@ public:
 
 private:
 
+    friend class GameObject;
     MeshRender *_meshRender;
     Program *_program;
 

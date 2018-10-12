@@ -14,8 +14,13 @@ public:
     MeshRender();
     ~MeshRender();
 
+    void active();
+    void render();
+    void addMesh(Mesh *mesh);
+
 private:
 
+    friend class GameObject;
     std::vector<Mesh*> _meshes;
 
 };

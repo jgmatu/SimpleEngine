@@ -16,8 +16,8 @@ public:
      Update();
     ~Update();
 
-    void init(std::vector<GameObject*> _GameObjects);
-    void update(float dt, std::vector<GameObject*> _GameObjects);
+    void init(Scene *scene);
+    void update(float dt, Scene *scene);
     void sendMessage (Message *msg);
 
 private:

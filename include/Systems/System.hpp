@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "GameObjects/GameObject.hpp"
+#include "GameObjects/Scene.hpp"
 #include "Messages/Message.hpp"
 
 class System {
@@ -14,10 +14,10 @@ public:
     virtual ~System() {};
 
     // It's good practice to separate the construction and initialization code.
-    virtual void init(std::vector<GameObject*> _GameObjects) = 0;
+    virtual void init(Scene *scene) = 0;
 
     // All systems must update each game loop...
-    virtual void update(float dt, std::vector<GameObject*> _GameObjects) = 0;
+    virtual void update(float dt, Scene *scene) = 0;
 
     // This recieves any messages sent to the core engine in Engine.cpp
     virtual void sendMessage (Message *msg) = 0;

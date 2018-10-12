@@ -1,11 +1,11 @@
 #include "Components/Transform.hpp"
 
 Transform::Transform() {
-    std::cout << "Component Transform... created..." << '\n';
+    std::cout << "************ Transform ***************" << '\n';
 }
 
 Transform::~Transform() {
-    std::cout << "Component Transform... destroyed..." << '\n';
+    ;
 }
 
 void Transform::start() {
