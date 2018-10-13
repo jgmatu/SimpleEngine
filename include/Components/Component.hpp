@@ -1,6 +1,8 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
+#include "Constants/TypeComp.hpp"
+
 class Component {
 
 public:
@@ -17,8 +19,8 @@ public:
 protected:
 
     friend class GameObject;
-    unsigned _id;
-
+    TypeComp _type;
+    
 };
 
 #endif // COMPONENT_H

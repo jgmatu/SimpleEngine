@@ -32,7 +32,7 @@ void Mesh::active() {
 }
 
 void Mesh::draw() {
-    std::cout << "draw Mesh!" << '\n';
+    std::cout << "Draw Mesh." << '\n';
 }
 
 void Mesh::vertexArrayID() {

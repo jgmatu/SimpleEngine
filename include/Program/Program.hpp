@@ -12,13 +12,8 @@ public:
     Program(std::string vshader, std::string fshader);
     ~Program();
 
-    void createVertexShader();
-    void createFragmentShader();
-    void link();
-
-    void bind();
-    void unbind();
-    void cleanup();
+    void active();
+    void render();
 
     void createUniform(std::string uniformName);
 //    void setUniform(std::string name, glm::vec3 value);
@@ -26,6 +21,14 @@ public:
     void setUniform(std::string name, int value);
 
 private:
+
+    void createVertexShader();
+    void createFragmentShader();
+    void link();
+
+    void bind();
+    void unbind();
+    void cleanup();
 
     std::string getDataFile(const std::string& filename);
     int createShader(const std::string& sc, int shaderType);

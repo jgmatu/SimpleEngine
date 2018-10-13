@@ -1,22 +1,19 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "Components/Component.hpp"
+
+#include "GameObjects/GameObject.hpp"
 
 #include <iostream>
 #include <string>
 
 
-class Camera : public Component {
+class Camera : public GameObject {
 
 public:
 
     Camera();
     ~Camera();
-
-    void start();
-    void awakeStart();
-    void update();
 
 private:
 

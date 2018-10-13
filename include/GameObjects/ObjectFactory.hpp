@@ -4,7 +4,10 @@
 #include <iostream>
 #include <string>
 
+
+#include "GameObjects/Camera.hpp"
 #include "GameObjects/GameObject.hpp"
+
 #include "Components/Material.hpp"
 #include "Mesh/MeshRender.hpp"
 #include "Mesh/Mesh.hpp"

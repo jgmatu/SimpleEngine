@@ -7,6 +7,7 @@
 
 #include "Components/Component.hpp"
 #include "Components/Transform.hpp"
+#include "Constants/TypeComp.hpp"
 
 class GameObject {
 
@@ -16,19 +17,21 @@ public:
     GameObject(unsigned id, std::string _name);
     ~GameObject();
 
-    Component* getComponent(unsigned id);
+    Component* getComponent(TypeComp type);
     void addComponent(Component *comp);
-    bool hasComponent(unsigned id);
-
-    bool hasGameObject(unsigned id);
+    bool hasComponent(TypeComp type);
 
     GameObject* getGameObject(unsigned id);
-
+    bool hasGameObject(unsigned id);
     void addGameObject(GameObject *gameObject);
 
-protected:
+    std::vector<unsigned> getKeysObjects();
 
-    friend class Engine;
+    void scale(std::string vec3);
+    void translate(std::string vec3);
+    void rotate(std::string vec3, std::string quad);
+
+protected:
 
     unsigned _id;
     std::string _name;

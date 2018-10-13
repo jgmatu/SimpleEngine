@@ -6,7 +6,6 @@ GameObject::GameObject() :
     _id(13333333),
     _name("?")
 {
-    std::cout << "Creating Basic Game Object..." << '\n';
     _components.push_back(new Transform());
 }
 
@@ -15,7 +14,6 @@ GameObject::GameObject(unsigned id, std::string name) :
 {
     this->_id = id;
     this->_name = name;
-    std::cout << "Creating Game Object..."  << "id: " << _id << "name : " << _name << '\n';
 }
 
 GameObject::~GameObject() {
@@ -27,28 +25,24 @@ GameObject::~GameObject() {
     }
 }
 
-Component* GameObject::getComponent(unsigned id) {
+Component* GameObject::getComponent(TypeComp type) {
     Component *search = nullptr;
 
     for (unsigned i = 0; i < _components.size() && search == nullptr; ++i) {
-        if (_components[i]->_id == id) {
+        if (_components[i]->_type == type) {
             search = _components[i];
         }
-    }
-    if (search == nullptr) {
-        throw;
     }
     return search;
 }
 
 void GameObject::addComponent(Component *comp) {
-    std::cout << "Added Component " << '\n';
     _components.push_back(comp);
 }
 
-bool GameObject::hasComponent(unsigned id) {
+bool GameObject::hasComponent(TypeComp type) {
     for (unsigned i = 0; i < _components.size(); ++i) {
-        if (_components[i]->_id == id) {
+        if (_components[i]->_type == type) {
             return true;
         }
     }
@@ -77,7 +71,43 @@ bool GameObject::hasGameObject(unsigned id) {
         if (id == _gameObjects[i]->_id) {
             return true;
         }
-        _gameObjects[i]->hasComponent(id);
+        _gameObjects[i]->hasGameObject(id);
     }
     return false;
+}
+
+std::vector<unsigned> GameObject::getKeysObjects() {
+    std::vector<unsigned> keys;
+
+    for (unsigned i = 0; i < _gameObjects.size(); ++i) {
+        std::vector<unsigned> subkeys = _gameObjects[i]->getKeysObjects();
+
+        keys.insert(keys.end(), subkeys.begin(), subkeys.end());
+        keys.push_back(_gameObjects[i]->_id);
+    }
+    return keys;
+}
+
+void GameObject::scale(std::string vec3) {
+    Component *component = getComponent(TypeComp::TRANSFORM);
+
+    if (Transform *tf =  dynamic_cast<Transform*>(component)) {
+        tf->scale(vec3);
+    }
+}
+
+void GameObject::translate(std::string vec3) {
+    Component *component = getComponent(TypeComp::TRANSFORM);
+
+    if (Transform *tf =  dynamic_cast<Transform*>(component)) {
+        tf->translate(vec3);
+    }
+}
+
+void GameObject::rotate(std::string vec3, std::string quad) {
+    Component *component = getComponent(TypeComp::TRANSFORM);
+
+    if (Transform *tf =  dynamic_cast<Transform*>(component)) {
+        tf->rotate(vec3, quad);
+    }
 }

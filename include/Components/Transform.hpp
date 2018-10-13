@@ -17,12 +17,16 @@ public:
     void awakeStart();
     void update();
 
+    void scale(std::string vec3);
+    void translate(std::string vec3);
+    void rotate(std::string vec3, std::string quad);
+
 private:
 
     std::string _model, _gModel;
+
     std::string _pos, _scale;
     std::string _quat, _axis;
-
 };
 
 #endif // TRANSFORM_H
