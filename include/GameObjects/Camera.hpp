@@ -15,6 +15,9 @@ public:
     Camera();
     ~Camera();
 
+    std::string view();
+    std::string projection();
+
 private:
 
     std::string _view;

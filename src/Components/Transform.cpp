@@ -46,3 +46,7 @@ void Transform::rotate(std::string vec3, std::string quat) {
     this->_quat = quat;
     this->_axis = vec3;
 }
+
+std::string Transform::model() {
+    return "";
+};

@@ -15,7 +15,7 @@ public:
 
     GameObject();
     GameObject(unsigned id, std::string _name);
-    ~GameObject();
+    virtual ~GameObject();
 
     Component* getComponent(TypeComp type);
     void addComponent(Component *comp);

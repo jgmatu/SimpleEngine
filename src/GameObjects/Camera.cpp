@@ -9,3 +9,11 @@ Camera::Camera() :
 Camera::~Camera() {
     std::cout << "Delete gameObject camera" << '\n';
 }
+
+std::string Camera::view() {
+    return "";
+}
+
+std::string Camera::projection() {
+    return "";
+}

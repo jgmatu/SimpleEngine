@@ -17,9 +17,15 @@ public:
     void awakeStart();
     void update();
 
+    void createUniform(std::string uniformName);
+    //    void setUniform(std::string name, glm::vec3 value);
+    //    void setUniform(std::string name, glm::mat4 value);
+    void setUniform(std::string name, int value);
+    void setUniform(std::string name, std::string value);
+
+
 private:
 
-    friend class GameObject;
     MeshRender *_meshRender;
     Program *_program;
 

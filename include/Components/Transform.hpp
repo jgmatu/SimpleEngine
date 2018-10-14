@@ -21,6 +21,8 @@ public:
     void translate(std::string vec3);
     void rotate(std::string vec3, std::string quad);
 
+    std::string model();
+
 private:
 
     std::string _model, _gModel;

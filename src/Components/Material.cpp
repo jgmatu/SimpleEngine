@@ -23,10 +23,6 @@ void Material::start() {
         _meshRender->active();
         if (_program) {
             _program->active();
-            _program->createUniform("projection");
-            _program->createUniform("view");
-            _program->createUniform("model");
-            _program->createUniform("diffuseTexture");
         }
     }
 }
@@ -43,4 +39,21 @@ void Material::awakeStart() {
 
 void Material::update() {
     std::cout << "Material update..." << '\n';
+}
+
+void Material::createUniform(std::string uniformName) {
+    if (_program) {
+        _program->createUniform(uniformName);
+    }
+};
+//    void setUniform(std::string name, glm::vec3 value);
+//    void setUniform(std::string name, glm::mat4 value);
+void Material::setUniform(std::string name, int value) {
+    if (_program) {
+        _program->setUniform(name, value);
+    }
+};
+
+void Material::setUniform(std::string name, std::string value) {
+    std::cout << "Set uniform -> " << name << " " << value << '\n';
 }
