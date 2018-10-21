@@ -14,9 +14,9 @@ void Update::init(Scene *scene) {
 
     for (unsigned i = 0; i < keys.size(); ++i) {
         GameObject *gameObject = scene->getGameObject(keys[i]);
-        Component *component = gameObject->getComponent(TypeComp::TRANSFORM);
 
-        if (Transform *tf =  dynamic_cast<Transform*>(component)) {
+        std::shared_ptr<Component> component = gameObject->getComponent(TypeComp::TRANSFORM);
+        if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
             tf->start();
         }
     }
@@ -28,14 +28,14 @@ void Update::update(float dt, Scene *scene) {
 
     for (unsigned i = 0; i < keys.size(); ++i) {
         GameObject *gameObject = scene->getGameObject(keys[i]);
-        Component *component = gameObject->getComponent(TypeComp::TRANSFORM);
 
-        if (Transform *tf =  dynamic_cast<Transform*>(component)) {
+        std::shared_ptr<Component> component = gameObject->getComponent(TypeComp::TRANSFORM);
+        if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
             tf->update();
         }
     }
 }
 
-void Update::sendMessage (Message *msg) {
+void Update::sendMessage(Message *msg) {
     std::cout << "Send system message update... " << '\n';
 }

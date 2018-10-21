@@ -14,10 +14,11 @@ void Draw::init(Scene *scene) {
 
     for (unsigned i = 0; i < keys.size(); ++i) {
         GameObject *gameObject = scene->getGameObject(keys[i]);
-        Component *component = gameObject->getComponent(TypeComp::MATERIAL);
+        std::shared_ptr<Component> component = gameObject->getComponent(TypeComp::MATERIAL);
 
-        if(Material *material = dynamic_cast<Material*>(component)) {
+        if(std::shared_ptr<Material> material = std::dynamic_pointer_cast<Material>(component)) {
             material->start();
+            material->addTexture("../resources/textura.png");
             material->createUniform("projection");
             material->createUniform("view");
             material->createUniform("model");
@@ -27,23 +28,24 @@ void Draw::init(Scene *scene) {
 }
 
 void Draw::update(float dt, Scene *scene) {
-    std::cout << "|Update system Draw|" << '\n';
+    std::cout << "*** Update system Draw ***" << '\n';
     std::vector<unsigned> keys = scene->getKeysObjects();
-    
+
     for (unsigned i = 0; i < keys.size(); ++i) {
         GameObject *gameObject = scene->getGameObject(keys[i]);
-        Component *component = gameObject->getComponent(TypeComp::MATERIAL);
+        std::shared_ptr<Component> component = gameObject->getComponent(TypeComp::MATERIAL);
 
-        if (Material *material = dynamic_cast<Material*>(component)) {
+        if (std::shared_ptr<Material> material = std::dynamic_pointer_cast<Material>(component)) {
             Camera* camera = scene->getCamera();
-            Component* component = gameObject->getComponent(TypeComp::TRANSFORM);
-            if (Transform* tf =  dynamic_cast<Transform*>(component)) {
-                material->setUniform("model", tf->model());
-            }
-            material->setUniform("projection", camera->projection());
-            material->setUniform("view", camera->view());
+            material->setUniform("projection", camera->_projection);
+            material->setUniform("view", camera->_view);
             material->setUniform("diffuseTexture", 0);  // El índice es el mismo que en glActiveTexture()
             material->awakeStart();
+
+            std::shared_ptr<Component> component = gameObject->getComponent(TypeComp::TRANSFORM);
+            if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
+                material->setUniform("model", tf->model());
+            }
         }
     }
 }

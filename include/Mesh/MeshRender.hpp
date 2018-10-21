@@ -17,6 +17,7 @@ public:
     void active();
     void render();
     void addMesh(Mesh *mesh);
+    void addTexture(const char* filename);
 
 private:
 

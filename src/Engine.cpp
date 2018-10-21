@@ -3,8 +3,6 @@
 Engine::Engine() :
     _systems()
 {
-    // OpengL Conext...
-    // Init windows system glfws
     _scene = new Scene(0, "*** scene *** ");
 }
 
@@ -21,14 +19,61 @@ Engine::~Engine() {
         delete _systems[i];
     }
     delete _scene;
-    // Exit system windows...
-    // Close OpenGL glad Conext...
+}
+
+static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    std::cout << scancode << " " << mods << std::endl;
+
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+}
+
+void Engine::initWindow() {
+    // Initialize GLFW. Most GLFW functions will not work before doing this.
+    if (!glfwInit()) {
+        throw;
+    }
+
+    // Configure GLFW
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+
+    // Create the window
+    _window = glfwCreateWindow(800, 600, "Graphic Engine", nullptr, nullptr);
+    if (_window == nullptr) {
+        std::cerr << "Failed to create the GLFW System window" << std::endl;
+        throw;
+    }
+
+    // Setup a key callback. It will be called every time a key is pressed, repeated or released.
+    glfwSetKeyCallback(_window, keyCallback);
+
+    // Make the OpenGL context current.
+    glfwMakeContextCurrent(_window);
+
+    // Enable v-sync.
+    glfwSwapInterval(1);
+
+    // Make the window visible.
+    glfwShowWindow(_window);
+    gladLoadGL();
 }
 
 void Engine::init() {
     std::cout << "Iniciar Engine!!" << '\n';
-    for (unsigned i = 0; i < _systems.size(); ++i) {
-        _systems[i]->init(_scene);
+    try {
+        this->initWindow();
+        for (unsigned i = 0; i < _systems.size(); ++i) {
+            _systems[i]->init(_scene);
+        }
+    } catch (std::exception &ex) {
+        std::cerr << "Error init engine " << ex.what() << '\n';
+        throw ex;
+    } catch (...) {
+        std::cout << "Fatal error init Engine " << '\n';
+        throw;
     }
 }
 
@@ -47,10 +92,17 @@ void Engine::update(float dt) {
 }
 
 void Engine::mainLoop() {
-    for (;;) {
-        this->update(0);
+    float position = 0.0;
+    do {
         GameObject *cube = _scene->getGameObject(1);
-        cube->translate("(0, 0, 1)");
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    }
+
+        cube->translate(glm::vec3(0.0f, 0.0f, position));
+        position += 0.0001f;
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        this->update(0);
+        glfwSwapBuffers(_window); // swap the color buffers.
+        glfwPollEvents();
+    } while(!glfwWindowShouldClose(_window));
+    glfwTerminate();
 }

@@ -4,6 +4,30 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <vector>
+#include <exception>
+#include <fstream>
+
+#define GLM_ENABLE_EXPERIMENTAL
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+
+struct ProgramException : public std::exception {
+    std::string msg;
+
+    ProgramException(const std::string& msg) {
+        this->msg = msg;
+    }
+
+    const char * what () const throw () {
+        return std::string("Program error: " + msg).c_str();
+    }
+};
 
 class Program {
 
@@ -16,8 +40,9 @@ public:
     void render();
 
     void createUniform(std::string uniformName);
-//    void setUniform(std::string name, glm::vec3 value);
-//    void setUniform(std::string name, glm::mat4 value);
+
+    void setUniform(std::string name, glm::mat4 value);
+    void setUniform(std::string name, glm::vec3 value);
     void setUniform(std::string name, int value);
 
 private:

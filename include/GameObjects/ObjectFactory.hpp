@@ -1,9 +1,14 @@
 #ifndef OBJECT_FACTORY_H
 #define OBJECT_FACTORY_H
 
+#define _USE_MATH_DEFINES
+
 #include <iostream>
 #include <string>
+#include <memory>
 
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
 
 #include "GameObjects/Camera.hpp"
 #include "GameObjects/GameObject.hpp"
@@ -12,6 +17,8 @@
 #include "Mesh/MeshRender.hpp"
 #include "Mesh/Mesh.hpp"
 
+#include <math.h>
+
 class ObjectFactory {
 
 public:
@@ -19,15 +26,16 @@ public:
     ObjectFactory();
     ~ObjectFactory();
 
-    void addGameObject(GameObject *gameObject);
     GameObject* getGameObject(unsigned id);
-    std::vector<GameObject*> getListGameObjects();
-    void generateDemoObjects();
+    void addGameObject(GameObject *gameObject);
     unsigned size();
-    Mesh* getCubeMesh();
 
+    void generateDemoObjects();
 
 private:
+
+    Mesh* getCubeMesh();
+    Mesh* getSphereMesh();
 
     std::vector<GameObject*> _GameObjects;
 

@@ -1,19 +1,24 @@
 #include "GameObjects/Camera.hpp"
 
 Camera::Camera() :
-    GameObject::GameObject()
+    GameObject::GameObject(),
+    _view(1),
+    _projection(1)
 {
-    std::cout << "Create Game Object camera" << '\n';
+    this->_projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+
+    this->_view = glm::mat4(1.0);
+    this->_view = glm::translate(glm::vec3(0.0, 0.0, -10.0));
 }
 
 Camera::~Camera() {
     std::cout << "Delete gameObject camera" << '\n';
 }
 
-std::string Camera::view() {
-    return "";
-}
-
-std::string Camera::projection() {
-    return "";
+std::ostream& operator<<(std::ostream& os, const Camera& camera) {
+    os << "*** Camera *** " << std::endl;
+    os << glm::to_string(camera._view) << std::endl;
+    os << glm::to_string(camera._projection) << std::endl;
+    os << "*** *** *** *** *** *** ***" << std::endl;
+    return os;
 }

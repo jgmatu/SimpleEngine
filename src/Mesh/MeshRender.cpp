@@ -20,6 +20,12 @@ void MeshRender::active() {
     }
 }
 
+void MeshRender::addTexture(const char* filename) {
+    for (unsigned i = 0; i < _meshes.size(); ++i) {
+        _meshes[i]->loadTexture(filename);
+    }
+}
+
 void MeshRender::render() {
     for (unsigned i = 0; i < _meshes.size(); ++i) {
         _meshes[i]->draw();

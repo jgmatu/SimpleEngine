@@ -7,6 +7,8 @@ class Component {
 
 public:
 
+    virtual ~Component() {};
+
     // Este método SOLO se llama una vez la primera vez que se crea el componente.
     virtual void start() = 0;
 
@@ -20,7 +22,7 @@ protected:
 
     friend class GameObject;
     TypeComp _type;
-    
+
 };
 
 #endif // COMPONENT_H

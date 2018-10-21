@@ -5,7 +5,7 @@ Material::Material() {
     std::cout << "Create component material" << '\n';
 }
 
-Material::Material(MeshRender *meshRender, Program *program) :
+Material::Material(std::shared_ptr<MeshRender> meshRender, std::shared_ptr<Program> program) :
     Material::Material()
 {
     this->_meshRender = meshRender;
@@ -46,14 +46,27 @@ void Material::createUniform(std::string uniformName) {
         _program->createUniform(uniformName);
     }
 };
-//    void setUniform(std::string name, glm::vec3 value);
-//    void setUniform(std::string name, glm::mat4 value);
+
+void Material::setUniform(std::string name, glm::vec3 value) {
+    if (_program) {
+        _program->setUniform(name, value);
+    }
+}
+
+void Material::setUniform(std::string name, glm::mat4 value) {
+    if (_program) {
+        _program->setUniform(name, value);
+    }
+}
+
 void Material::setUniform(std::string name, int value) {
     if (_program) {
         _program->setUniform(name, value);
     }
-};
+}
 
-void Material::setUniform(std::string name, std::string value) {
-    std::cout << "Set uniform -> " << name << " " << value << '\n';
+void Material::addTexture(const char *filename) {
+    if (_meshRender) {
+        _meshRender->addTexture(filename);
+    }
 }

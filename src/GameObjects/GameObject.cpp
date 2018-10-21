@@ -1,12 +1,13 @@
 #include "GameObjects/GameObject.hpp"
 
 GameObject::GameObject() :
-    _components(),
-    _gameObjects(),
     _id(13333333),
-    _name("?")
+    _name("?"),
+    _components(),
+    _gameObjects()
 {
-    _components.push_back(new Transform());
+    std::shared_ptr<Transform> tf = std::shared_ptr<Transform>(new Transform());
+    _components.push_back(tf);
 }
 
 GameObject::GameObject(unsigned id, std::string name) :
@@ -20,15 +21,12 @@ GameObject::~GameObject() {
     for (unsigned i = 0; i < _gameObjects.size(); ++i) {
         delete _gameObjects[i];
     }
-    for (unsigned i = 0; i < _components.size(); ++i) {
-        delete _components[i];
-    }
 }
 
-Component* GameObject::getComponent(TypeComp type) {
-    Component *search = nullptr;
+std::shared_ptr<Component> GameObject::getComponent(TypeComp type) const {
+    std::shared_ptr<Component> search = nullptr;
 
-    for (unsigned i = 0; i < _components.size() && search == nullptr; ++i) {
+    for (unsigned i = 0; !search && i < _components.size(); ++i) {
         if (_components[i]->_type == type) {
             search = _components[i];
         }
@@ -36,8 +34,8 @@ Component* GameObject::getComponent(TypeComp type) {
     return search;
 }
 
-void GameObject::addComponent(Component *comp) {
-    _components.push_back(comp);
+void GameObject::addComponent(std::shared_ptr<Component> component) {
+    _components.push_back(component);
 }
 
 bool GameObject::hasComponent(TypeComp type) {
@@ -52,7 +50,7 @@ bool GameObject::hasComponent(TypeComp type) {
 GameObject* GameObject::getGameObject(unsigned id) {
     GameObject *search = nullptr;
 
-    for (unsigned i = 0; search == nullptr && i < _gameObjects.size(); ++i) {
+    for (unsigned i = 0; !search && i < _gameObjects.size(); ++i) {
         if (_gameObjects[i]->_id == id) {
             search = _gameObjects[i];
         } else {
@@ -88,26 +86,43 @@ std::vector<unsigned> GameObject::getKeysObjects() {
     return keys;
 }
 
-void GameObject::scale(std::string vec3) {
-    Component *component = getComponent(TypeComp::TRANSFORM);
+void GameObject::scale(glm::vec3 vec3) {
+    std::shared_ptr<Component> component = getComponent(TypeComp::TRANSFORM);
 
-    if (Transform *tf =  dynamic_cast<Transform*>(component)) {
+    if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
         tf->scale(vec3);
     }
 }
 
-void GameObject::translate(std::string vec3) {
-    Component *component = getComponent(TypeComp::TRANSFORM);
+void GameObject::translate(glm::vec3 vec3) {
+    std::shared_ptr<Component> component = getComponent(TypeComp::TRANSFORM);
 
-    if (Transform *tf =  dynamic_cast<Transform*>(component)) {
+    if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
         tf->translate(vec3);
     }
 }
 
-void GameObject::rotate(std::string vec3, std::string quad) {
-    Component *component = getComponent(TypeComp::TRANSFORM);
+void GameObject::rotate(glm::vec3 vec3, glm::quat quat) {
+    std::shared_ptr<Component> component = getComponent(TypeComp::TRANSFORM);
 
-    if (Transform *tf =  dynamic_cast<Transform*>(component)) {
-        tf->rotate(vec3, quad);
+    if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
+        tf->rotate(vec3, quat);
     }
+}
+
+void GameObject::addTexture(const char *filename) {
+    std::shared_ptr<Component> component = getComponent(TypeComp::MATERIAL);
+
+    if (std::shared_ptr<Material> material = std::dynamic_pointer_cast<Material>(component)) {
+        material->addTexture(filename);
+    }
+}
+
+std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
+    std::shared_ptr<Component> component = gameObject.getComponent(TypeComp::TRANSFORM);
+
+    if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
+        os << (*tf);
+    }
+    return os;
 }

@@ -1,6 +1,15 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#define GLM_ENABLE_EXPERIMENTAL
+#define _USE_MATH_DEFINES
+#define STB_IMAGE_IMPLEMENTATION
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
+
 #include <chrono>
 #include <thread>
 #include <iostream>
@@ -25,6 +34,10 @@ public:
     void add(GameObject *gameObject);
 
 private:
+
+    void initWindow();
+
+    GLFWwindow *_window;
 
     std::vector<System*> _systems;
     Scene *_scene;

@@ -1,12 +1,20 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <vector>
 #include <string>
 #include <iostream>
+#include <memory>
+
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+#include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
 
 #include "Components/Component.hpp"
 #include "Components/Transform.hpp"
+#include "Components/Material.hpp"
 #include "Constants/TypeComp.hpp"
 
 class GameObject {
@@ -17,8 +25,8 @@ public:
     GameObject(unsigned id, std::string _name);
     virtual ~GameObject();
 
-    Component* getComponent(TypeComp type);
-    void addComponent(Component *comp);
+    std::shared_ptr<Component> getComponent(TypeComp type) const;
+    void addComponent(std::shared_ptr<Component> component);
     bool hasComponent(TypeComp type);
 
     GameObject* getGameObject(unsigned id);
@@ -27,18 +35,21 @@ public:
 
     std::vector<unsigned> getKeysObjects();
 
-    void scale(std::string vec3);
-    void translate(std::string vec3);
-    void rotate(std::string vec3, std::string quad);
+    void scale(glm::vec3 vec3);
+    void translate(glm::vec3 vec3);
+    void rotate(glm::vec3 vec3, glm::quat quat);
+
+    void addTexture(const char *filename);
+
+    friend std::ostream& operator<<(std::ostream&, const GameObject& gameObject);
 
 protected:
 
     unsigned _id;
     std::string _name;
 
+    std::vector<std::shared_ptr<Component>> _components;
     std::vector<GameObject*> _gameObjects;
-    std::vector<Component*> _components;
-
 };
 
 #endif

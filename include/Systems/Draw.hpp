@@ -2,6 +2,7 @@
 #define DRAW_H
 
 #include <vector>
+#include <memory>
 
 #include "Systems/System.hpp"
 #include "GameObjects/GameObject.hpp"

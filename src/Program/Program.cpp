@@ -4,7 +4,9 @@ Program::Program(std::string vshader, std::string fshader) :
     _vshader(vshader),
     _fshader(fshader)
 {
-    std::cout << "Create program : " << _vshader << " " << _fshader << '\n';
+    _programId = 0;
+    _vertexShaderId = 0;
+    _fragmentShaderId = 0;
 }
 
 Program::~Program() {
@@ -12,6 +14,10 @@ Program::~Program() {
 }
 
 void Program::active() {
+    _programId = glCreateProgram();
+    if (_programId == 0) {
+        throw ProgramException("Failed to create program id");
+    }
     this->createVertexShader();
     this->createFragmentShader();
     this->link();
@@ -23,45 +29,129 @@ void Program::render() {
 
 void Program::createVertexShader() {
     std::cout << "Create vertex shader: " << _vshader << '\n';
+    const std::string sc = getDataFile(this->_vshader);
+
+    _vertexShaderId = createShader(sc, GL_VERTEX_SHADER);
 }
 
 void Program::createFragmentShader() {
     std::cout << "Crete fragments shader: " << _fshader << '\n';
+    const std::string sc = getDataFile(this->_fshader);
+
+    _fragmentShaderId = createShader(sc, GL_FRAGMENT_SHADER);
+}
+
+std::string Program::getDataFile(const std::string& filename) {
+    std::cout << "Getting data file..." << '\n';
+    std::ifstream file(filename);
+
+    file.open("r");
+    if (!file.is_open()) {
+        throw ProgramException("Failing opening file..");
+    }
+    std::string data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    file.close();
+    return data;
+}
+
+void Program::createUniform(std::string uniformName) {
+    std::cout << "Program : " << _programId << " " << "Create uniform :" << uniformName << '\n';
+    int uniformLocation = glGetUniformLocation(_programId, uniformName.c_str());
+
+    if (uniformLocation < 0) {
+        std::string err;
+        if (uniformLocation == GL_INVALID_VALUE) {
+            err += "Invalid value";
+        }
+        if (uniformLocation == GL_INVALID_OPERATION) {
+            err += "Invalid operation";
+        }
+        throw ProgramException("Could not find uniform to create: " + uniformName + " " + err);
+    }
+    _uniforms.insert(std::pair<std::string, int>(uniformName, uniformLocation));
+}
+
+
+void Program::setUniform(std::string name, glm::vec3 value) {
+    glUniform3f(_uniforms[name], value.x, value.y, value.z);
+}
+
+void Program::setUniform(std::string name, glm::mat4 value) {
+    glUniformMatrix4fv(_uniforms[name], 1, GL_FALSE,  glm::value_ptr(value));
+};
+
+void Program::setUniform(std::string name, int value) {
+    glUniform1i(_uniforms[name], value);
+}
+
+int Program::createShader(const std::string& sc, int shaderType) {
+    int params;
+    const char* _sc = sc.c_str();
+    int size = sc.size();
+
+    int shaderId = glCreateShader(shaderType);
+    if (shaderId == 0) {
+        throw ProgramException("Error creating shader. Type: " + shaderType);
+    }
+
+    glShaderSource(shaderId, 1, &_sc, &size);
+    glCompileShader(shaderId);
+    glGetShaderiv(shaderId, GL_COMPILE_STATUS, &params);
+
+    int InfoLogLength;
+    glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &InfoLogLength);
+    if (InfoLogLength > 0) {
+        std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
+        glGetShaderInfoLog(shaderId, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+        throw ProgramException("Vertex Shader Error Message: " + VertexShaderErrorMessage[0] + '\n');
+    }
+    glAttachShader(_programId, shaderId);
+    return shaderId;
 }
 
 void Program::link() {
     std::cout << "Link program: " << _programId << '\n';
+    int params;
+    char inflog[1024];
+    int size;
+
+    glLinkProgram(_programId);
+    glGetProgramiv(_programId, GL_LINK_STATUS, &params);
+    if (!params) {
+        glGetProgramInfoLog(_programId, 1024, &size, inflog);
+        sprintf(inflog, "Error linking Shader code: %s\n", inflog);
+        throw ProgramException(std::string(inflog));
+    }
+    if (_vertexShaderId != 0) {
+        glDetachShader(_programId, _vertexShaderId);
+    }
+    if (_fragmentShaderId != 0) {
+        glDetachShader(_programId, _fragmentShaderId);
+    }
+    glValidateProgram(_programId);
+    glGetProgramiv(_programId, GL_LINK_STATUS, &params);
+    if (!params) {
+        glGetProgramInfoLog(_programId, 1024, &size, inflog);
+        sprintf(inflog, "Error linking Shader code: %s\n", inflog);
+        throw ProgramException(std::string(inflog));
+    }
 }
 
 void Program::bind() {
     std::cout << "Bind program:" << _programId << '\n';
+    glUseProgram(_programId);
 }
 
 
 void Program::unbind() {
     std::cout << "Unbind program: " << _programId << '\n';
+    glUseProgram(0);
 }
 
 void Program::cleanup() {
     std::cout << "Clean up" << '\n';
-}
-
-void Program::createUniform(std::string uniformName) {
-    std::cout << "Create uniform :" << uniformName << '\n';
-}
-
-//    void setUniform(std::string name, glm::vec3 value);
-//    void setUniform(std::string name, glm::mat4 value);
-
-void Program::setUniform(std::string name, int value) {
-    std::cout << "Set uniform : " << name << " " << value << '\n';
-}
-
-std::string Program::getDataFile(const std::string& filename) {
-    return "Program File data";
-}
-
-int Program::createShader(const std::string& sc, int shaderType) {
-    std::cout << "Create Shader type..." << '\n';
-    return 0;
+    unbind();
+    if (_programId != 0) {
+        glDeleteProgram(_programId);
+    }
 }
