@@ -1,13 +1,14 @@
 #include "Mesh/Mesh.hpp"
 #include "stb_image.h"
 
-Mesh::Mesh(unsigned id) :
+Mesh::Mesh(unsigned id, std::string name) :
     _vertexPos(),
     _vertexNormal(),
     _vertexTexCoord(),
     _triangleIndex(),
     _NTriangleIndex(0),
     _id(id),
+    _name(name),
     _VAO(0),
     _textureID(0),
     _VBO(0),
@@ -59,6 +60,8 @@ void Mesh::loadTexture(const char *filename) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glGenerateMipmap(GL_TEXTURE_2D);
+
+    std::cerr << this->_name << " : " << "Load texture " << _textureID << " " << filename << '\n';
 }
 
 void Mesh::vertexArrayID() {
@@ -67,6 +70,7 @@ void Mesh::vertexArrayID() {
     glGenVertexArrays(1, &_VAO);
     glBindVertexArray(_VAO);
 }
+
 void Mesh::genVertexBufferPosition() {
     std::cout << "Mesh vertex Buffer genVertexBufferPosition" << '\n';
     // Position attribute...
@@ -106,9 +110,10 @@ void Mesh::genVertexBufferIndex() {
 }
 
 void Mesh::draw() {
-    std::cout << "Draw Mesh!" << '\n';
+    std::cout << "Draw Mesh!" << this->_name << ": " << _textureID << '\n';
     // 1st attribute buffer : vertices...
 
+    // Draw texture....
     glActiveTexture(GL_TEXTURE0); // Activate first texture unit... diffuseTexture 0.
     glBindTexture(GL_TEXTURE_2D, _textureID);
 
@@ -124,4 +129,9 @@ void Mesh::draw() {
     );
     // Draw the cube!
     glDrawElements(GL_TRIANGLES, _NTriangleIndex, GL_UNSIGNED_INT, 0);
+}
+
+std::ostream& operator<<(std::ostream& os, const Mesh& mesh) {
+    os << mesh._name;
+    return os;
 }

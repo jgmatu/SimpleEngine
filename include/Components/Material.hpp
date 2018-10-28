@@ -30,6 +30,8 @@ public:
 
     void addTexture(const char *filename);
 
+    friend std::ostream& operator<<(std::ostream& os, const Material& material);
+
 private:
 
     MeshRender *_meshRender;

@@ -28,6 +28,7 @@ public:
 //        return std::string("Mesh error: " + _msg).c_str();
     }
 private:
+
     std::string _msg;
 
 };
@@ -36,7 +37,7 @@ class Mesh {
 
 public:
 
-    Mesh(unsigned id);
+    Mesh( unsigned id, std::string name);
     ~Mesh();
 
     void active();
@@ -55,10 +56,12 @@ public:
     std::vector<unsigned> _triangleIndex;
     int _NTriangleIndex;
 
+    friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
+
 private:
 
-    friend class GameObject;
     unsigned _id;
+    std::string _name;
 
     // Active Buffer.
     GLuint _VAO;

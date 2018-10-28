@@ -31,3 +31,10 @@ void MeshRender::render() {
         _meshes[i]->draw();
     }
 }
+
+std::ostream& operator<<(std::ostream& os, const MeshRender& meshRender) {
+    for (unsigned i = 0; i < meshRender._meshes.size(); ++i) {
+        os << *meshRender._meshes[i];
+    }
+    return os;
+}

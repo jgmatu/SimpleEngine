@@ -56,9 +56,6 @@ GameObject* GameObject::getGameObject(unsigned id) {
             search = _gameObjects[i]->getGameObject(id);
         }
     }
-//    if (search != nullptr) {
-//        std::cout << "???????????????? SEARCH : " << *search << '\n';
-//    }
     return search;
 }
 
@@ -135,5 +132,11 @@ std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
     if (Transform *tf = dynamic_cast<Transform*>(component)) {
         os << (*tf);
     }
+
+    component = gameObject.getComponent(TypeComp::MATERIAL);
+    if (Material *material = dynamic_cast<Material*>(component)) {
+        os << (*material);
+    }
+
     return os;
 }

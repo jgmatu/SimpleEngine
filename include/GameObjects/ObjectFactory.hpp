@@ -35,7 +35,7 @@ public:
 private:
 
     Mesh* getCubeMesh();
-    Mesh* getSphereMesh();
+    Mesh* getSphereMesh(std::string name);
 
     std::vector<GameObject*> _GameObjects;
 

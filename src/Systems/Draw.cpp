@@ -18,7 +18,6 @@ void Draw::init(Scene *scene) {
 
         if(Material *material = dynamic_cast<Material*>(component)) {
             material->start();
-            material->addTexture("../resources/textura.png");
             material->createUniform("projection");
             material->createUniform("view");
             material->createUniform("model");
@@ -36,16 +35,17 @@ void Draw::update(float dt, Scene *scene) {
         Component *component = gameObject->getComponent(TypeComp::MATERIAL);
 
         if (Material *material = dynamic_cast<Material*>(component)) {
-            Camera* camera = scene->getCamera();
+            Camera *camera = scene->getCamera();
             material->setUniform("projection", camera->_projection);
             material->setUniform("view", camera->_view);
             material->setUniform("diffuseTexture", 0);  // El índice es el mismo que en glActiveTexture()
-            material->awakeStart();
 
             Component *component = gameObject->getComponent(TypeComp::TRANSFORM);
             if (Transform *tf = dynamic_cast<Transform*>(component)) {
                 material->setUniform("model", tf->_gModel);
             }
+            // Last step, uniforms first after draw the object!!
+            material->awakeStart();
         }
     }
 }

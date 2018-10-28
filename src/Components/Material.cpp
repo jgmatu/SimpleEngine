@@ -70,3 +70,8 @@ void Material::addTexture(const char *filename) {
         _meshRender->addTexture(filename);
     }
 }
+
+std::ostream& operator<<(std::ostream& os, const Material& material) {
+    os << *material._meshRender;
+    return os;
+}

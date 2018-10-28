@@ -94,18 +94,23 @@ void Engine::mainLoop() {
     GameObject *sun = _scene->getGameObject(1);
     GameObject *earth = _scene->getGameObject(2);
     GameObject *moon = _scene->getGameObject(3);
+    GameObject *mars = _scene->getGameObject(4);
+    GameObject *mercury = _scene->getGameObject(5);
+    GameObject *jupiter = _scene->getGameObject(6);
 
     // Lo tienes traslada el objeto desde la escena como pivote Hay que pivotar!!
     std::cout << *(this->_scene) << '\n';
     std::cout << *sun << '\n';
     std::cout << *earth << '\n';
     std::cout << *moon << '\n';
+    std::cout << *mars << '\n';
 
-    sun->addTexture("../resources/earth_diffuse.jpg");
-
-    earth->addTexture("../resources/moon.png");
-
-    moon->addTexture("../resources/sun.png");
+    sun->addTexture("../resources/sun.png");
+    earth->addTexture("../resources/earth_diffuse.jpg");
+    moon->addTexture("../resources/moon.png");
+    mars->addTexture("../resources/mars.png");
+    mercury->addTexture("../resources/mercury.jpg");
+    jupiter->addTexture("../resources/jupiter.jpg");
 
     glEnable(GL_DEPTH_TEST);
     do {
@@ -116,13 +121,28 @@ void Engine::mainLoop() {
 
         earth->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
         earth->translate(glm::vec3(5.0f, 0.0f, 0.0f));
-        earth->scale(glm::vec3(0.5f, 0.5f, 0.5f));
         earth->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        earth->scale(glm::vec3(0.35f, 0.35f, 0.35f));
 
         moon->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
-        moon->translate(2.0f * glm::vec3(2.0f, 0.0, 0.0f));
-        moon->scale(glm::vec3(0.5f, 0.5f, 0.5f));
+        moon->translate(2.0f * glm::vec3(1.0f, 0.0, 0.0f));
         moon->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        moon->scale(glm::vec3(0.35f, 0.35f, 0.35f));
+
+        mars->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        mars->translate(glm::vec3(5.5f, 0.0f, 5.5f));
+        mars->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        mars->scale(glm::vec3(0.40f, 0.40f, 0.40f));
+
+        mercury->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        mercury->translate(glm::vec3(1.0f, 0.0f, 1.0f));
+        mercury->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        mercury->scale(glm::vec3(0.15f, 0.15f, 0.15f));
+
+        jupiter->rotate(glm::vec3(0.0f, -3.0f, 0.0f), angle);
+        jupiter->translate(glm::vec3(7.0f, 0.0f, -7.0f));
+        jupiter->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        jupiter->scale(glm::vec3(0.85f, 0.85f, 0.85f));
 
         this->update(0);
 

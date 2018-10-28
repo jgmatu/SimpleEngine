@@ -19,6 +19,8 @@ public:
     void addMesh(Mesh *mesh);
     void addTexture(const char* filename);
 
+    friend std::ostream& operator<<(std::ostream& os, const MeshRender& meshRender);
+
 private:
 
     friend class GameObject;

@@ -29,36 +29,54 @@ void ObjectFactory::generateDemoObjects() {
     MeshRender *meshRender_sun = new MeshRender();
     MeshRender *meshRender_earth = new MeshRender();
     MeshRender *meshRender_moon = new MeshRender();
+    MeshRender *meshRender_mars = new MeshRender();
+    MeshRender *meshRender_mercury = new MeshRender();
+    MeshRender *meshRender_jupiter = new MeshRender();
 
-    meshRender_sun->addMesh(getSphereMesh());
-    meshRender_earth->addMesh(getSphereMesh());
-    meshRender_moon->addMesh(getSphereMesh());
+    meshRender_sun->addMesh(getSphereMesh("** SUN **"));
+    meshRender_earth->addMesh(getSphereMesh("** EARTH **"));
+    meshRender_moon->addMesh(getSphereMesh("** MOON **"));
+    meshRender_mars->addMesh(getSphereMesh("** MARS **"));
+    meshRender_mercury->addMesh(getSphereMesh("*** MERCURY ***"));
+    meshRender_jupiter->addMesh(getSphereMesh("*** JUPITER ***"));
 
     Program *program = new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl");
 
     Material *material_sun = new Material(meshRender_sun, program);
     Material *material_earth = new Material(meshRender_earth, program);
     Material *material_moon = new Material(meshRender_moon, program);
+    Material *material_mars = new Material(meshRender_mars, program);
+    Material *material_mercury = new Material(meshRender_mercury, program);
+    Material *material_jupiter = new Material(meshRender_jupiter, program);
+
 
     GameObject *sun = new GameObject(1, " *************************** SUN ********************************** ");
     GameObject *earth = new GameObject(2, " ************************ EARTH ********************************* ");
     GameObject *moon = new GameObject(3, " ************************* MOON ********************************** ");
-
-    sun->addComponent(material_sun);
-
-    earth->addComponent(material_earth);
-
-    moon->addComponent(material_moon);
+    GameObject *mars = new GameObject(4, " ************************* MARS ********************************** ");
+    GameObject *mercury = new GameObject(5, " ************************* MERCURY **************************** ");
+    GameObject *jupiter = new GameObject(6, " ************************* JUPITER **************************** ");
 
     _GameObjects.push_back(camera);
     _GameObjects.push_back(sun);
 
     sun->addGameObject(earth);
+    sun->addGameObject(mars);
+    sun->addGameObject(mercury);
+    sun->addGameObject(jupiter);
+
     earth->addGameObject(moon);
+
+    sun->addComponent(material_sun);
+    earth->addComponent(material_earth);
+    moon->addComponent(material_moon);
+    mars->addComponent(material_mars);
+    mercury->addComponent(material_mercury);
+    jupiter->addComponent(material_jupiter);
 }
 
 Mesh* ObjectFactory::getCubeMesh() {
-    Mesh *mesh = new Mesh(1);
+    Mesh *mesh = new Mesh(1, "cube");
 
     mesh->_vertexPos = cubeVertexPos;
     mesh->_vertexNormal = cubeVertexNormal;
@@ -68,7 +86,7 @@ Mesh* ObjectFactory::getCubeMesh() {
     return mesh;
 }
 
-Mesh* ObjectFactory::getSphereMesh() {
+Mesh* ObjectFactory::getSphereMesh(std::string name) {
     int idx = 0;
 
     /* Statement Exercise ... */
@@ -138,7 +156,7 @@ Mesh* ObjectFactory::getSphereMesh() {
           }
     }
 
-    Mesh *mesh = new Mesh(2);
+    Mesh *mesh = new Mesh(1, name);
     mesh->_vertexPos = posVertex;
     mesh->_vertexNormal = normals;
     mesh->_vertexTexCoord = texCoords;
