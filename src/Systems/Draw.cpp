@@ -14,9 +14,9 @@ void Draw::init(Scene *scene) {
 
     for (unsigned i = 0; i < keys.size(); ++i) {
         GameObject *gameObject = scene->getGameObject(keys[i]);
-        std::shared_ptr<Component> component = gameObject->getComponent(TypeComp::MATERIAL);
+        Component *component = gameObject->getComponent(TypeComp::MATERIAL);
 
-        if(std::shared_ptr<Material> material = std::dynamic_pointer_cast<Material>(component)) {
+        if(Material *material = dynamic_cast<Material*>(component)) {
             material->start();
             material->addTexture("../resources/textura.png");
             material->createUniform("projection");
@@ -33,17 +33,17 @@ void Draw::update(float dt, Scene *scene) {
 
     for (unsigned i = 0; i < keys.size(); ++i) {
         GameObject *gameObject = scene->getGameObject(keys[i]);
-        std::shared_ptr<Component> component = gameObject->getComponent(TypeComp::MATERIAL);
+        Component *component = gameObject->getComponent(TypeComp::MATERIAL);
 
-        if (std::shared_ptr<Material> material = std::dynamic_pointer_cast<Material>(component)) {
+        if (Material *material = dynamic_cast<Material*>(component)) {
             Camera* camera = scene->getCamera();
             material->setUniform("projection", camera->_projection);
             material->setUniform("view", camera->_view);
             material->setUniform("diffuseTexture", 0);  // El índice es el mismo que en glActiveTexture()
             material->awakeStart();
 
-            std::shared_ptr<Component> component = gameObject->getComponent(TypeComp::TRANSFORM);
-            if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
+            Component *component = gameObject->getComponent(TypeComp::TRANSFORM);
+            if (Transform *tf = dynamic_cast<Transform*>(component)) {
                 material->setUniform("model", tf->_gModel);
             }
         }

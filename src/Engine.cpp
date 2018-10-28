@@ -33,7 +33,6 @@ void Engine::initWindow() {
     if (!glfwInit()) {
         throw;
     }
-
     // Configure GLFW
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -90,10 +89,23 @@ void Engine::update(float dt) {
 }
 
 void Engine::mainLoop() {
+    std::cout << "********************** MAIN LOOP ***************************************" << '\n';
+
     GameObject *sun = _scene->getGameObject(1);
     GameObject *earth = _scene->getGameObject(2);
     GameObject *moon = _scene->getGameObject(3);
 
+    // Lo tienes traslada el objeto desde la escena como pivote Hay que pivotar!!
+    std::cout << *(this->_scene) << '\n';
+    std::cout << *sun << '\n';
+    std::cout << *earth << '\n';
+    std::cout << *moon << '\n';
+
+    sun->addTexture("../resources/earth_diffuse.jpg");
+
+    earth->addTexture("../resources/moon.png");
+
+    moon->addTexture("../resources/sun.png");
 
     glEnable(GL_DEPTH_TEST);
     do {
@@ -112,6 +124,9 @@ void Engine::mainLoop() {
         moon->scale(glm::vec3(0.5f, 0.5f, 0.5f));
         moon->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
 
+        this->update(0);
+
+        glfwSwapBuffers(_window); // swap the color buffers.
 
         // Lo tienes traslada el objeto desde la escena como pivote Hay que pivotar!!
         std::cout << *(this->_scene) << '\n';
@@ -119,11 +134,8 @@ void Engine::mainLoop() {
         std::cout << *earth << '\n';
         std::cout << *moon << '\n';
 
-        this->update(0);
-
-        glfwSwapBuffers(_window); // swap the color buffers.
-
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
     } while(!glfwWindowShouldClose(_window));
     glfwTerminate();
 }

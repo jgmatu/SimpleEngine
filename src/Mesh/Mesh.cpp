@@ -35,25 +35,30 @@ void Mesh::active() {
 
 
 void Mesh::loadTexture(const char *filename) {
-      int width, heigth, channels;
-      unsigned char* pixels = stbi_load(filename, &width, &heigth, &channels, 0);
+    std::ifstream file(filename);
 
-      glGenTextures(1, &_textureID);
-      glBindTexture(GL_TEXTURE_2D, _textureID); // all upcoming GL_TEXTURE_2D operations now have
+    if (file.fail()) {
+        throw MeshException("Texture file not exists");
+    }
+    int width, heigth, channels;
+    unsigned char* pixels = stbi_load(filename, &width, &heigth, &channels, 0);
 
-      // set the texture wrapping parameters.
-      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glGenTextures(1, &_textureID);
+    glBindTexture(GL_TEXTURE_2D, _textureID); // all upcoming GL_TEXTURE_2D operations now have
 
-      if (channels == 4) {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, heigth, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-      } else if (channels == 3) {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, heigth, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-      }
-      free(pixels);
+    // set the texture wrapping parameters.
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-      glGenerateMipmap(GL_TEXTURE_2D);
+    if (channels == 4) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, heigth, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    } else if (channels == 3) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, heigth, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+    }
+    free(pixels);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 void Mesh::vertexArrayID() {

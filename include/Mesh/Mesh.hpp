@@ -7,8 +7,30 @@
 
 #include <vector>
 #include <iostream>
+#include <fstream>
+#include <exception>
+#include <stdexcept>
 
 #include <glad/glad.h>
+
+class MeshException : public std::exception {
+
+public:
+
+    MeshException(const std::string& msg) :
+        _msg(msg)
+    {
+        ;
+    }
+
+    virtual const char* what () const throw () {
+        return "Mesh Error file not found!!";
+//        return std::string("Mesh error: " + _msg).c_str();
+    }
+private:
+    std::string _msg;
+
+};
 
 class Mesh {
 

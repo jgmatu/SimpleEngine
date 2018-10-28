@@ -20,12 +20,12 @@ void Update::models(float dt, GameObject *scene) {
     for (unsigned i = 0; i < scene->_gameObjects.size(); ++i) {
         GameObject *gameObj = scene->_gameObjects[i];
 
-        std::shared_ptr<Component> component = gameObj->getComponent(TypeComp::TRANSFORM);
-        if (std::shared_ptr<Transform> tfObj = std::dynamic_pointer_cast<Transform>(component)) {
+        Component *component = gameObj->getComponent(TypeComp::TRANSFORM);
+        if (Transform *tfObj = dynamic_cast<Transform*>(component)) {
             component = scene->getComponent(TypeComp::TRANSFORM);
 
             tfObj->update();
-            if (std::shared_ptr<Transform> tfScene = std::dynamic_pointer_cast<Transform>(component)) {
+            if (Transform *tfScene = dynamic_cast<Transform*>(component)) {
                 tfObj->_gModel = tfScene->_gModel * tfObj->_model;
             }
         }

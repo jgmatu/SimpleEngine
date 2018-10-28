@@ -47,7 +47,7 @@ std::string Program::getDataFile(const std::string& filename) {
 
     file.open("r");
     if (!file.is_open()) {
-        throw ProgramException("Failing opening file..");
+        throw ProgramException("Failing opening file...");
     }
     std::string data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     file.close();

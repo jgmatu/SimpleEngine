@@ -15,7 +15,7 @@ class Material : public Component {
 public:
 
     Material();
-    Material(std::shared_ptr<MeshRender> meshRender, std::shared_ptr<Program> program);
+    Material(MeshRender *meshRender, Program *program);
     ~Material();
 
     void start();
@@ -32,8 +32,8 @@ public:
 
 private:
 
-    std::shared_ptr<MeshRender> _meshRender;
-    std::shared_ptr<Program> _program;
+    MeshRender *_meshRender;
+    Program *_program;
 
 };
 

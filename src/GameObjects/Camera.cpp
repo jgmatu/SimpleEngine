@@ -5,6 +5,8 @@ Camera::Camera() :
     _view(1),
     _projection(1)
 {
+    this->_id = 100;
+    this->_name = "**** CAMERA **** ";
     this->_projection = glm::perspective(glm::radians(60.0f), aspectRatio, 0.1f, 100.0f);
 
     this->_view = glm::mat4(1.0);

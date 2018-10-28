@@ -5,7 +5,7 @@ Material::Material() {
     std::cout << "Create component material" << '\n';
 }
 
-Material::Material(std::shared_ptr<MeshRender> meshRender, std::shared_ptr<Program> program) :
+Material::Material(MeshRender *meshRender, Program *program) :
     Material::Material()
 {
     this->_meshRender = meshRender;

@@ -6,8 +6,7 @@ GameObject::GameObject() :
     _components(),
     _gameObjects()
 {
-    std::shared_ptr<Transform> tf = std::shared_ptr<Transform>(new Transform());
-    _components.push_back(tf);
+    _components.push_back(new Transform());
 }
 
 GameObject::GameObject(unsigned id, std::string name) :
@@ -23,8 +22,8 @@ GameObject::~GameObject() {
     }
 }
 
-std::shared_ptr<Component> GameObject::getComponent(TypeComp type) const {
-    std::shared_ptr<Component> search = nullptr;
+Component* GameObject::getComponent(TypeComp type) const {
+    Component* search = nullptr;
 
     for (unsigned i = 0; !search && i < _components.size(); ++i) {
         if (_components[i]->_type == type) {
@@ -34,7 +33,7 @@ std::shared_ptr<Component> GameObject::getComponent(TypeComp type) const {
     return search;
 }
 
-void GameObject::addComponent(std::shared_ptr<Component> component) {
+void GameObject::addComponent(Component *component) {
     _components.push_back(component);
 }
 
@@ -57,6 +56,9 @@ GameObject* GameObject::getGameObject(unsigned id) {
             search = _gameObjects[i]->getGameObject(id);
         }
     }
+//    if (search != nullptr) {
+//        std::cout << "???????????????? SEARCH : " << *search << '\n';
+//    }
     return search;
 }
 
@@ -87,50 +89,50 @@ std::vector<unsigned> GameObject::getKeysObjects() {
 }
 
 void GameObject::scale(glm::vec3 vec3) {
-    std::shared_ptr<Component> component = getComponent(TypeComp::TRANSFORM);
+    Component *component = getComponent(TypeComp::TRANSFORM);
 
-    if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
+    if (Transform *tf = dynamic_cast<Transform*>(component)) {
         tf->scale(vec3);
     }
 }
 
 void GameObject::translate(glm::vec3 vec3) {
-    std::shared_ptr<Component> component = getComponent(TypeComp::TRANSFORM);
+    Component *component = getComponent(TypeComp::TRANSFORM);
 
-    if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
+    if (Transform *tf = dynamic_cast<Transform*>(component)) {
         tf->translate(vec3);
     }
 }
 
 void GameObject::rotate(glm::vec3 vec3, glm::quat quat) {
-    std::shared_ptr<Component> component = getComponent(TypeComp::TRANSFORM);
+    Component *component = getComponent(TypeComp::TRANSFORM);
 
-    if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
+    if (Transform *tf = dynamic_cast<Transform*>(component)) {
         tf->rotate(vec3, quat);
     }
 }
 
 void GameObject::rotate(glm::vec3 vec3, float angle) {
-    std::shared_ptr<Component> component = getComponent(TypeComp::TRANSFORM);
+    Component *component = getComponent(TypeComp::TRANSFORM);
 
-    if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
+    if (Transform *tf = dynamic_cast<Transform*>(component)) {
         tf->rotate(vec3, angle);
     }
 }
 
 void GameObject::addTexture(const char *filename) {
-    std::shared_ptr<Component> component = getComponent(TypeComp::MATERIAL);
+    Component *component = getComponent(TypeComp::MATERIAL);
 
-    if (std::shared_ptr<Material> material = std::dynamic_pointer_cast<Material>(component)) {
+    if (Material *material = dynamic_cast<Material*>(component)) {
         material->addTexture(filename);
     }
 }
 
 std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
-    std::shared_ptr<Component> component = gameObject.getComponent(TypeComp::TRANSFORM);
+    Component *component = gameObject.getComponent(TypeComp::TRANSFORM);
 
     os << gameObject._name << std::endl;
-    if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
+    if (Transform *tf = dynamic_cast<Transform*>(component)) {
         os << (*tf);
     }
     return os;

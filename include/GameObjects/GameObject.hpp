@@ -28,8 +28,9 @@ public:
     GameObject(unsigned id, std::string _name);
     virtual ~GameObject();
 
-    std::shared_ptr<Component> getComponent(TypeComp type) const;
-    void addComponent(std::shared_ptr<Component> component);
+
+    Component* getComponent(TypeComp type) const;
+    void addComponent(Component *component);
     bool hasComponent(TypeComp type);
 
     GameObject* getGameObject(unsigned id);
@@ -52,7 +53,7 @@ protected:
     unsigned _id;
     std::string _name;
 
-    std::vector<std::shared_ptr<Component>> _components;
+    std::vector<Component*> _components;
     std::vector<GameObject*> _gameObjects;
 };
 

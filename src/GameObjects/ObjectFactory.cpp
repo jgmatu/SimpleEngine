@@ -26,46 +26,35 @@ GameObject* ObjectFactory::getGameObject(unsigned id) {
 void ObjectFactory::generateDemoObjects() {
     Camera *camera = new Camera();
 
-    std::shared_ptr<MeshRender> meshRender = std::shared_ptr<MeshRender>(new MeshRender());
-    meshRender->addMesh(getSphereMesh());
+    MeshRender *meshRender_sun = new MeshRender();
+    MeshRender *meshRender_earth = new MeshRender();
+    MeshRender *meshRender_moon = new MeshRender();
 
-    std::shared_ptr<Program> program = std::shared_ptr<Program>(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
-    std::shared_ptr<Material> material = std::shared_ptr<Material>(new Material(meshRender, program));
+    meshRender_sun->addMesh(getSphereMesh());
+    meshRender_earth->addMesh(getSphereMesh());
+    meshRender_moon->addMesh(getSphereMesh());
+
+    Program *program = new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl");
+
+    Material *material_sun = new Material(meshRender_sun, program);
+    Material *material_earth = new Material(meshRender_earth, program);
+    Material *material_moon = new Material(meshRender_moon, program);
 
     GameObject *sun = new GameObject(1, " *************************** SUN ********************************** ");
     GameObject *earth = new GameObject(2, " ************************ EARTH ********************************* ");
     GameObject *moon = new GameObject(3, " ************************* MOON ********************************** ");
 
-    sun->addComponent(material);
-    earth->addComponent(material);
-    moon->addComponent(material);
+    sun->addComponent(material_sun);
+
+    earth->addComponent(material_earth);
+
+    moon->addComponent(material_moon);
 
     _GameObjects.push_back(camera);
     _GameObjects.push_back(sun);
+
     sun->addGameObject(earth);
-
     earth->addGameObject(moon);
-
-
-/*
-    GameObject *cube2 = new GameObject(2, " *** cube *** ");
-    _GameObjects.push_back(cube2);
-
-    GameObject *cube3 = new GameObject(3, " *** cube *** ");
-    _GameObjects.push_back(cube3);
-
-    GameObject *cube4 = new GameObject(4, " *** cube *** ");
-    cube3->_gameObjects.push_back(cube4);
-
-    GameObject *cube5 = new GameObject(5, " *** cube *** ");
-    cube3->_gameObjects.push_back(cube5);
-
-    GameObject *cube6 = new GameObject(6, " *** cube *** ");
-    cube4->_gameObjects.push_back(cube6);
-
-    GameObject *cube7 = new GameObject(7, " *** cube *** ");
-    cube6->_gameObjects.push_back(cube7);
-*/
 }
 
 Mesh* ObjectFactory::getCubeMesh() {
