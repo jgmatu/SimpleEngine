@@ -3,7 +3,7 @@
 Engine::Engine() :
     _systems()
 {
-    _scene = new Scene(0, "*** scene *** ");
+    _scene = new Scene(0, "********************* SCENE *********************** ");
 }
 
 Engine::Engine(ObjectFactory *objectFactory) :
@@ -23,8 +23,6 @@ Engine::~Engine() {
 
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    std::cout << scancode << " " << mods << std::endl;
-
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
@@ -92,17 +90,40 @@ void Engine::update(float dt) {
 }
 
 void Engine::mainLoop() {
-    float position = 0.0;
-    do {
-        GameObject *cube = _scene->getGameObject(1);
+    GameObject *sun = _scene->getGameObject(1);
+    GameObject *earth = _scene->getGameObject(2);
+    GameObject *moon = _scene->getGameObject(3);
 
-        cube->translate(glm::vec3(0.0f, 0.0f, position));
-        position += 0.0001f;
+
+    glEnable(GL_DEPTH_TEST);
+    do {
+        float angle = std::fmod(glfwGetTime(), (2.0f * M_PI));
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        this->update(0);
-        glfwSwapBuffers(_window); // swap the color buffers.
         glfwPollEvents();
+
+        earth->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        earth->translate(glm::vec3(5.0f, 0.0f, 0.0f));
+        earth->scale(glm::vec3(0.5f, 0.5f, 0.5f));
+        earth->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+
+        moon->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        moon->translate(2.0f * glm::vec3(2.0f, 0.0, 0.0f));
+        moon->scale(glm::vec3(0.5f, 0.5f, 0.5f));
+        moon->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+
+
+        // Lo tienes traslada el objeto desde la escena como pivote Hay que pivotar!!
+        std::cout << *(this->_scene) << '\n';
+        std::cout << *sun << '\n';
+        std::cout << *earth << '\n';
+        std::cout << *moon << '\n';
+
+        this->update(0);
+
+        glfwSwapBuffers(_window); // swap the color buffers.
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     } while(!glfwWindowShouldClose(_window));
     glfwTerminate();
 }

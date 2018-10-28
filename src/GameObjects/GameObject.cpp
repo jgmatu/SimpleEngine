@@ -110,6 +110,14 @@ void GameObject::rotate(glm::vec3 vec3, glm::quat quat) {
     }
 }
 
+void GameObject::rotate(glm::vec3 vec3, float angle) {
+    std::shared_ptr<Component> component = getComponent(TypeComp::TRANSFORM);
+
+    if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
+        tf->rotate(vec3, angle);
+    }
+}
+
 void GameObject::addTexture(const char *filename) {
     std::shared_ptr<Component> component = getComponent(TypeComp::MATERIAL);
 
@@ -121,6 +129,7 @@ void GameObject::addTexture(const char *filename) {
 std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
     std::shared_ptr<Component> component = gameObject.getComponent(TypeComp::TRANSFORM);
 
+    os << gameObject._name << std::endl;
     if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
         os << (*tf);
     }

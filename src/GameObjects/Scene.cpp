@@ -19,13 +19,14 @@ Scene::~Scene() {
 
 Camera* Scene::getCamera() {
     std::vector<unsigned> keys = this->getKeysObjects();
+    Camera *result = nullptr;
 
-    for (unsigned i = 0; i < keys.size(); ++i) {
+    for (unsigned i = 0; i < keys.size() && !result; ++i) {
         GameObject *gameObject = this->getGameObject(keys[i]);
 
         if (Camera *camera = dynamic_cast<Camera*>(gameObject)) {
-            return camera;
+            result = camera;
         }
     }
-    return nullptr;
+    return result;
 }

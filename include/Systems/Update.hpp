@@ -23,6 +23,8 @@ public:
 
 private:
 
+    void models(float dt, GameObject *scene);
+
 };
 
 #endif // SYSTEM_UPDATE_H

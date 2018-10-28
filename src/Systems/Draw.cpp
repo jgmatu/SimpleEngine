@@ -44,7 +44,7 @@ void Draw::update(float dt, Scene *scene) {
 
             std::shared_ptr<Component> component = gameObject->getComponent(TypeComp::TRANSFORM);
             if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
-                material->setUniform("model", tf->model());
+                material->setUniform("model", tf->_gModel);
             }
         }
     }

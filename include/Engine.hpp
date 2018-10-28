@@ -14,6 +14,7 @@
 #include <thread>
 #include <iostream>
 #include <string>
+#include <math.h>
 
 #include "Systems/System.hpp"
 #include "GameObjects/ObjectFactory.hpp"

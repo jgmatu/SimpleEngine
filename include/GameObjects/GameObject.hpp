@@ -19,6 +19,9 @@
 
 class GameObject {
 
+    friend class Update;
+    friend class Draw;
+
 public:
 
     GameObject();
@@ -38,6 +41,7 @@ public:
     void scale(glm::vec3 vec3);
     void translate(glm::vec3 vec3);
     void rotate(glm::vec3 vec3, glm::quat quat);
+    void rotate(glm::vec3 vec3, float angle);
 
     void addTexture(const char *filename);
 

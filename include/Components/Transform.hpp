@@ -5,12 +5,17 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include <glm/glm.hpp>
-#include <glm/ext.hpp>
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
+#include <glm/ext.hpp>
 
 #include "Components/Component.hpp"
+#include "Operations/Operation.hpp"
+#include "Operations/Rotate.hpp"
+#include "Operations/Scale.hpp"
+#include "Operations/Translate.hpp"
 
 class Transform : public Component {
 
@@ -26,18 +31,15 @@ public:
     void scale(glm::vec3 vec3);
     void translate(glm::vec3 vec3);
     void rotate(glm::vec3 vec3, glm::quat quad);
-
-    glm::mat4 model();
+    void rotate(glm::vec3 vec3, float angle);
 
     friend std::ostream& operator<<(std::ostream&, const Transform& tf);
 
+    glm::mat4 _gModel, _model;
+
 private:
 
-    glm::mat4 _gModel, _model;
-    glm::vec3 _pos, _scale;
-    glm::vec3 _axis;
-
-    glm::quat _quat;
+    std::vector<Operation*> _operations;
 };
 
 #endif // TRANSFORM_H

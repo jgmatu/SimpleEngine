@@ -27,35 +27,25 @@ void ObjectFactory::generateDemoObjects() {
     Camera *camera = new Camera();
 
     std::shared_ptr<MeshRender> meshRender = std::shared_ptr<MeshRender>(new MeshRender());
-    std::shared_ptr<Program> program = std::shared_ptr<Program>(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
+    meshRender->addMesh(getSphereMesh());
 
+    std::shared_ptr<Program> program = std::shared_ptr<Program>(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
     std::shared_ptr<Material> material = std::shared_ptr<Material>(new Material(meshRender, program));
 
-    meshRender->addMesh(getCubeMesh());
+    GameObject *sun = new GameObject(1, " *************************** SUN ********************************** ");
+    GameObject *earth = new GameObject(2, " ************************ EARTH ********************************* ");
+    GameObject *moon = new GameObject(3, " ************************* MOON ********************************** ");
 
-    GameObject* cube1 = new GameObject(1, " *** cube *** ");
-    cube1->addComponent(material);
-    cube1->translate(glm::vec3(-3.0f, 0.0f, 0.0f));
-
-    GameObject* cube2 = new GameObject(2, " *** cube *** ");
-    cube2->addComponent(material);
-    cube2->translate(glm::vec3(3.0f, 0.0f, 0.0f));
-
-
-    std::shared_ptr<MeshRender> meshRender_s = std::shared_ptr<MeshRender>(new MeshRender());
-    std::shared_ptr<Material> material_s = std::shared_ptr<Material>(new Material(meshRender_s, program));
-
-    meshRender_s->addMesh(getSphereMesh());
-
-    GameObject *sphere = new GameObject(3, "*** sphere ***");
-
-    sphere->addComponent(material_s);
-    sphere->translate(glm::vec3(0.0f, 0.0f, 0.0f));
+    sun->addComponent(material);
+    earth->addComponent(material);
+    moon->addComponent(material);
 
     _GameObjects.push_back(camera);
-    _GameObjects.push_back(cube1);
-    _GameObjects.push_back(sphere);
-    _GameObjects.push_back(cube2);
+    _GameObjects.push_back(sun);
+    sun->addGameObject(earth);
+
+    earth->addGameObject(moon);
+
 
 /*
     GameObject *cube2 = new GameObject(2, " *** cube *** ");

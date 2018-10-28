@@ -25,6 +25,7 @@ file(GLOB PROJECT_CONFIGS CMakeLists.txt
                          .gitmodules)
 
 file(GLOB PROJECT_SOURCES
+    src/Operations/*cpp
     src/Components/*cpp
     src/GameObjects/*cpp
     src/Mesh/*cpp

@@ -9,30 +9,27 @@ Update::~Update() {
 }
 
 void Update::init(Scene *scene) {
-    std::cout << "|Init system Update|" << '\n';
-    std::vector<unsigned> keys = scene->getKeysObjects();
-
-    for (unsigned i = 0; i < keys.size(); ++i) {
-        GameObject *gameObject = scene->getGameObject(keys[i]);
-
-        std::shared_ptr<Component> component = gameObject->getComponent(TypeComp::TRANSFORM);
-        if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
-            tf->start();
-        }
-    }
+    ;
 }
 
 void Update::update(float dt, Scene *scene) {
-    std::cout << "|update system Update|" << '\n';
-    std::vector<unsigned> keys = scene->getKeysObjects();
+    this->models(dt, scene);
+}
 
-    for (unsigned i = 0; i < keys.size(); ++i) {
-        GameObject *gameObject = scene->getGameObject(keys[i]);
+void Update::models(float dt, GameObject *scene) {
+    for (unsigned i = 0; i < scene->_gameObjects.size(); ++i) {
+        GameObject *gameObj = scene->_gameObjects[i];
 
-        std::shared_ptr<Component> component = gameObject->getComponent(TypeComp::TRANSFORM);
-        if (std::shared_ptr<Transform> tf = std::dynamic_pointer_cast<Transform>(component)) {
-            tf->update();
+        std::shared_ptr<Component> component = gameObj->getComponent(TypeComp::TRANSFORM);
+        if (std::shared_ptr<Transform> tfObj = std::dynamic_pointer_cast<Transform>(component)) {
+            component = scene->getComponent(TypeComp::TRANSFORM);
+
+            tfObj->update();
+            if (std::shared_ptr<Transform> tfScene = std::dynamic_pointer_cast<Transform>(component)) {
+                tfObj->_gModel = tfScene->_gModel * tfObj->_model;
+            }
         }
+        this->models(dt, gameObj);
     }
 }
 

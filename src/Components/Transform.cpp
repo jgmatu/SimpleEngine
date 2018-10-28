@@ -1,12 +1,8 @@
 #include "Components/Transform.hpp"
 
 Transform::Transform() :
-    _gModel(1),
-    _model(1),
-    _pos(0, 0, 0),
-    _scale(1, 1, 1),
-    _axis(0, 0, 0),
-    _quat()
+    _gModel(1.0f),
+    _model(1.0f)
 {
     this->_type = TypeComp::TRANSFORM;
     std::cout << "************ Transform ***************" << '\n';
@@ -18,10 +14,6 @@ Transform::~Transform() {
 
 void Transform::start() {
     std::cout << "**** Transform start ****" << '\n';
-//    std::cout << "-> Position " << _pos << '\n';
-//    std::cout << "-> Scale " << _scale << '\n';
-//    std::cout << "-> Axis " << _axis << '\n';
-//    std::cout << "-> Quat " << _quat << '\n';
 }
 
 void Transform::awakeStart() {
@@ -30,31 +22,34 @@ void Transform::awakeStart() {
 
 void Transform::update() {
     std::cout << "**** Transform update **** " << '\n';
-    _model = glm::translate(_pos);
+    this->_model = glm::mat4(1.0f);
+
+    for (unsigned i = 0; i < this->_operations.size(); ++i) {
+        this->_model = this->_model * this->_operations[i]->apply();
+        delete this->_operations[i];
+    }
+    this->_operations.erase(this->_operations.begin(), this->_operations.end());
 }
 
 void Transform::scale(glm::vec3 vec3) {
-    this->_scale = vec3;
+    this->_operations.push_back(new Scale(vec3));
 };
 
 void Transform::translate(glm::vec3 vec3) {
-    this->_pos.x += vec3.x;
-    this->_pos.y += vec3.y;
-    this->_pos.z += vec3.z;
+    this->_operations.push_back(new Translate(vec3));
 }
 
 void Transform::rotate(glm::vec3 vec3, glm::quat quat) {
-    this->_quat = quat;
-    this->_axis = vec3;
+    this->_operations.push_back(new Rotate(vec3, quat));
 }
 
-glm::mat4 Transform::model() {
-    return _model;
-};
+void Transform::rotate(glm::vec3 vec3, float angle) {
+    this->_operations.push_back(new Rotate(angle, vec3));
+}
+
 
 std::ostream& operator<<(std::ostream& os, const Transform& tf) {
-    std::cout << "Pos : (" << tf._pos.x << "," << tf._pos.y << "," << tf._pos.z << ")" << '\n';
-    std::cout << "Scale : (" << tf._pos.x << "," << tf._pos.y << "," << tf._pos.z << ")" << '\n';
-    std::cout << "Axis : (" << tf._pos.x << "," << tf._pos.y << "," << tf._pos.z << ")" << '\n';
+    os << "Model : " << std::endl << glm::to_string(tf._model) << std::endl;
+    os << "GModel : " << std::endl << glm::to_string(tf._gModel) << std::endl;
     return os;
 }
