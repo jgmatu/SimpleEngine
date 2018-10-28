@@ -119,6 +119,8 @@ void Engine::mainLoop() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
 
+        sun->translate(glm::vec3(0.0f, 0.0f, -5.0f));
+
         earth->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
         earth->translate(glm::vec3(5.0f, 0.0f, 0.0f));
         earth->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
