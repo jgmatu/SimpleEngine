@@ -20,7 +20,7 @@
 class GameObject {
 
     friend class Update;
-    friend class Draw;
+    friend class Scene;
 
 public:
 

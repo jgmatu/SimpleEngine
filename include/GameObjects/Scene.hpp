@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "GameObjects/GameObject.hpp"
-#include "GameObjects/Camera.hpp"
+#include "Components/Camera.hpp"
 
 class Scene : public GameObject {
 
@@ -15,7 +15,10 @@ public:
     Scene(unsigned id, std::string name);
     ~Scene();
 
-    Camera* getCamera();
+    const unsigned MAX_CAMERAS = 3;
+
+    std::vector<Camera*> _cameras;
+    unsigned _camera = 0;
 
 };
 

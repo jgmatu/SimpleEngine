@@ -40,6 +40,7 @@ public:
 private:
 
     std::vector<Operation*> _operations;
+
 };
 
 #endif // TRANSFORM_H

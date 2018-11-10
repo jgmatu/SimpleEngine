@@ -126,9 +126,8 @@ void GameObject::addTexture(const char *filename) {
 }
 
 std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
-    Component *component = gameObject.getComponent(TypeComp::TRANSFORM);
-
     os << gameObject._name << std::endl;
+      Component *component = gameObject.getComponent(TypeComp::TRANSFORM);
     if (Transform *tf = dynamic_cast<Transform*>(component)) {
         os << (*tf);
     }
@@ -137,6 +136,5 @@ std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
     if (Material *material = dynamic_cast<Material*>(component)) {
         os << (*material);
     }
-
     return os;
 }

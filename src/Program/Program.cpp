@@ -28,21 +28,18 @@ void Program::render() {
 }
 
 void Program::createVertexShader() {
-    std::cout << "Create vertex shader: " << _vshader << '\n';
     const std::string sc = getDataFile(this->_vshader);
 
     _vertexShaderId = createShader(sc, GL_VERTEX_SHADER);
 }
 
 void Program::createFragmentShader() {
-    std::cout << "Crete fragments shader: " << _fshader << '\n';
     const std::string sc = getDataFile(this->_fshader);
 
     _fragmentShaderId = createShader(sc, GL_FRAGMENT_SHADER);
 }
 
 std::string Program::getDataFile(const std::string& filename) {
-    std::cout << "Getting data file..." << '\n';
     std::ifstream file(filename);
 
     file.open("r");
@@ -55,7 +52,6 @@ std::string Program::getDataFile(const std::string& filename) {
 }
 
 void Program::createUniform(std::string uniformName) {
-    std::cout << "Program : " << _programId << " " << "Create uniform :" << uniformName << '\n';
     int uniformLocation = glGetUniformLocation(_programId, uniformName.c_str());
 
     if (uniformLocation < 0) {
@@ -110,7 +106,6 @@ int Program::createShader(const std::string& sc, int shaderType) {
 }
 
 void Program::link() {
-    std::cout << "Link program: " << _programId << '\n';
     int params;
     char inflog[1024];
     int size;
@@ -138,18 +133,15 @@ void Program::link() {
 }
 
 void Program::bind() {
-    std::cout << "Bind program:" << _programId << '\n';
     glUseProgram(_programId);
 }
 
 
 void Program::unbind() {
-    std::cout << "Unbind program: " << _programId << '\n';
     glUseProgram(0);
 }
 
 void Program::cleanup() {
-    std::cout << "Clean up" << '\n';
     unbind();
     if (_programId != 0) {
         glDeleteProgram(_programId);

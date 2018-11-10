@@ -9,7 +9,6 @@ Draw::~Draw() {
 }
 
 void Draw::init(Scene *scene) {
-    std::cout << "|Init system Draw|" << '\n';
     std::vector<unsigned> keys = scene->getKeysObjects();
 
     for (unsigned i = 0; i < keys.size(); ++i) {
@@ -27,7 +26,14 @@ void Draw::init(Scene *scene) {
 }
 
 void Draw::update(float dt, Scene *scene) {
-    std::cout << "*** Update system Draw ***" << '\n';
+
+    // ** Update cameras **/
+    std::vector<Camera*> cameras = scene->_cameras;
+    for (unsigned i = 0; i < scene->MAX_CAMERAS; ++i) {
+        cameras[i]->update();
+    }
+
+    // ** Update Game Objects **/
     std::vector<unsigned> keys = scene->getKeysObjects();
 
     for (unsigned i = 0; i < keys.size(); ++i) {
@@ -35,9 +41,8 @@ void Draw::update(float dt, Scene *scene) {
         Component *component = gameObject->getComponent(TypeComp::MATERIAL);
 
         if (Material *material = dynamic_cast<Material*>(component)) {
-            Camera *camera = scene->getCamera();
-            material->setUniform("projection", camera->_projection);
-            material->setUniform("view", camera->_view);
+            material->setUniform("projection", cameras[scene->_camera]->_projection);
+            material->setUniform("view", cameras[scene->_camera]->_tf->_gModel);
             material->setUniform("diffuseTexture", 0);  // El índice es el mismo que en glActiveTexture()
 
             Component *component = gameObject->getComponent(TypeComp::TRANSFORM);
@@ -45,7 +50,7 @@ void Draw::update(float dt, Scene *scene) {
                 material->setUniform("model", tf->_gModel);
             }
             // Last step, uniforms first after draw the object!!
-            material->awakeStart();
+            material->update();
         }
     }
 }

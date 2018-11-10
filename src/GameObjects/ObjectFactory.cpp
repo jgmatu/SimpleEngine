@@ -24,7 +24,6 @@ GameObject* ObjectFactory::getGameObject(unsigned id) {
 }
 
 void ObjectFactory::generateDemoObjects() {
-    Camera *camera = new Camera();
 
     MeshRender *meshRender_sun = new MeshRender();
     MeshRender *meshRender_earth = new MeshRender();
@@ -57,7 +56,6 @@ void ObjectFactory::generateDemoObjects() {
     GameObject *mercury = new GameObject(5, " ************************* MERCURY **************************** ");
     GameObject *jupiter = new GameObject(6, " ************************* JUPITER **************************** ");
 
-    _GameObjects.push_back(camera);
     _GameObjects.push_back(sun);
 
     sun->addGameObject(earth);

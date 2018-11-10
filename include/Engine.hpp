@@ -42,7 +42,8 @@ private:
 
     std::vector<System*> _systems;
     Scene *_scene;
-
+    Camera *_camera;
+    
 };
 
 #endif // ENGINE_H

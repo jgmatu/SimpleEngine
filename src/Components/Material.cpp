@@ -18,7 +18,6 @@ Material::~Material() {
 }
 
 void Material::start() {
-    std::cout << "**** Material start ****" << '\n';
     if (_meshRender) {
         _meshRender->active();
         if (_program) {
@@ -28,7 +27,6 @@ void Material::start() {
 }
 
 void Material::awakeStart() {
-    std::cout << "*** Material awakeStart *** " << '\n';
     if (_meshRender) {
         _meshRender->render();
         if (_program) {
@@ -38,7 +36,12 @@ void Material::awakeStart() {
 }
 
 void Material::update() {
-    std::cout << "Material update..." << '\n';
+    if (_meshRender) {
+        _meshRender->render();
+        if (_program) {
+            _program->render();
+        }
+    }
 }
 
 void Material::createUniform(std::string uniformName) {

@@ -60,19 +60,15 @@ void Mesh::loadTexture(const char *filename) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glGenerateMipmap(GL_TEXTURE_2D);
-
-    std::cerr << this->_name << " : " << "Load texture " << _textureID << " " << filename << '\n';
 }
 
 void Mesh::vertexArrayID() {
-    std::cout << "Mesh vertex vertexArrayID" << '\n';
     // Active Vertex Buffer....
     glGenVertexArrays(1, &_VAO);
     glBindVertexArray(_VAO);
 }
 
 void Mesh::genVertexBufferPosition() {
-    std::cout << "Mesh vertex Buffer genVertexBufferPosition" << '\n';
     // Position attribute...
     glGenBuffers(1, &_VBO);  // Create VertexArrayObject.
     glBindBuffer(GL_ARRAY_BUFFER, _VBO); // Bind Vertex VAO...
@@ -82,7 +78,6 @@ void Mesh::genVertexBufferPosition() {
 
 }
 void Mesh::genVertexBufferNormal() {
-    std::cout << "Mesh vertex Buffer genVertexBufferNormal" << '\n';
     // Normal attribute...
     glGenBuffers(1, &_VBO2); // Create VertexArrayObject.
     glBindBuffer(GL_ARRAY_BUFFER, _VBO2);
@@ -91,7 +86,6 @@ void Mesh::genVertexBufferNormal() {
     glEnableVertexAttribArray(1);
 }
 void Mesh::genVertexBufferTextCoord() {
-    std::cout << "Mesh vertex Buffer genVertexBufferTextCoord" << '\n';
     // Text Coord attribute...
     glGenBuffers(1, &_VBO3); // Create VertexArrayObject.
     glBindBuffer(GL_ARRAY_BUFFER, _VBO3);
@@ -110,9 +104,6 @@ void Mesh::genVertexBufferIndex() {
 }
 
 void Mesh::draw() {
-    std::cout << "Draw Mesh!" << this->_name << ": " << _textureID << '\n';
-    // 1st attribute buffer : vertices...
-
     // Draw texture....
     glActiveTexture(GL_TEXTURE0); // Activate first texture unit... diffuseTexture 0.
     glBindTexture(GL_TEXTURE_2D, _textureID);

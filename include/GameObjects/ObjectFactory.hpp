@@ -10,10 +10,11 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-#include "GameObjects/Camera.hpp"
 #include "GameObjects/GameObject.hpp"
 
+#include "Components/Camera.hpp"
 #include "Components/Material.hpp"
+
 #include "Mesh/MeshRender.hpp"
 #include "Mesh/Mesh.hpp"
 

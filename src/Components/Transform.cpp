@@ -17,11 +17,10 @@ void Transform::start() {
 }
 
 void Transform::awakeStart() {
-    std::cout << "Component Transform awakeStart..." << '\n';
+    ;
 }
 
 void Transform::update() {
-    std::cout << "**** Transform update **** " << '\n';
     this->_model = glm::mat4(1.0f);
 
     for (unsigned i = 0; i < this->_operations.size(); ++i) {

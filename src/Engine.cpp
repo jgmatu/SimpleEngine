@@ -6,12 +6,17 @@ Engine::Engine() :
     _scene = new Scene(0, "********************* SCENE *********************** ");
 }
 
+Camera *_cameraEvent;
+Scene *_sceneEvent;
+
 Engine::Engine(ObjectFactory *objectFactory) :
     Engine::Engine()
 {
     for (unsigned i = 0; i < objectFactory->size(); ++i) {
         this->add(objectFactory->getGameObject(i));
     }
+    _sceneEvent = this->_scene;
+    _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
 }
 
 Engine::~Engine() {
@@ -21,10 +26,28 @@ Engine::~Engine() {
     delete _scene;
 }
 
-static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+
+    if (key == GLFW_KEY_UP) {
+        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(0.0, 0.0, 0.1));
+    }
+    if (key == GLFW_KEY_DOWN) {
+        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(0.0, 0.0, -0.1));
+    }
+    if (key == GLFW_KEY_LEFT) {
+        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(0.1, 0.0, 0.0));
+    }
+    if (key == GLFW_KEY_RIGHT) {
+        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(-0.1, 0.0, 0.0));
+    }
+
+    if (key == GLFW_KEY_SPACE) {
+        _sceneEvent->_camera = (_sceneEvent->_camera + 1) % _sceneEvent->MAX_CAMERAS;
+        _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
     }
 }
 
@@ -98,12 +121,8 @@ void Engine::mainLoop() {
     GameObject *mercury = _scene->getGameObject(5);
     GameObject *jupiter = _scene->getGameObject(6);
 
-    // Lo tienes traslada el objeto desde la escena como pivote Hay que pivotar!!
-    std::cout << *(this->_scene) << '\n';
-    std::cout << *sun << '\n';
-    std::cout << *earth << '\n';
-    std::cout << *moon << '\n';
-    std::cout << *mars << '\n';
+    _scene->_cameras[0]->setGameObject(jupiter);
+    _scene->_cameras[1]->setGameObject(earth);
 
     sun->addTexture("../resources/sun.png");
     earth->addTexture("../resources/earth_diffuse.jpg");
@@ -119,45 +138,36 @@ void Engine::mainLoop() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
 
-        sun->translate(glm::vec3(0.0f, 0.0f, -5.0f));
+        sun->translate(glm::vec3(0.0f, 0.0f, 0.0f));
 
-        earth->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        earth->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
         earth->translate(glm::vec3(5.0f, 0.0f, 0.0f));
-        earth->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        earth->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
         earth->scale(glm::vec3(0.35f, 0.35f, 0.35f));
 
-        moon->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
-        moon->translate(2.0f * glm::vec3(1.0f, 0.0, 0.0f));
-        moon->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        moon->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
+        moon->translate(glm::vec3(2.0f, 0.0, 0.0f));
+        moon->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
         moon->scale(glm::vec3(0.35f, 0.35f, 0.35f));
 
-        mars->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        mars->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
         mars->translate(glm::vec3(5.5f, 0.0f, 5.5f));
-        mars->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        mars->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
         mars->scale(glm::vec3(0.40f, 0.40f, 0.40f));
 
-        mercury->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        mercury->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
         mercury->translate(glm::vec3(1.0f, 0.0f, 1.0f));
-        mercury->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        mercury->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
         mercury->scale(glm::vec3(0.15f, 0.15f, 0.15f));
 
-        jupiter->rotate(glm::vec3(0.0f, -3.0f, 0.0f), angle);
+        jupiter->rotate(glm::vec3(0.0f, 0.05f, 0.0f), angle);
         jupiter->translate(glm::vec3(7.0f, 0.0f, -7.0f));
-        jupiter->rotate(glm::vec3(0.0f, -5.0f, 0.0f), angle);
+        jupiter->rotate(glm::vec3(0.0f, 0.05f, 0.0f), angle);
         jupiter->scale(glm::vec3(0.85f, 0.85f, 0.85f));
 
         this->update(0);
-
         glfwSwapBuffers(_window); // swap the color buffers.
-
-        // Lo tienes traslada el objeto desde la escena como pivote Hay que pivotar!!
-        std::cout << *(this->_scene) << '\n';
-        std::cout << *sun << '\n';
-        std::cout << *earth << '\n';
-        std::cout << *moon << '\n';
-
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
     } while(!glfwWindowShouldClose(_window));
     glfwTerminate();
 }
