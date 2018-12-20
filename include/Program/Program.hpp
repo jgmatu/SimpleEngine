@@ -16,6 +16,7 @@
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Uniforms.hpp"
 
 struct ProgramException : public std::exception {
     std::string msg;
@@ -24,7 +25,7 @@ struct ProgramException : public std::exception {
         this->msg = msg;
     }
 
-    const char * what () const throw () {
+    const char* what () const throw () {
         return std::string("Program error: " + msg).c_str();
     }
 };
@@ -38,14 +39,16 @@ public:
 
     void active();
     void render();
+    void setUniforms(Uniforms *uniforms);
+
+private:
 
     void createUniform(std::string uniformName);
 
     void setUniform(std::string name, glm::mat4 value);
     void setUniform(std::string name, glm::vec3 value);
     void setUniform(std::string name, int value);
-
-private:
+    void setUniform(std::string name, float value);
 
     void createVertexShader();
     void createFragmentShader();

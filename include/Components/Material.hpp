@@ -3,7 +3,6 @@
 
 #include <memory>
 
-#include "Program/Program.hpp"
 #include "Mesh/MeshRender.hpp"
 #include "Components/Component.hpp"
 
@@ -15,18 +14,16 @@ class Material : public Component {
 public:
 
     Material();
-    Material(MeshRender *meshRender, Program *program);
+    Material(MeshRender *meshRender, Program *program, Uniforms *uniforms);
     ~Material();
 
     void start();
     void awakeStart();
     void update();
 
-    void createUniform(std::string uniformName);
-
-    void setUniform(std::string name, glm::vec3 value);
-    void setUniform(std::string name, glm::mat4 value);
-    void setUniform(std::string name, int value);
+    void setParameter(std::string, glm::vec3);
+    void setParameter(std::string, glm::mat4);
+    void setParameter(std::string, int);
 
     void addTexture(const char *filename);
 
@@ -35,8 +32,6 @@ public:
 private:
 
     MeshRender *_meshRender;
-    Program *_program;
-
 };
 
 #endif

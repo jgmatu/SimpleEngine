@@ -1,3 +1,4 @@
+
 #include "GameObjects/ObjectFactory.hpp"
 
 #include "Data/BOX.h"
@@ -24,7 +25,6 @@ GameObject* ObjectFactory::getGameObject(unsigned id) {
 }
 
 void ObjectFactory::generateDemoObjects() {
-
     MeshRender *meshRender_sun = new MeshRender();
     MeshRender *meshRender_earth = new MeshRender();
     MeshRender *meshRender_moon = new MeshRender();
@@ -40,13 +40,18 @@ void ObjectFactory::generateDemoObjects() {
     meshRender_jupiter->addMesh(getSphereMesh("*** JUPITER ***"));
 
     Program *program = new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl");
+    Uniforms *uniforms = new Uniforms();
 
-    Material *material_sun = new Material(meshRender_sun, program);
-    Material *material_earth = new Material(meshRender_earth, program);
-    Material *material_moon = new Material(meshRender_moon, program);
-    Material *material_mars = new Material(meshRender_mars, program);
-    Material *material_mercury = new Material(meshRender_mercury, program);
-    Material *material_jupiter = new Material(meshRender_jupiter, program);
+    Material *material_sun = new Material(meshRender_sun, program, uniforms);
+    Material *material_earth = new Material(meshRender_earth, program, uniforms);
+    Material *material_moon = new Material(meshRender_moon, program, uniforms);
+    Material *material_mars = new Material(meshRender_mars, program, uniforms);
+    Material *material_mercury = new Material(meshRender_mercury, program, uniforms);
+    Material *material_jupiter = new Material(meshRender_jupiter, program, uniforms);
+
+    Light *ambient = new Ambient(0.2f, glm::vec3(1.0, 1.0, 1.0), uniforms);
+    Light *specular = new Specular(0.5f, glm::vec3(1.0, 1.0, 1.0), uniforms);
+    Light *diffuse = new Diffuse(0.5f, glm::vec3(1.0, 1.0, 1.0), uniforms);
 
 
     GameObject *sun = new GameObject(1, " *************************** SUN ********************************** ");
@@ -62,14 +67,36 @@ void ObjectFactory::generateDemoObjects() {
     sun->addGameObject(mars);
     sun->addGameObject(mercury);
     sun->addGameObject(jupiter);
-
     earth->addGameObject(moon);
 
+    sun->addComponent(ambient);
+    sun->addComponent(specular);
+    sun->addComponent(diffuse);
     sun->addComponent(material_sun);
+
+    earth->addComponent(ambient);
+    earth->addComponent(specular);
+    earth->addComponent(diffuse);
     earth->addComponent(material_earth);
+
+    moon->addComponent(ambient);
+    moon->addComponent(specular);
+    moon->addComponent(diffuse);
     moon->addComponent(material_moon);
+
+    mars->addComponent(ambient);
+    mars->addComponent(specular);
+    mars->addComponent(diffuse);
     mars->addComponent(material_mars);
+
+    mercury->addComponent(ambient);
+    mercury->addComponent(specular);
+    mercury->addComponent(diffuse);
     mercury->addComponent(material_mercury);
+
+    jupiter->addComponent(ambient);
+    jupiter->addComponent(specular);
+    jupiter->addComponent(diffuse);
     jupiter->addComponent(material_jupiter);
 }
 

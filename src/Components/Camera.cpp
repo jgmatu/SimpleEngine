@@ -8,7 +8,8 @@ Camera::Camera(GameObject *gameObject) :
     this->_projection = glm::perspective(glm::radians(60.0f), aspectRatio, 0.1f, 100.0f);
 }
 
-Camera::~Camera() {
+Camera::~Camera()
+{
     std::cout << "Delete gameObject camera" << '\n';
 }
 

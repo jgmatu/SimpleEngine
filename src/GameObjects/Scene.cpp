@@ -2,10 +2,9 @@
 
 
 Scene::Scene() :
+    GameObject::GameObject(),
     _cameras(MAX_CAMERAS)
 {
-    this->_components.push_back(new Transform());
-
     for (unsigned i = 0; i < MAX_CAMERAS; ++i) {
         this->_cameras[i] = new Camera(this);
     }
@@ -13,13 +12,17 @@ Scene::Scene() :
 }
 
 Scene::Scene(unsigned id, std::string name) :
-    Scene()
+    GameObject::GameObject(id, name),
+    _cameras(MAX_CAMERAS)
 {
-    this->_id = id;
-    this->_name = name;
+    for (unsigned i = 0; i < MAX_CAMERAS; ++i) {
+        this->_cameras[i] = new Camera(this);
+    }
     std::cout << "Create GameObject Scene" << '\n';
 }
 
 Scene::~Scene() {
-    ;
+    for (unsigned i = 0; i < MAX_CAMERAS; ++i) {
+        delete this->_cameras[i];
+    }
 }

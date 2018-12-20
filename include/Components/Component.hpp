@@ -2,6 +2,8 @@
 #define COMPONENT_H
 
 #include "Constants/TypeComp.hpp"
+#include "Program/Program.hpp"
+#include "Program/Uniforms.hpp"
 
 class Component {
 
@@ -22,6 +24,9 @@ protected:
 
     friend class GameObject;
     TypeComp _type;
+
+    Uniforms *_uniforms;
+    Program *_program;
 
 };
 

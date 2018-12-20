@@ -23,6 +23,42 @@ void Program::active() {
     this->link();
 }
 
+void Program::setUniforms(Uniforms *uniforms) {
+    std::vector<std::string> names;
+
+    names = uniforms->getUniformsNamesInt();
+    for (unsigned i = 0; i < names.size(); ++i) {
+        if (_uniforms.find(names[i]) == _uniforms.end()) {
+            this->createUniform(names[i]);
+        }
+        this->setUniform(names[i], uniforms->getUniformValueInt(names[i]));
+    }
+
+    names = uniforms->getUniformsNamesFloat();
+    for (unsigned i = 0; i < names.size(); ++i) {
+        if (_uniforms.find(names[i]) == _uniforms.end()) {
+            this->createUniform(names[i]);
+        }
+        this->setUniform(names[i], uniforms->getUniformValueFloat(names[i]));
+    }
+
+    names = uniforms->getUniformsNamesVec3();
+    for (unsigned i = 0; i < names.size(); ++i) {
+        if (_uniforms.find(names[i]) == _uniforms.end()) {
+            this->createUniform(names[i]);
+        }
+        this->setUniform(names[i], uniforms->getUniformValueVec3(names[i]));
+    }
+
+    names = uniforms->getUniformsNamesMat4();
+    for (unsigned i = 0; i < names.size(); ++i) {
+        if (_uniforms.find(names[i]) == _uniforms.end()) {
+            this->createUniform(names[i]);
+        }
+        this->setUniform(names[i], uniforms->getUniformValueMat4(names[i]));
+    }
+}
+
 void Program::render() {
     this->bind();
 }
@@ -67,6 +103,13 @@ void Program::createUniform(std::string uniformName) {
     _uniforms.insert(std::pair<std::string, int>(uniformName, uniformLocation));
 }
 
+void Program::setUniform(std::string name, int value) {
+    glUniform1i(_uniforms[name], value);
+}
+
+void Program::setUniform(std::string name, float value) {
+    glUniform1f(_uniforms[name], value);
+}
 
 void Program::setUniform(std::string name, glm::vec3 value) {
     glUniform3f(_uniforms[name], value.x, value.y, value.z);
@@ -74,10 +117,6 @@ void Program::setUniform(std::string name, glm::vec3 value) {
 
 void Program::setUniform(std::string name, glm::mat4 value) {
     glUniformMatrix4fv(_uniforms[name], 1, GL_FALSE,  glm::value_ptr(value));
-};
-
-void Program::setUniform(std::string name, int value) {
-    glUniform1i(_uniforms[name], value);
 }
 
 int Program::createShader(const std::string& sc, int shaderType) {
@@ -87,9 +126,9 @@ int Program::createShader(const std::string& sc, int shaderType) {
 
     int shaderId = glCreateShader(shaderType);
     if (shaderId == 0) {
+        std::cerr << "Program error : " << "Error creating shader. Type: " << shaderType << '\n';
         throw ProgramException("Error creating shader. Type: " + shaderType);
     }
-
     glShaderSource(shaderId, 1, &_sc, &size);
     glCompileShader(shaderId);
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &params);
@@ -99,7 +138,8 @@ int Program::createShader(const std::string& sc, int shaderType) {
     if (InfoLogLength > 0) {
         std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
         glGetShaderInfoLog(shaderId, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-        throw ProgramException("Vertex Shader Error Message: " + VertexShaderErrorMessage[0] + '\n');
+        std::cerr << "Shader Error Message: " << VertexShaderErrorMessage[0] << '\n';
+        throw ProgramException("Shader Error Message: " + VertexShaderErrorMessage[0] + '\n');
     }
     glAttachShader(_programId, shaderId);
     return shaderId;
@@ -114,7 +154,8 @@ void Program::link() {
     glGetProgramiv(_programId, GL_LINK_STATUS, &params);
     if (!params) {
         glGetProgramInfoLog(_programId, 1024, &size, inflog);
-        sprintf(inflog, "Error linking Shader code: %s\n", inflog);
+        sprintf(inflog, "Error linking shader code: %s\n", inflog);
+        std::cerr << "Program error : " << inflog << '\n';
         throw ProgramException(std::string(inflog));
     }
     if (_vertexShaderId != 0) {
@@ -128,6 +169,7 @@ void Program::link() {
     if (!params) {
         glGetProgramInfoLog(_programId, 1024, &size, inflog);
         sprintf(inflog, "Error linking Shader code: %s\n", inflog);
+        std::cerr << "Program error : " << inflog << '\n';
         throw ProgramException(std::string(inflog));
     }
 }

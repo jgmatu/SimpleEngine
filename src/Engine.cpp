@@ -45,7 +45,7 @@ static void keyCallback(GLFWwindow *window, int key, int scancode, int action, i
         _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(-0.1, 0.0, 0.0));
     }
 
-    if (key == GLFW_KEY_SPACE) {
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
         _sceneEvent->_camera = (_sceneEvent->_camera + 1) % _sceneEvent->MAX_CAMERAS;
         _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
     }
@@ -56,6 +56,7 @@ void Engine::initWindow() {
     if (!glfwInit()) {
         throw;
     }
+
     // Configure GLFW
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -89,7 +90,7 @@ void Engine::init() {
             _systems[i]->init(_scene);
         }
     } catch (std::exception &ex) {
-        std::cerr << "Error init engine " << ex.what() << '\n';
+        std::cerr << "Error init engine... " << ex.what() << '\n';
         throw ex;
     } catch (...) {
         std::cout << "Fatal error init Engine " << '\n';

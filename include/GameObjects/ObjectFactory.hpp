@@ -14,6 +14,7 @@
 
 #include "Components/Camera.hpp"
 #include "Components/Material.hpp"
+#include "Components/Light.hpp"
 
 #include "Mesh/MeshRender.hpp"
 #include "Mesh/Mesh.hpp"

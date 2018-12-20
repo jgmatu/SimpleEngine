@@ -7,6 +7,8 @@
 #include "Systems/System.hpp"
 #include "GameObjects/GameObject.hpp"
 #include "Components/Material.hpp"
+#include "Components/Light.hpp"
+
 #include "Messages/Message.hpp"
 
 class Draw : public System {
@@ -21,6 +23,9 @@ public:
     void sendMessage (Message *msg);
 
 private:
+
+//    Uniforms *_uniforms;
+//    Program *_program;
 
 };
 

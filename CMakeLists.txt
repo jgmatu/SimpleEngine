@@ -11,7 +11,7 @@ add_subdirectory(src/extras/glfw)
 
 file(GLOB VENDORS_SOURCES src/extras/glad/src/glad.c)
 
-include_directories(include
+include_directories(include/
                     src/extras/glad/include/
                     src/extras/glfw/include/
                     src/extras/glm/
