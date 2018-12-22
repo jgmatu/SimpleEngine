@@ -25,7 +25,7 @@ public:
     void setParameter(std::string, glm::mat4);
     void setParameter(std::string, int);
 
-    void addTexture(const char *filename);
+    void setTexture(const char *filename);
 
     friend std::ostream& operator<<(std::ostream& os, const Material& material);
 

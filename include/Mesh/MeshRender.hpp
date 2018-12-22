@@ -17,7 +17,6 @@ public:
     void active();
     void render();
     void addMesh(Mesh *mesh);
-    void addTexture(const char* filename);
 
     friend std::ostream& operator<<(std::ostream& os, const MeshRender& meshRender);
 

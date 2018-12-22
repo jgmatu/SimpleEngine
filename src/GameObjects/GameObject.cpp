@@ -117,14 +117,6 @@ void GameObject::rotate(glm::vec3 vec3, float angle) {
     }
 }
 
-void GameObject::addTexture(const char *filename) {
-    Component *component = getComponent(TypeComp::MATERIAL);
-
-    if (Material *material = dynamic_cast<Material*>(component)) {
-        material->addTexture(filename);
-    }
-}
-
 std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
     os << gameObject._name << std::endl;
       Component *component = gameObject.getComponent(TypeComp::TRANSFORM);

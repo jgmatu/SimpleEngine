@@ -64,13 +64,6 @@ void Material::setParameter(std::string name, int val) {
     _uniforms->setUniformInt(name, val);
 }
 
-
-void Material::addTexture(const char *filename) {
-    if (_meshRender) {
-        _meshRender->addTexture(filename);
-    }
-}
-
 std::ostream& operator<<(std::ostream& os, const Material& material) {
     os << *material._meshRender;
     return os;

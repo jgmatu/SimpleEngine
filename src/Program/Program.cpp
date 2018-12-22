@@ -26,6 +26,7 @@ void Program::active() {
 void Program::setUniforms(Uniforms *uniforms) {
     std::vector<std::string> names;
 
+
     names = uniforms->getUniformsNamesInt();
     for (unsigned i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
@@ -98,6 +99,7 @@ void Program::createUniform(std::string uniformName) {
         if (uniformLocation == GL_INVALID_OPERATION) {
             err += "Invalid operation";
         }
+        std::cerr << "Could not find uniform to create: " << uniformName << " " << err << '\n';
         throw ProgramException("Could not find uniform to create: " + uniformName + " " + err);
     }
     _uniforms.insert(std::pair<std::string, int>(uniformName, uniformLocation));

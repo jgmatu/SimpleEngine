@@ -2,7 +2,6 @@
 
 
 Light::Light() {
-    this->_type = TypeComp::LIGTH;
     this->_tf = new Transform();
 }
 
@@ -29,7 +28,7 @@ Ambient::Ambient() :
 Ambient::Ambient(float strength, glm::vec3 color, Uniforms *uniforms) :
     Light::Light(strength, color, uniforms)
 {
-    ;
+    this->_type = TypeComp::LIGTH_AMBIENT;
 }
 
 Ambient::~Ambient()
@@ -61,13 +60,13 @@ void Ambient::update()
 Specular::Specular() :
     Light::Light()
 {
-    ;
+    this->_type = TypeComp::LIGTH_SPECULAR;
 }
 
 Specular::Specular(float strength, glm::vec3 color, Uniforms *uniforms) :
     Light::Light(strength, color, uniforms)
 {
-    ;
+    this->_type = TypeComp::LIGTH_SPECULAR;
 }
 
 Specular::~Specular()
@@ -98,13 +97,13 @@ void Specular::update()
 Diffuse::Diffuse() :
     Light::Light()
 {
-    ;
+    this->_type = TypeComp::LIGTH_DIFFUSE;
 }
 
 Diffuse::Diffuse(float strength, glm::vec3 color, Uniforms *uniforms) :
     Light::Light(strength, color, uniforms)
 {
-    ;
+    this->_type = TypeComp::LIGTH_DIFFUSE;
 }
 
 Diffuse::~Diffuse()

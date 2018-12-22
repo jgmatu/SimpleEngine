@@ -1,5 +1,4 @@
 #include "Mesh/Mesh.hpp"
-#include "stb_image.h"
 
 Mesh::Mesh(unsigned id, std::string name) :
     _vertexPos(),
@@ -10,7 +9,6 @@ Mesh::Mesh(unsigned id, std::string name) :
     _id(id),
     _name(name),
     _VAO(0),
-    _textureID(0),
     _VBO(0),
     _VBO2(0),
     _VBO3(0),
@@ -32,34 +30,6 @@ void Mesh::active() {
     genVertexBufferNormal();
     genVertexBufferTextCoord();
     genVertexBufferIndex();
-}
-
-
-void Mesh::loadTexture(const char *filename) {
-    std::ifstream file(filename);
-
-    if (file.fail()) {
-        throw MeshException("Texture file not exists");
-    }
-    int width, heigth, channels;
-    unsigned char* pixels = stbi_load(filename, &width, &heigth, &channels, 0);
-
-    glGenTextures(1, &_textureID);
-    glBindTexture(GL_TEXTURE_2D, _textureID); // all upcoming GL_TEXTURE_2D operations now have
-
-    // set the texture wrapping parameters.
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    if (channels == 4) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, heigth, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-    } else if (channels == 3) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, heigth, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-    }
-    free(pixels);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 void Mesh::vertexArrayID() {
@@ -104,10 +74,6 @@ void Mesh::genVertexBufferIndex() {
 }
 
 void Mesh::draw() {
-    // Draw texture....
-    glActiveTexture(GL_TEXTURE0); // Activate first texture unit... diffuseTexture 0.
-    glBindTexture(GL_TEXTURE_2D, _textureID);
-
     glBindVertexArray(_VAO); // Activa la geometría que se va a pintar.
     glBindBuffer(GL_ARRAY_BUFFER, _VBO); // Activar el buffer de vertices a pintar.
     glVertexAttribPointer(

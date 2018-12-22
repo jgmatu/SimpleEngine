@@ -38,7 +38,8 @@ public:
 
 private:
 
-    GameObject *_gameObject;
+    GameObject *_gameObject; // La camara está asociado a un Game object de la escena
+                             // ya sea un objeto o la raiz de la escena...
 
     float near, far;
     const float aspectRatio = 4.0f / 3.0f;

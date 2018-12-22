@@ -125,13 +125,6 @@ void Engine::mainLoop() {
     _scene->_cameras[0]->setGameObject(jupiter);
     _scene->_cameras[1]->setGameObject(earth);
 
-    sun->addTexture("../resources/sun.png");
-    earth->addTexture("../resources/earth_diffuse.jpg");
-    moon->addTexture("../resources/moon.png");
-    mars->addTexture("../resources/mars.png");
-    mercury->addTexture("../resources/mercury.jpg");
-    jupiter->addTexture("../resources/jupiter.jpg");
-
     glEnable(GL_DEPTH_TEST);
     do {
         float angle = std::fmod(glfwGetTime(), (2.0f * M_PI));

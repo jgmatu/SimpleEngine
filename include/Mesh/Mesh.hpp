@@ -3,7 +3,6 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #define _USE_MATH_DEFINES
-#define STB_IMAGE_IMPLEMENTATION
 
 #include <vector>
 #include <iostream>
@@ -25,7 +24,6 @@ public:
 
     virtual const char* what () const throw () {
         return "Mesh Error file not found!!";
-//        return std::string("Mesh error: " + _msg).c_str();
     }
 private:
 
@@ -41,13 +39,6 @@ public:
     ~Mesh();
 
     void active();
-
-    void vertexArrayID();
-    void genVertexBufferPosition();
-    void genVertexBufferNormal();
-    void genVertexBufferTextCoord();
-    void genVertexBufferIndex();
-    void loadTexture(const char *filename);
     void draw();
 
     std::vector<float> _vertexPos;
@@ -60,13 +51,17 @@ public:
 
 private:
 
+    void vertexArrayID();
+    void genVertexBufferPosition();
+    void genVertexBufferNormal();
+    void genVertexBufferTextCoord();
+    void genVertexBufferIndex();
+
     unsigned _id;
     std::string _name;
 
     // Active Buffer.
     GLuint _VAO;
-
-    GLuint _textureID;
 
     // Vertices Buffers... // Se puede splitear para meter varias cosas de los vertices
     // en el mismo buffer.

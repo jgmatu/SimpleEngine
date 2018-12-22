@@ -14,32 +14,42 @@ void Draw::init(Scene *scene) {
     std::cout << "Init draw..." << '\n';
     for (unsigned i = 0; i < keys.size(); ++i) {
         GameObject *gameObject = scene->getGameObject(keys[i]);
-        Component *component = gameObject->getComponent(TypeComp::MATERIAL);
 
+        // Load Material...
+        Component *component = gameObject->getComponent(TypeComp::MATERIAL);
         if (Material *material = dynamic_cast<Material*>(component)) {
             material->start();
         }
 
-        component = gameObject->getComponent(TypeComp::LIGTH);
-        if (Light *light = dynamic_cast<Light*>(component)) {
-            // Ambient...
-            if (Ambient *ambient = dynamic_cast<Ambient*>(light)) {
-                ambient->start();
-            }
-            // Difuse...
-            if (Diffuse *diffuse = dynamic_cast<Diffuse*>(light)) {
-                diffuse->start();
-            }
-            // Specular...
-            if (Specular *specular = dynamic_cast<Specular*>(light)) {
-                specular->start();
-            }
+        // Load texture...
+        component = gameObject->getComponent(TypeComp::TEXTURE);
+        if (Texture *texture = dynamic_cast<Texture*>(component)) {
+            texture->start();
+        }
+
+        // Ambient...
+        component = gameObject->getComponent(TypeComp::LIGTH_AMBIENT);
+        if (Ambient *ambient = dynamic_cast<Ambient*>(component)) {
+            ambient->start();
+        }
+
+        // Diffuse...
+        component = gameObject->getComponent(TypeComp::LIGTH_DIFFUSE);
+        if (Diffuse *diffuse = dynamic_cast<Diffuse*>(component)) {
+            diffuse->start();
+        }
+
+        // Specular...
+        component = gameObject->getComponent(TypeComp::LIGTH_SPECULAR);
+        if (Specular *specular = dynamic_cast<Specular*>(component)) {
+            specular->start();
         }
     }
     std::cout << "Draw Complete Initialize...." << '\n';
 }
 
 void Draw::update(float dt, Scene *scene) {
+
     // ** Update cameras **/
     std::vector<Camera*> cameras = scene->_cameras;
     for (unsigned i = 0; i < scene->MAX_CAMERAS; ++i) {
@@ -55,27 +65,16 @@ void Draw::update(float dt, Scene *scene) {
         if (Material *material = dynamic_cast<Material*>(component)) {
             material->setParameter("projection", cameras[scene->_camera]->_projection);
             material->setParameter("view", cameras[scene->_camera]->_tf->_gModel);
-            material->setParameter("diffuseTexture", 0);  // El índice es el mismo que en glActiveTexture()
+            material->setParameter("diffuseTexture", 0);  // El índice es el mismo que en glActiveTexture(), "Número de textura...";
 
             Component *component = gameObject->getComponent(TypeComp::TRANSFORM);
             if (Transform *tf = dynamic_cast<Transform*>(component)) {
                 material->setParameter("model", tf->_gModel);
             }
 
-            component = gameObject->getComponent(TypeComp::LIGTH);
-            if (Light *light = dynamic_cast<Light*>(component)) {
-                // Ambient...
-                if (Ambient *ambient = dynamic_cast<Ambient*>(light)) {
-                    ambient->update();
-                }
-                // Difuse...
-                if (Diffuse *diffuse = dynamic_cast<Diffuse*>(light)) {
-                    diffuse->update();
-                }
-                // Specular...
-                if (Specular *specular = dynamic_cast<Specular*>(light)) {
-                    specular->update();
-                }
+            component = gameObject->getComponent(TypeComp::TEXTURE);
+            if (Texture *texture = dynamic_cast<Texture*>(component)) {
+                texture->awakeStart();
             }
             // Last step, uniforms first after draw the object!!
             material->update();

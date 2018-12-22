@@ -1,4 +1,3 @@
-
 #include "GameObjects/ObjectFactory.hpp"
 
 #include "Data/BOX.h"
@@ -49,10 +48,9 @@ void ObjectFactory::generateDemoObjects() {
     Material *material_mercury = new Material(meshRender_mercury, program, uniforms);
     Material *material_jupiter = new Material(meshRender_jupiter, program, uniforms);
 
-    Light *ambient = new Ambient(0.2f, glm::vec3(1.0, 1.0, 1.0), uniforms);
+    Light *ambient = new Ambient(0.1f, glm::vec3(1.0, 1.0, 1.0), uniforms);
     Light *specular = new Specular(0.5f, glm::vec3(1.0, 1.0, 1.0), uniforms);
-    Light *diffuse = new Diffuse(0.5f, glm::vec3(1.0, 1.0, 1.0), uniforms);
-
+    Light *diffuse = new Diffuse(1.0f, glm::vec3(1.0, 1.0, 1.0), uniforms);
 
     GameObject *sun = new GameObject(1, " *************************** SUN ********************************** ");
     GameObject *earth = new GameObject(2, " ************************ EARTH ********************************* ");
@@ -98,6 +96,13 @@ void ObjectFactory::generateDemoObjects() {
     jupiter->addComponent(specular);
     jupiter->addComponent(diffuse);
     jupiter->addComponent(material_jupiter);
+
+    sun->addComponent(new Texture("../resources/sun.png"));
+    earth->addComponent(new Texture("../resources/earth_diffuse.jpg"));
+    moon->addComponent(new Texture("../resources/moon.png"));
+    mars->addComponent(new Texture("../resources/mars.png"));
+    mercury->addComponent(new Texture("../resources/mercury.jpg"));
+    jupiter->addComponent(new Texture("../resources/jupiter.jpg"));
 }
 
 Mesh* ObjectFactory::getCubeMesh() {
