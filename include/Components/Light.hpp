@@ -2,30 +2,24 @@
 #define LIGHT_H
 
 #include "Transform.hpp"
+#include "Constants/TypeComp.hpp"
 
-class Light : public Component {
+class Light {
 
 public:
 
     Light();
-    Light(float strength, glm::vec3 color, Uniforms *uniforms);
+    Light(CompLigth type);
 
-    ~Light();
+    virtual ~Light();
 
-    // Este método SOLO se llama una vez la primera vez que se crea el componente...
-    virtual void start() = 0;
+    virtual void setParameters(Uniforms *uniforms) = 0;
 
-    // Método que se llama cada vez que el componente se activa...
-    virtual void awakeStart() = 0;
-
-    // Método que realiza transformaciones, cálculos de cosas...
-    virtual void update() = 0;
+    CompLigth _type;
 
 protected:
 
-    Transform *_tf;
-    float strength;
-    glm::vec3 color;
+    glm::vec3 _value;
 
 };
 
@@ -34,13 +28,10 @@ class Ambient : public Light {
 public:
 
     Ambient();
-    Ambient(float strength, glm::vec3 color, Uniforms *uniforms);
-
+    Ambient(glm::vec3 value);
     ~Ambient();
 
-    void start();
-    void awakeStart();
-    void update();
+    void setParameters(Uniforms *uniforms);
 
 };
 
@@ -49,12 +40,11 @@ class Diffuse : public Light {
 public:
 
     Diffuse();
-    Diffuse(float strength, glm::vec3 color, Uniforms *uniforms);
-
+    Diffuse(glm::vec3 value);
     ~Diffuse();
-    void start();
-    void awakeStart();
-    void update();
+
+    void setParameters(Uniforms *uniforms);
+
 };
 
 class Specular : public Light {
@@ -62,12 +52,82 @@ class Specular : public Light {
 public:
 
     Specular();
-    Specular(float strength, glm::vec3 color, Uniforms *uniforms);
-
+    Specular(glm::vec3 value, float shininess);
     ~Specular();
-    void start();
-    void awakeStart();
-    void update();
+
+    void setParameters(Uniforms *uniforms);
+
+private:
+
+    float _shininess;
+};
+
+class Directional : public Light {
+
+public:
+
+    Directional();
+    Directional(glm::vec3 direction);
+    ~Directional();
+
+    void setParameters(Uniforms *uniforms);
+
+private:
+
+    glm::vec3 _direction;
+};
+
+class Point : public Light {
+
+public:
+
+    Point();
+    Point(glm::vec3 direction);
+    ~Point();
+
+    void setParameters(Uniforms *uniforms);
+
+private:
+
+    glm::vec3 _position;
+};
+
+class Spot : public Light {
+
+public:
+
+    Spot();
+    Spot(glm::vec3 position, glm::vec3 direction, float cutOff, float outerCutOff);
+    ~Spot();
+
+    void setParameters(Uniforms *uniforms);
+
+private:
+
+    glm::vec3 _position;
+    glm::vec3 _direction;
+    float _cutOff; // Degrees...
+    float _outerCutOff; // Degrees...
+};
+
+class LightScene : public Light {
+
+public:
+
+    LightScene();
+    LightScene(glm::vec3 position);
+    ~LightScene();
+
+private:
+
+    void setParameters(Uniforms *uniforms);
+
+    Ambient *_ambient;
+    Diffuse *_diffuse;
+    Specular *_specular;
+    Transform *_tf;
+
+    glm::vec3 _ligthPos;
 };
 
 #endif // LIGHT_H

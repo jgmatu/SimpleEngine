@@ -14,11 +14,8 @@ out vec2 texCoord;
 
 void main()
 {
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
-
-    normal = aNormal;
-    mat3 normalMatrix = mat3(transpose(inverse(model))); // normal que este acorde con el modelo..
-    normal = normalMatrix * aNormal;
-    fragPos = vec3(model * vec4(aPos, 1.0));
     texCoord = aTexCoord;
+    normal = mat3(transpose(inverse(model))) * aNormal;
+    fragPos = vec3(model * vec4(aPos, 1.0));
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
 }

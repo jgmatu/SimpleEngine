@@ -33,6 +33,8 @@ public:
     void rotate(glm::vec3 vec3, glm::quat quad);
     void rotate(glm::vec3 vec3, float angle);
 
+    glm::vec3 position();
+
     friend std::ostream& operator<<(std::ostream&, const Transform& tf);
 
     glm::mat4 _gModel, _model;

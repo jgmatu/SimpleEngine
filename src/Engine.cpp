@@ -45,6 +45,10 @@ static void keyCallback(GLFWwindow *window, int key, int scancode, int action, i
         _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(-0.1, 0.0, 0.0));
     }
 
+    if (key == GLFW_KEY_Q) {
+        _cameraEvent->_tf->_model = glm::rotate(_cameraEvent->_tf->_model, 0.01f, glm::vec3(-1.0f, 0.0f, 0.0f));
+    }
+
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
         _sceneEvent->_camera = (_sceneEvent->_camera + 1) % _sceneEvent->MAX_CAMERAS;
         _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
@@ -80,6 +84,7 @@ void Engine::initWindow() {
     // Make the window visible.
     glfwShowWindow(_window);
     gladLoadGL();
+    glEnable(GL_DEPTH_TEST);
 }
 
 void Engine::init() {
@@ -113,52 +118,53 @@ void Engine::update(float dt) {
 }
 
 void Engine::mainLoop() {
-    std::cout << "********************** MAIN LOOP ***************************************" << '\n';
+    std::vector<GameObject*> cubes(5);
 
-    GameObject *sun = _scene->getGameObject(1);
-    GameObject *earth = _scene->getGameObject(2);
-    GameObject *moon = _scene->getGameObject(3);
-    GameObject *mars = _scene->getGameObject(4);
-    GameObject *mercury = _scene->getGameObject(5);
-    GameObject *jupiter = _scene->getGameObject(6);
+    for (unsigned i = 0; i < 5; ++i) {
+        cubes[i] = _scene->getGameObject(i);
+    }
+    GameObject *lamp = _scene->getGameObject(9);
+    _scene->_cameras[0]->setGameObject(_scene);
+    _scene->_cameras[1]->setGameObject(lamp);
 
-    _scene->_cameras[0]->setGameObject(jupiter);
-    _scene->_cameras[1]->setGameObject(earth);
 
-    glEnable(GL_DEPTH_TEST);
     do {
         float angle = std::fmod(glfwGetTime(), (2.0f * M_PI));
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
 
-        sun->translate(glm::vec3(0.0f, 0.0f, 0.0f));
+        cubes[0]->translate(glm::vec3(2.0,  2.0, -2.0));
+        cubes[1]->translate(glm::vec3(-2.0, 1.0, 0.0));
+        cubes[2]->translate(glm::vec3(-1.0,  2.0, 2.0));
+        cubes[3]->translate(glm::vec3(0.0, -2.0, -1.0));
+        cubes[4]->translate(glm::vec3(1.0, 1.0, -1.0));
+        for (unsigned i = 0; i < cubes.size(); ++i) {
+            cubes[i]->rotate(glm::vec3(1.0f, 0.3f, 0.5f), angle);
+        }
+        glm::vec3 lightPos = glm::vec3(0, 0, 10.0);
 
-        earth->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
-        earth->translate(glm::vec3(5.0f, 0.0f, 0.0f));
-        earth->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
-        earth->scale(glm::vec3(0.35f, 0.35f, 0.35f));
+//        Component *component = lamp->getComponent(TypeComp::MATERIAL);
+//        if (Material *material = dynamic_cast<Material*>(component)) {
+//            material->eraseLigth(CompLigth::POINT);
+//            material->setLigth(new Point(lightPos));
+//        }
+        lamp->translate(lightPos);
+        lamp->scale(glm::vec3(0.05, 0.05, 0.05));
 
-        moon->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
-        moon->translate(glm::vec3(2.0f, 0.0, 0.0f));
-        moon->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
-        moon->scale(glm::vec3(0.35f, 0.35f, 0.35f));
+//        for (unsigned i = 0; i < 5; ++i) {
+//            Component *component = cubes[i]->getComponent(TypeComp::MATERIAL);
 
-        mars->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
-        mars->translate(glm::vec3(5.5f, 0.0f, 5.5f));
-        mars->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
-        mars->scale(glm::vec3(0.40f, 0.40f, 0.40f));
-
-        mercury->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
-        mercury->translate(glm::vec3(1.0f, 0.0f, 1.0f));
-        mercury->rotate(glm::vec3(0.0f, -0.5f, 0.0f), angle);
-        mercury->scale(glm::vec3(0.15f, 0.15f, 0.15f));
-
-        jupiter->rotate(glm::vec3(0.0f, 0.05f, 0.0f), angle);
-        jupiter->translate(glm::vec3(7.0f, 0.0f, -7.0f));
-        jupiter->rotate(glm::vec3(0.0f, 0.05f, 0.0f), angle);
-        jupiter->scale(glm::vec3(0.85f, 0.85f, 0.85f));
-
+//            if (Material *material = dynamic_cast<Material*>(component)) {
+//                material->eraseLigth(CompLigth::SCENE);
+//                material->setLigth(new LightScene(lightPos));
+//                glm::vec3 lightColor;
+//                lightColor.x = sin(glfwGetTime() * 2.0f);
+//                lightColor.y = sin(glfwGetTime() * 0.7f);
+//                lightColor.z = sin(glfwGetTime() * 1.3f);
+//                material->setColor(lightColor);
+//            }
+//        }
         this->update(0);
         glfwSwapBuffers(_window); // swap the color buffers.
         std::this_thread::sleep_for(std::chrono::milliseconds(10));

@@ -20,30 +20,6 @@ void Draw::init(Scene *scene) {
         if (Material *material = dynamic_cast<Material*>(component)) {
             material->start();
         }
-
-        // Load texture...
-        component = gameObject->getComponent(TypeComp::TEXTURE);
-        if (Texture *texture = dynamic_cast<Texture*>(component)) {
-            texture->start();
-        }
-
-        // Ambient...
-        component = gameObject->getComponent(TypeComp::LIGTH_AMBIENT);
-        if (Ambient *ambient = dynamic_cast<Ambient*>(component)) {
-            ambient->start();
-        }
-
-        // Diffuse...
-        component = gameObject->getComponent(TypeComp::LIGTH_DIFFUSE);
-        if (Diffuse *diffuse = dynamic_cast<Diffuse*>(component)) {
-            diffuse->start();
-        }
-
-        // Specular...
-        component = gameObject->getComponent(TypeComp::LIGTH_SPECULAR);
-        if (Specular *specular = dynamic_cast<Specular*>(component)) {
-            specular->start();
-        }
     }
     std::cout << "Draw Complete Initialize...." << '\n';
 }
@@ -63,25 +39,21 @@ void Draw::update(float dt, Scene *scene) {
         Component *component = gameObject->getComponent(TypeComp::MATERIAL);
 
         if (Material *material = dynamic_cast<Material*>(component)) {
-            material->setParameter("projection", cameras[scene->_camera]->_projection);
-            material->setParameter("view", cameras[scene->_camera]->_tf->_gModel);
-            material->setParameter("diffuseTexture", 0);  // El índice es el mismo que en glActiveTexture(), "Número de textura...";
-
             Component *component = gameObject->getComponent(TypeComp::TRANSFORM);
             if (Transform *tf = dynamic_cast<Transform*>(component)) {
                 material->setParameter("model", tf->_gModel);
             }
+            material->setParameter("projection", cameras[scene->_camera]->_projection); // Vertex...
+            material->setParameter("view", cameras[scene->_camera]->_tf->_gModel);      // Vertex...
+            material->setParameter("viewPos", -cameras[scene->_camera]->_tf->position()); // Fragments...
 
-            component = gameObject->getComponent(TypeComp::TEXTURE);
-            if (Texture *texture = dynamic_cast<Texture*>(component)) {
-                texture->awakeStart();
-            }
-            // Last step, uniforms first after draw the object!!
-            material->update();
+            // Last step, uniforms first. After draw the object!!
+            material->awakeStart();
         }
     }
 }
 
-void Draw::sendMessage(Message *msg) {
+void Draw::sendMessage(Message *msg)
+{
     ;
 }

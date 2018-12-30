@@ -8,105 +8,139 @@ ObjectFactory::ObjectFactory() :
     std::cout << "Creating Factory Objects..." << '\n';
 }
 
-ObjectFactory::~ObjectFactory() {
+ObjectFactory::~ObjectFactory()
+{
     std::cout << "Delete All Game Objects!" << '\n';
+
     for (unsigned i = 0; i < _GameObjects.size(); ++i) {
         delete _GameObjects[i];
     }
 }
 
-void ObjectFactory::addGameObject(GameObject *gameObject) {
+void ObjectFactory::addGameObject(GameObject *gameObject)
+{
     _GameObjects.push_back(gameObject);
 };
 
-GameObject* ObjectFactory::getGameObject(unsigned id) {
+GameObject* ObjectFactory::getGameObject(unsigned id)
+{
     return _GameObjects[id];
 }
 
-void ObjectFactory::generateDemoObjects() {
-    MeshRender *meshRender_sun = new MeshRender();
-    MeshRender *meshRender_earth = new MeshRender();
-    MeshRender *meshRender_moon = new MeshRender();
-    MeshRender *meshRender_mars = new MeshRender();
-    MeshRender *meshRender_mercury = new MeshRender();
-    MeshRender *meshRender_jupiter = new MeshRender();
-
-    meshRender_sun->addMesh(getSphereMesh("** SUN **"));
-    meshRender_earth->addMesh(getSphereMesh("** EARTH **"));
-    meshRender_moon->addMesh(getSphereMesh("** MOON **"));
-    meshRender_mars->addMesh(getSphereMesh("** MARS **"));
-    meshRender_mercury->addMesh(getSphereMesh("*** MERCURY ***"));
-    meshRender_jupiter->addMesh(getSphereMesh("*** JUPITER ***"));
-
+void ObjectFactory::generateDemoObjects()
+{
     Program *program = new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl");
-    Uniforms *uniforms = new Uniforms();
+    MeshRender *cube_mesh = new MeshRender();
+    glm::vec3 position = glm::vec3(0.0, 0.0, 10.0);
+    glm::vec3 direction = glm::vec3(0.0, 0.0, -1.0);
 
-    Material *material_sun = new Material(meshRender_sun, program, uniforms);
-    Material *material_earth = new Material(meshRender_earth, program, uniforms);
-    Material *material_moon = new Material(meshRender_moon, program, uniforms);
-    Material *material_mars = new Material(meshRender_mars, program, uniforms);
-    Material *material_mercury = new Material(meshRender_mercury, program, uniforms);
-    Material *material_jupiter = new Material(meshRender_jupiter, program, uniforms);
+    cube_mesh->addMesh(getCubeMesh());
 
-    Light *ambient = new Ambient(0.1f, glm::vec3(1.0, 1.0, 1.0), uniforms);
-    Light *specular = new Specular(0.5f, glm::vec3(1.0, 1.0, 1.0), uniforms);
-    Light *diffuse = new Diffuse(1.0f, glm::vec3(1.0, 1.0, 1.0), uniforms);
+    for (unsigned i = 0; i < 5; ++i) {
+        GameObject *cube = new GameObject(i, "*** CUBE ***");
 
-    GameObject *sun = new GameObject(1, " *************************** SUN ********************************** ");
-    GameObject *earth = new GameObject(2, " ************************ EARTH ********************************* ");
-    GameObject *moon = new GameObject(3, " ************************* MOON ********************************** ");
-    GameObject *mars = new GameObject(4, " ************************* MARS ********************************** ");
-    GameObject *mercury = new GameObject(5, " ************************* MERCURY **************************** ");
-    GameObject *jupiter = new GameObject(6, " ************************* JUPITER **************************** ");
+        Material *cube_material_1 = new Material(cube_mesh);
 
-    _GameObjects.push_back(sun);
+        cube_material_1->setProgram(program);
 
-    sun->addGameObject(earth);
-    sun->addGameObject(mars);
-    sun->addGameObject(mercury);
-    sun->addGameObject(jupiter);
-    earth->addGameObject(moon);
+        cube_material_1->setLigth(new Ambient(glm::vec3(0.2125, 0.1275, 0.054)));
+        cube_material_1->setLigth(new Diffuse(glm::vec3(0.714, 0.4284, 0.18144)));
+        cube_material_1->setLigth(new Specular(glm::vec3(0.5f, 0.5f, 0.5f), 0.5));
+        cube_material_1->setLigth(new Spot(position, direction, 7.5, 15.5));
 
-    sun->addComponent(ambient);
-    sun->addComponent(specular);
-    sun->addComponent(diffuse);
-    sun->addComponent(material_sun);
+        cube_material_1->setTexture(new Texture(0, "material.diffuse", "../resources/container2.png"));
+        cube_material_1->setTexture(new Texture(1, "material.specular", "../resources/container2_specular.png"));
 
-    earth->addComponent(ambient);
-    earth->addComponent(specular);
-    earth->addComponent(diffuse);
-    earth->addComponent(material_earth);
+//      cube_material_1->setColor(glm::vec3(1.0, 1.0, 1.0));
 
-    moon->addComponent(ambient);
-    moon->addComponent(specular);
-    moon->addComponent(diffuse);
-    moon->addComponent(material_moon);
+        Material *cube_material_2 = new Material(cube_mesh);
 
-    mars->addComponent(ambient);
-    mars->addComponent(specular);
-    mars->addComponent(diffuse);
-    mars->addComponent(material_mars);
+        cube_material_2->setProgram(program);
 
-    mercury->addComponent(ambient);
-    mercury->addComponent(specular);
-    mercury->addComponent(diffuse);
-    mercury->addComponent(material_mercury);
+        cube_material_2->setLigth(new Ambient(glm::vec3(0.24725, 0.1995, 0.0745)));
+        cube_material_2->setLigth(new Diffuse(glm::vec3(0.75164, 0.60648, 0.22648)));
+        cube_material_2->setLigth(new Specular(glm::vec3(0.5f, 0.5f, 0.5f), 0.5));
+        cube_material_2->setLigth(new Spot(position, direction, 7.5, 15.5));
 
-    jupiter->addComponent(ambient);
-    jupiter->addComponent(specular);
-    jupiter->addComponent(diffuse);
-    jupiter->addComponent(material_jupiter);
 
-    sun->addComponent(new Texture("../resources/sun.png"));
-    earth->addComponent(new Texture("../resources/earth_diffuse.jpg"));
-    moon->addComponent(new Texture("../resources/moon.png"));
-    mars->addComponent(new Texture("../resources/mars.png"));
-    mercury->addComponent(new Texture("../resources/mercury.jpg"));
-    jupiter->addComponent(new Texture("../resources/jupiter.jpg"));
+        cube_material_2->setTexture(new Texture(0, "material.diffuse", "../resources/container2.png"));
+        cube_material_2->setTexture(new Texture(1, "material.specular", "../resources/container2_specular.png"));
+
+//      cube_material_2->setColor(glm::vec3(1.0, 1.0, 0.0));
+
+        if (i % 2 == 0) {
+            cube->addComponent(cube_material_1);
+        } else {
+            cube->addComponent(cube_material_2);
+        }
+        _GameObjects.push_back(cube);
+        std::cerr << "Cube " << i << '\n';
+    }
+
+    Material *lamp_mat = new Material(cube_mesh);
+
+    lamp_mat->setProgram(program);
+    lamp_mat->setColor(glm::vec3(1.0, 1.0, 1.0));
+    lamp_mat->setLigth(new Ambient(glm::vec3(5.05, 5.05, 5.05)));
+    lamp_mat->setLigth(new Diffuse(glm::vec3(0.5, 0.5, 0.5)));
+    lamp_mat->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
+//    lamp_mat->setLigth(new Spot(position, direction, 12.5));
+
+    GameObject *lamp = new GameObject(9, "*** LAMP *** ");
+    lamp->addComponent(lamp_mat);
+    _GameObjects.push_back(lamp);
 }
 
+Mesh* ObjectFactory::getPlaneMesh() {
+    Mesh *mesh = new Mesh();
+
+    std::vector<GLfloat> position = {
+         0.0f,  0.0f,  0.0f, // 0
+         0.5f,  0.0f,  0.0f, // 1
+         0.0f,  0.5f,  0.0f, // 2
+        -0.5f,  0.0f,  0.0f, // 3
+         0.0f, -0.5f,  0.0f, // 4
+    };
+
+    std::vector<GLuint> index = {
+        0, 1, 2,
+        0, 2, 3,
+        0, 3, 4,
+        0, 4, 1,
+    };
+
+    std::vector<GLfloat> textCoord = {
+        // Cara z = 1
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+
+        // Cara z = -1
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+    };
+
+    std::vector<GLfloat> normal = {
+        0.0f,   1.0f,   0.0f,
+        0.0f,   1.0f,   0.0f,
+        0.0f,   1.0f,   0.0f,
+        0.0f,   1.0f,   0.0f,
+    };
+
+    mesh->_vertexPos = position;
+    mesh->_vertexNormal = normal;
+    mesh->_vertexTexCoord = textCoord;
+    mesh->_triangleIndex = index;
+    mesh->_NTriangleIndex = index.size();
+    return mesh;
+}
+
+
 Mesh* ObjectFactory::getCubeMesh() {
-    Mesh *mesh = new Mesh(1, "cube");
+    Mesh *mesh = new Mesh();
 
     mesh->_vertexPos = cubeVertexPos;
     mesh->_vertexNormal = cubeVertexNormal;
@@ -116,7 +150,7 @@ Mesh* ObjectFactory::getCubeMesh() {
     return mesh;
 }
 
-Mesh* ObjectFactory::getSphereMesh(std::string name) {
+Mesh* ObjectFactory::getSphereMesh() {
     int idx = 0;
 
     /* Statement Exercise ... */
@@ -170,7 +204,7 @@ Mesh* ObjectFactory::getSphereMesh(std::string name) {
     }
 
     // Generate índices
-    // Sorting of indices...(for triangles-strip)
+    // Sorting of indices... (for triangles-strip)
     for (int iy = 0; iy < height; ++iy ) {
           for (int ix = 0; ix < width; ++ix ) {
                 int a = grid[ iy ][ ix + 1 ];
@@ -186,7 +220,7 @@ Mesh* ObjectFactory::getSphereMesh(std::string name) {
           }
     }
 
-    Mesh *mesh = new Mesh(1, name);
+    Mesh *mesh = new Mesh();
     mesh->_vertexPos = posVertex;
     mesh->_vertexNormal = normals;
     mesh->_vertexTexCoord = texCoords;

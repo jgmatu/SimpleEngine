@@ -8,6 +8,11 @@
 #include <exception>
 #include <fstream>
 
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include <glad/glad.h>
@@ -26,7 +31,13 @@ struct ProgramException : public std::exception {
     }
 
     const char* what () const throw () {
-        return std::string("Program error: " + msg).c_str();
+        char *data = (char*) malloc(1024 * sizeof(char));
+        if (!data) {
+            fprintf(stderr, "%s\n", strerror(errno));
+        }
+        strcpy(data, std::string("Program error: " + msg).c_str());
+        sprintf(data, "%s", data);
+        return data;
     }
 };
 
@@ -40,6 +51,7 @@ public:
     void active();
     void render();
     void setUniforms(Uniforms *uniforms);
+    void clearUniforms(Uniforms *uniforms);
 
 private:
 

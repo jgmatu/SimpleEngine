@@ -5,15 +5,15 @@ Transform::Transform() :
     _model(1.0f)
 {
     this->_type = TypeComp::TRANSFORM;
-    std::cout << "************ Transform ***************" << '\n';
 }
 
 Transform::~Transform() {
     ;
 }
 
-void Transform::start() {
-    std::cout << "**** Transform start ****" << '\n';
+void Transform::start()
+{
+    ;
 }
 
 void Transform::awakeStart() {
@@ -46,6 +46,11 @@ void Transform::rotate(glm::vec3 vec3, float angle) {
     this->_operations.push_back(new Rotate(angle, vec3));
 }
 
+glm::vec3 Transform::position() {
+    glm::vec4 row = this->_gModel[3];
+
+    return glm::vec3(row.x, row.y, row.z);
+}
 
 std::ostream& operator<<(std::ostream& os, const Transform& tf) {
     os << "Model : " << std::endl << glm::to_string(tf._model) << std::endl;

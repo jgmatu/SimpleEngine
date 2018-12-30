@@ -35,7 +35,7 @@ class Mesh {
 
 public:
 
-    Mesh( unsigned id, std::string name);
+    Mesh();
     ~Mesh();
 
     void active();
@@ -56,9 +56,6 @@ private:
     void genVertexBufferNormal();
     void genVertexBufferTextCoord();
     void genVertexBufferIndex();
-
-    unsigned _id;
-    std::string _name;
 
     // Active Buffer.
     GLuint _VAO;

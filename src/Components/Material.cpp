@@ -2,19 +2,20 @@
 
 Material::Material() {
     this->_type = TypeComp::MATERIAL;
-    std::cout << "Create component material" << '\n';
+    this->_uniforms = new Uniforms();
+    this->_textures = new Textures();
+
+    this->_program = nullptr;
 }
 
-Material::Material(MeshRender *meshRender, Program *program, Uniforms *uniforms) :
+Material::Material(MeshRender *meshRender) :
     Material::Material()
 {
     this->_meshRender = meshRender;
-    this->_program = program;
-    this->_uniforms = uniforms;
-    std::cout << "Create component material" << '\n';
 }
 
-Material::~Material() {
+Material::~Material()
+{
     std::cout << "Delete component material" << '\n';
 }
 
@@ -23,33 +24,44 @@ void Material::start() {
         _meshRender->active();
         if (_program) {
             _program->active();
-            std::cout << " *** Trace material.., *** " << '\n';
+        }
+        if (_textures) {
+            _textures->active();
         }
     }
 }
 
 void Material::awakeStart() {
+    for (unsigned i = 0; i < _ligths.size(); ++i) {
+        _ligths[i]->setParameters(_uniforms);
+    }
+    if (_textures) {
+        _textures->setParameters(_uniforms);
+    }
+
     if (_program) {
         _program->setUniforms(_uniforms);
     }
+
+    if (_textures) {
+        _textures->render();
+    }
+
     if (_meshRender) {
         _meshRender->render();
         if (_program) {
             _program->render();
         }
+    }
+
+    if (_program) {
+        _program->clearUniforms(_uniforms);
     }
 }
 
-void Material::update() {
-    if (_program) {
-        _program->setUniforms(_uniforms);
-    }
-    if (_meshRender) {
-        _meshRender->render();
-        if (_program) {
-            _program->render();
-        }
-    }
+void Material::update()
+{
+    ;
 }
 
 void Material::setParameter(std::string name, glm::vec3 val) {
@@ -62,6 +74,40 @@ void Material::setParameter(std::string name, glm::mat4 val) {
 
 void Material::setParameter(std::string name, int val) {
     _uniforms->setUniformInt(name, val);
+}
+
+void Material::setParameter(std::string name, float val) {
+    _uniforms->setUniformFloat(name, val);
+}
+
+void Material::setTexture(Texture *texture) {
+    _textures->setTexture(texture);
+}
+
+void Material::setLigth(Light *ligth)
+{
+    this->_ligths.push_back(ligth);
+}
+
+void Material::eraseLigth(CompLigth component)
+{
+    bool erase = false;
+
+    for (unsigned i = 0 ; i < _ligths.size() && !erase; ++i) {
+        if (_ligths[i]->_type == component) {
+            delete _ligths[i];
+            _ligths.erase (_ligths.begin() + i);
+            erase = true;
+        }
+    }
+}
+
+void Material::setProgram(Program *program) {
+    _program = program;
+}
+
+void Material::setColor(glm::vec3 color) {
+//    _uniforms->setUniformVec3("color", color);
 }
 
 std::ostream& operator<<(std::ostream& os, const Material& material) {

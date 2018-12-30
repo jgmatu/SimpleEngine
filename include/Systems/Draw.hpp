@@ -9,7 +9,6 @@
 
 #include "Components/Material.hpp"
 #include "Components/Light.hpp"
-#include "Components/Texture.hpp"
 
 #include "Messages/Message.hpp"
 

@@ -26,7 +26,6 @@ void Program::active() {
 void Program::setUniforms(Uniforms *uniforms) {
     std::vector<std::string> names;
 
-
     names = uniforms->getUniformsNamesInt();
     for (unsigned i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
@@ -57,6 +56,31 @@ void Program::setUniforms(Uniforms *uniforms) {
             this->createUniform(names[i]);
         }
         this->setUniform(names[i], uniforms->getUniformValueMat4(names[i]));
+    }
+}
+
+void Program::clearUniforms(Uniforms *uniforms)
+{
+    std::vector<std::string> names;
+
+    names = uniforms->getUniformsNamesInt();
+    for (unsigned i = 0; i < names.size(); ++i) {
+        this->setUniform(names[i], 0);
+    }
+
+    names = uniforms->getUniformsNamesFloat();
+    for (unsigned i = 0; i < names.size(); ++i) {
+        this->setUniform(names[i], 0.0f);
+    }
+
+    names = uniforms->getUniformsNamesVec3();
+    for (unsigned i = 0; i < names.size(); ++i) {
+        this->setUniform(names[i], glm::vec3(0.0, 0.0, 0.0));
+    }
+
+    names = uniforms->getUniformsNamesMat4();
+    for (unsigned i = 0; i < names.size(); ++i) {
+        this->setUniform(names[i], glm::mat4(1.0));
     }
 }
 
@@ -141,7 +165,7 @@ int Program::createShader(const std::string& sc, int shaderType) {
         std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
         glGetShaderInfoLog(shaderId, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
         std::cerr << "Shader Error Message: " << VertexShaderErrorMessage[0] << '\n';
-        throw ProgramException("Shader Error Message: " + VertexShaderErrorMessage[0] + '\n');
+        throw ProgramException(std::string("Shader Error Message: " + VertexShaderErrorMessage[0] + '\n'));
     }
     glAttachShader(_programId, shaderId);
     return shaderId;
@@ -157,8 +181,8 @@ void Program::link() {
     if (!params) {
         glGetProgramInfoLog(_programId, 1024, &size, inflog);
         sprintf(inflog, "Error linking shader code: %s\n", inflog);
-        std::cerr << "Program error : " << inflog << '\n';
-        throw ProgramException(std::string(inflog));
+        std::cerr << "Error linking shader : " << inflog << '\n';
+        throw ProgramException("Error linking shader code:" + std::string(inflog));
     }
     if (_vertexShaderId != 0) {
         glDetachShader(_programId, _vertexShaderId);
@@ -170,8 +194,8 @@ void Program::link() {
     glGetProgramiv(_programId, GL_LINK_STATUS, &params);
     if (!params) {
         glGetProgramInfoLog(_programId, 1024, &size, inflog);
-        sprintf(inflog, "Error linking Shader code: %s\n", inflog);
-        std::cerr << "Program error : " << inflog << '\n';
+        sprintf(inflog, "Error linking shader code: %s\n", inflog);
+        std::cerr << "Error linking shader code : " << inflog << '\n';
         throw ProgramException(std::string(inflog));
     }
 }

@@ -1,13 +1,11 @@
 #include "Mesh/Mesh.hpp"
 
-Mesh::Mesh(unsigned id, std::string name) :
+Mesh::Mesh() :
     _vertexPos(),
     _vertexNormal(),
     _vertexTexCoord(),
     _triangleIndex(),
     _NTriangleIndex(0),
-    _id(id),
-    _name(name),
     _VAO(0),
     _VBO(0),
     _VBO2(0),
@@ -89,6 +87,6 @@ void Mesh::draw() {
 }
 
 std::ostream& operator<<(std::ostream& os, const Mesh& mesh) {
-    os << mesh._name;
+    os << "*** DEBUG << MESH!";
     return os;
 }
