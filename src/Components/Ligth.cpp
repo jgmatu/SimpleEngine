@@ -34,7 +34,7 @@ Ambient::~Ambient()
 
 void Ambient::setParameters(Uniforms *uniforms)
 {
-//    uniforms->setUniformVec3("material.ambient", _value);
+    uniforms->setUniformVec3("material.ambient", _value);
 }
 
 Diffuse::Diffuse() :
@@ -56,7 +56,7 @@ Diffuse::~Diffuse()
 
 void Diffuse::setParameters(Uniforms *uniforms)
 {
-    uniforms->setUniformVec3("material.diffuse", _value);
+//    uniforms->setUniformVec3("material.diffuse", _value);
 }
 
 Specular::Specular() :
@@ -79,7 +79,7 @@ Specular::~Specular()
 
 void Specular::setParameters(Uniforms *uniforms)
 {
-    uniforms->setUniformVec3("material.specular", _value);
+//    uniforms->setUniformVec3("material.specular", _value);
     uniforms->setUniformFloat("material.shininess", _shininess);
 }
 
@@ -105,9 +105,9 @@ void Directional::setParameters(Uniforms *uniforms)
 {
     uniforms->setUniformVec3("directional.direction", this->_direction);
 
-    uniforms->setUniformVec3("directional.ambient", glm::vec3(0.1f));
-    uniforms->setUniformVec3("directional.diffuse", glm::vec3(1.0f));
-    uniforms->setUniformVec3("directional.specular", glm::vec3(1.0f));
+    uniforms->setUniformVec3("directional.ambient", glm::vec3(0.01f));
+    uniforms->setUniformVec3("directional.diffuse", glm::vec3(0.01f));
+    uniforms->setUniformVec3("directional.specular", glm::vec3(0.01f));
 }
 
 Point::Point() :
@@ -116,9 +116,10 @@ Point::Point() :
     ;
 }
 
-Point::Point(glm::vec3 position) :
+Point::Point(int num, glm::vec3 position) :
     Point::Point()
 {
+    this->_num = num;
     this->_position = position;
 }
 
@@ -129,14 +130,16 @@ Point::~Point()
 
 void Point::setParameters(Uniforms *uniforms)
 {
-    uniforms->setUniformVec3("point.ambient", glm::vec3(0.1f));
-    uniforms->setUniformVec3("point.diffuse", glm::vec3(1.0f));
-    uniforms->setUniformVec3("point.specular", glm::vec3(1.0f));
-    uniforms->setUniformVec3("point.position", this->_position);
+    std::string index = std::string(std::to_string(this->_num));
 
-    uniforms->setUniformFloat("point.constant", 1.0f);
-    uniforms->setUniformFloat("point.linear", 0.14f);
-    uniforms->setUniformFloat("point.quadratic", 0.07f);
+    uniforms->setUniformVec3("points[" + index + "].ambient", glm::vec3(0.6f));
+    uniforms->setUniformVec3("points[" + index + "].diffuse", glm::vec3(0.6f));
+    uniforms->setUniformVec3("points[" + index + "].specular", glm::vec3(1.0f));
+    uniforms->setUniformVec3("points[" + index + "].position", this->_position);
+
+    uniforms->setUniformFloat("points[" + index + "].constant", 1.0f);
+    uniforms->setUniformFloat("points[" + index + "].linear", 0.7f);
+    uniforms->setUniformFloat("points[" + index + "].quadratic", 1.8f);
 }
 
 Spot::Spot() :
@@ -161,8 +164,8 @@ Spot::~Spot()
 
 void Spot::setParameters(Uniforms *uniforms)
 {
-    uniforms->setUniformVec3("spot.ambient", glm::vec3(0.1f));
-    uniforms->setUniformVec3("spot.diffuse", glm::vec3(1.0f));
+    uniforms->setUniformVec3("spot.ambient", glm::vec3(0.6f));
+    uniforms->setUniformVec3("spot.diffuse", glm::vec3(0.6f));
     uniforms->setUniformVec3("spot.specular", glm::vec3(1.0f));
 
     uniforms->setUniformVec3("spot.position", this->_position);
@@ -171,36 +174,6 @@ void Spot::setParameters(Uniforms *uniforms)
     uniforms->setUniformFloat("spot.outerCutOff", glm::cos(glm::radians(this->_outerCutOff)));
 
     uniforms->setUniformFloat("spot.constant", 1.0f);
-    uniforms->setUniformFloat("spot.linear", 0.0014f);
-    uniforms->setUniformFloat("spot.quadratic", 0.000007f);
-}
-
-LightScene::LightScene() :
-    Light::Light(CompLigth::SCENE)
-{
-    this->_tf = new Transform();
-}
-
-LightScene::LightScene(glm::vec3 position) :
-    LightScene::LightScene()
-{
-    this->_tf->_gModel = glm::translate(this->_tf->_gModel, position);
-}
-
-LightScene::~LightScene()
-{
-    delete this->_tf;
-}
-
-void LightScene::setParameters(Uniforms *uniforms)
-{
-    uniforms->setUniformVec3("light.position", this->_tf->position());
-
-//    uniforms->setUniformVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-//    uniforms->setUniformVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-//    uniforms->setUniformVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-
-    uniforms->setUniformVec3("light.ambient", glm::vec3(1.0f));
-    uniforms->setUniformVec3("light.diffuse", glm::vec3(1.0f));
-    uniforms->setUniformVec3("light.specular", glm::vec3(1.0f));
+    uniforms->setUniformFloat("spot.linear", 0.07f);
+    uniforms->setUniformFloat("spot.quadratic", 0.017f);
 }

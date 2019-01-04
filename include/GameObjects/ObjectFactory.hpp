@@ -16,9 +16,8 @@
 #include "Components/Material.hpp"
 #include "Components/Light.hpp"
 
-#include "Mesh/Texture.hpp"
-#include "Mesh/MeshRender.hpp"
-#include "Mesh/Mesh.hpp"
+#include "Model/Model.hpp"
+#include "Model/Mesh.hpp"
 
 #include <math.h>
 

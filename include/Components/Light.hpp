@@ -82,13 +82,14 @@ class Point : public Light {
 public:
 
     Point();
-    Point(glm::vec3 direction);
+    Point(int num, glm::vec3 position);
     ~Point();
 
     void setParameters(Uniforms *uniforms);
 
 private:
 
+    int _num;
     glm::vec3 _position;
 };
 
@@ -108,26 +109,6 @@ private:
     glm::vec3 _direction;
     float _cutOff; // Degrees...
     float _outerCutOff; // Degrees...
-};
-
-class LightScene : public Light {
-
-public:
-
-    LightScene();
-    LightScene(glm::vec3 position);
-    ~LightScene();
-
-private:
-
-    void setParameters(Uniforms *uniforms);
-
-    Ambient *_ambient;
-    Diffuse *_diffuse;
-    Specular *_specular;
-    Transform *_tf;
-
-    glm::vec3 _ligthPos;
 };
 
 #endif // LIGHT_H

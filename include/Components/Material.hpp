@@ -5,8 +5,7 @@
 
 #include "Constants/TypeComp.hpp"
 
-#include "Mesh/MeshRender.hpp"
-#include "Mesh/Textures.hpp"
+#include "Model/Model.hpp"
 
 #include "Components/Component.hpp"
 #include "Components/Light.hpp"
@@ -14,14 +13,12 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-class Texture;
-
 class Material : public Component {
 
 public:
 
     Material();
-    Material(MeshRender *meshRender);
+    Material(Model *model);
     ~Material();
 
     void start();
@@ -33,9 +30,7 @@ public:
     void setParameter(std::string, int);
     void setParameter(std::string, float);
 
-    void setTexture(Texture *texture);
     void setProgram(Program *program);
-
     void setLigth(Light *ligth);
     void eraseLigth(CompLigth type);
 
@@ -47,9 +42,7 @@ private:
 
     Uniforms *_uniforms;
     Program *_program;
-    Textures *_textures;
-    MeshRender *_meshRender;
-
+    Model *_model;
     std::vector<Light*> _ligths;
 
 };

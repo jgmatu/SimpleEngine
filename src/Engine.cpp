@@ -119,38 +119,57 @@ void Engine::update(float dt) {
 
 void Engine::mainLoop() {
     std::vector<GameObject*> cubes(5);
-
     for (unsigned i = 0; i < 5; ++i) {
         cubes[i] = _scene->getGameObject(i);
     }
-    GameObject *lamp = _scene->getGameObject(9);
-    _scene->_cameras[0]->setGameObject(_scene);
-    _scene->_cameras[1]->setGameObject(lamp);
+    std::vector<glm::vec3> positions = {
+        glm::vec3( 2.0,  2.0, -1.0),
+        glm::vec3(-2.0,  1.0,  1.0),
+        glm::vec3(-1.0,  2.0,  3.0),
+        glm::vec3( 0.0, -2.0,  0.0)
+    };
 
+    std::vector<GameObject*> points;
+    for (unsigned i = 0; i < positions.size(); ++i) {
+        points.push_back(_scene->getGameObject(i + 9));
+    }
+
+    _scene->_cameras[0]->setGameObject(_scene);
+    _scene->_cameras[1]->setGameObject(cubes[0]);
+    _scene->_cameras[2]->setGameObject(cubes[1]);
+
+    std::vector<glm::vec3> cube_positions = {
+        glm::vec3(2.0,  2.0, -2.0),
+        glm::vec3(-2.0, 1.0, 0.0),
+        glm::vec3(-1.0,  2.0, 2.0),
+        glm::vec3(0.0, -2.0, -1.0),
+        glm::vec3(1.0, 1.0, -1.0)
+    };
 
     do {
-        float angle = std::fmod(glfwGetTime(), (2.0f * M_PI));
+        float angle = std::fmod(glfwGetTime(), 2.0f * M_PI);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
 
-        cubes[0]->translate(glm::vec3(2.0,  2.0, -2.0));
-        cubes[1]->translate(glm::vec3(-2.0, 1.0, 0.0));
-        cubes[2]->translate(glm::vec3(-1.0,  2.0, 2.0));
-        cubes[3]->translate(glm::vec3(0.0, -2.0, -1.0));
-        cubes[4]->translate(glm::vec3(1.0, 1.0, -1.0));
+        for (unsigned i = 0; i < cube_positions.size(); ++i) {
+            cubes[i]->translate(cube_positions[i]);
+        }
         for (unsigned i = 0; i < cubes.size(); ++i) {
             cubes[i]->rotate(glm::vec3(1.0f, 0.3f, 0.5f), angle);
         }
         glm::vec3 lightPos = glm::vec3(0, 0, 10.0);
+
+        for (unsigned i = 0; i < points.size(); ++i) {
+            points[i]->translate(positions[i]);
+            points[i]->scale(glm::vec3(0.05, 0.05, 0.05));
+        }
 
 //        Component *component = lamp->getComponent(TypeComp::MATERIAL);
 //        if (Material *material = dynamic_cast<Material*>(component)) {
 //            material->eraseLigth(CompLigth::POINT);
 //            material->setLigth(new Point(lightPos));
 //        }
-        lamp->translate(lightPos);
-        lamp->scale(glm::vec3(0.05, 0.05, 0.05));
 
 //        for (unsigned i = 0; i < 5; ++i) {
 //            Component *component = cubes[i]->getComponent(TypeComp::MATERIAL);

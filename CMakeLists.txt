@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project (SimpleEngine)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11") # -Wpedantic -Wextra
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -L /usr/local/lib -std=c++11") # -Wpedantic -Wextra
 set(GLAD_LIBRARIES dl)
 
 option(GLFW_BUILD_DOCS OFF)
@@ -16,6 +16,7 @@ include_directories(include/
                     src/extras/glfw/include/
                     src/extras/glm/
                     src/extras/stb/
+		    /usr/local/include/
 )
 
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
@@ -28,7 +29,7 @@ file(GLOB PROJECT_SOURCES
     src/Operations/*cpp
     src/Components/*cpp
     src/GameObjects/*cpp
-    src/Mesh/*cpp
+    src/Model/*cpp
     src/Messages/*cpp
     src/Systems/*cpp
     src/Program/*cpp
@@ -43,6 +44,6 @@ add_definitions(-DGLFW_INCLUDE_NONE
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
                       ${PROJECT_CONFIGS} ${VENDORS_SOURCES})
 
-target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES} ${GLAD_LIBRARIES})
 
+target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES} ${GLAD_LIBRARIES} assimp)
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})

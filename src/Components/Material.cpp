@@ -3,15 +3,14 @@
 Material::Material() {
     this->_type = TypeComp::MATERIAL;
     this->_uniforms = new Uniforms();
-    this->_textures = new Textures();
 
     this->_program = nullptr;
 }
 
-Material::Material(MeshRender *meshRender) :
+Material::Material(Model *model) :
     Material::Material()
 {
-    this->_meshRender = meshRender;
+    this->_model = model;
 }
 
 Material::~Material()
@@ -20,13 +19,10 @@ Material::~Material()
 }
 
 void Material::start() {
-    if (_meshRender) {
-        _meshRender->active();
+    if (_model) {
+        _model->active();
         if (_program) {
             _program->active();
-        }
-        if (_textures) {
-            _textures->active();
         }
     }
 }
@@ -35,32 +31,21 @@ void Material::awakeStart() {
     for (unsigned i = 0; i < _ligths.size(); ++i) {
         _ligths[i]->setParameters(_uniforms);
     }
-    if (_textures) {
-        _textures->setParameters(_uniforms);
-    }
-
     if (_program) {
         _program->setUniforms(_uniforms);
     }
-
-    if (_textures) {
-        _textures->render();
-    }
-
-    if (_meshRender) {
-        _meshRender->render();
+    if (_model) {
         if (_program) {
+            _model->render(_program);
             _program->render();
         }
     }
-
     if (_program) {
         _program->clearUniforms(_uniforms);
     }
 }
 
-void Material::update()
-{
+void Material::update() {
     ;
 }
 
@@ -78,10 +63,6 @@ void Material::setParameter(std::string name, int val) {
 
 void Material::setParameter(std::string name, float val) {
     _uniforms->setUniformFloat(name, val);
-}
-
-void Material::setTexture(Texture *texture) {
-    _textures->setTexture(texture);
 }
 
 void Material::setLigth(Light *ligth)
@@ -111,6 +92,6 @@ void Material::setColor(glm::vec3 color) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Material& material) {
-    os << *material._meshRender;
+    os << *material._model;
     return os;
 }

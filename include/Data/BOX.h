@@ -66,6 +66,7 @@ const std::vector<GLfloat> cubeVertexPos = {
      0.5f, -0.5f,  0.5f,
      0.5f,  0.5f,  0.5f,
 
+     // y = -1
     -0.5f, -0.5f, -0.5f,
      0.5f, -0.5f, -0.5f,
      0.5f, -0.5f,  0.5f,
@@ -74,6 +75,7 @@ const std::vector<GLfloat> cubeVertexPos = {
     -0.5f, -0.5f,  0.5f,
     -0.5f, -0.5f, -0.5f,
 
+    // y = 1
     -0.5f,  0.5f, -0.5f,
      0.5f,  0.5f, -0.5f,
      0.5f,  0.5f,  0.5f,
@@ -139,7 +141,6 @@ const std::vector<GLfloat> cubeVertexTexCoord = {
     0.0f, 0.0f,
     1.0f, 0.0f,
     1.0f, 1.0f,
-
     1.0f, 1.0f,
     0.0f, 1.0f,
     0.0f, 0.0f,
@@ -147,7 +148,6 @@ const std::vector<GLfloat> cubeVertexTexCoord = {
     0.0f, 0.0f,
     1.0f, 0.0f,
     1.0f, 1.0f,
-
     1.0f, 1.0f,
     0.0f, 1.0f,
     0.0f, 0.0f,
@@ -155,7 +155,6 @@ const std::vector<GLfloat> cubeVertexTexCoord = {
     1.0f, 0.0f,
     1.0f, 1.0f,
     0.0f, 1.0f,
-
     0.0f, 1.0f,
     0.0f, 0.0f,
     1.0f, 0.0f,
@@ -163,7 +162,6 @@ const std::vector<GLfloat> cubeVertexTexCoord = {
     1.0f, 0.0f,
     1.0f, 1.0f,
     0.0f, 1.0f,
-
     0.0f, 1.0f,
     0.0f, 0.0f,
     1.0f, 0.0f,
@@ -171,7 +169,6 @@ const std::vector<GLfloat> cubeVertexTexCoord = {
     0.0f, 1.0f,
     1.0f, 1.0f,
     1.0f, 0.0f,
-
     1.0f, 0.0f,
     0.0f, 0.0f,
     0.0f, 1.0f,
@@ -179,7 +176,6 @@ const std::vector<GLfloat> cubeVertexTexCoord = {
     0.0f, 1.0f,
     1.0f, 1.0f,
     1.0f, 0.0f,
-
     1.0f, 0.0f,
     0.0f, 0.0f,
     0.0f, 1.0f

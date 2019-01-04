@@ -1,3 +1,4 @@
+
 #include "GameObjects/ObjectFactory.hpp"
 
 #include "Data/BOX.h"
@@ -30,12 +31,29 @@ GameObject* ObjectFactory::getGameObject(unsigned id)
 void ObjectFactory::generateDemoObjects()
 {
     Program *program = new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl");
-    MeshRender *cube_mesh = new MeshRender();
-    glm::vec3 position = glm::vec3(0.0, 0.0, 10.0);
-    glm::vec3 direction = glm::vec3(0.0, 0.0, -1.0);
+    Model *cube_mesh = new Model();
+
+    std::vector<glm::vec3> positions = {
+        glm::vec3( 2.0,  2.0, -1.0),
+        glm::vec3(-2.0,  1.0,  1.0),
+        glm::vec3(-1.0,  2.0,  3.0),
+        glm::vec3( 0.0, -2.0,  0.0)
+    };
+    std::vector<glm::vec3> cube_positions = {
+        glm::vec3(2.0,  2.0, -2.0),
+        glm::vec3(-2.0, 1.0, 0.0),
+        glm::vec3(-1.0,  2.0, 2.0),
+        glm::vec3(0.0, -2.0, -1.0),
+        glm::vec3(1.0, 1.0, -1.0)
+    };
+
+    std::vector<Light*> points;
+    for (unsigned i = 0; i < positions.size(); ++i) {
+        points.push_back(new Point(i, positions[i]));
+    }
+    glm::vec3 direction = glm::vec3(0.0, -1.0, 0.0);
 
     cube_mesh->addMesh(getCubeMesh());
-
     for (unsigned i = 0; i < 5; ++i) {
         GameObject *cube = new GameObject(i, "*** CUBE ***");
 
@@ -46,12 +64,11 @@ void ObjectFactory::generateDemoObjects()
         cube_material_1->setLigth(new Ambient(glm::vec3(0.2125, 0.1275, 0.054)));
         cube_material_1->setLigth(new Diffuse(glm::vec3(0.714, 0.4284, 0.18144)));
         cube_material_1->setLigth(new Specular(glm::vec3(0.5f, 0.5f, 0.5f), 0.5));
-        cube_material_1->setLigth(new Spot(position, direction, 7.5, 15.5));
-
-        cube_material_1->setTexture(new Texture(0, "material.diffuse", "../resources/container2.png"));
-        cube_material_1->setTexture(new Texture(1, "material.specular", "../resources/container2_specular.png"));
-
-//      cube_material_1->setColor(glm::vec3(1.0, 1.0, 1.0));
+        cube_material_1->setLigth(new Spot(glm::vec3(1.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 1.0), 2.5, 7.5));
+        cube_material_1->setLigth(new Directional(direction));
+        for (unsigned j = 0; j < points.size(); ++j) {
+            cube_material_1->setLigth(points[j]);
+        }
 
         Material *cube_material_2 = new Material(cube_mesh);
 
@@ -60,21 +77,17 @@ void ObjectFactory::generateDemoObjects()
         cube_material_2->setLigth(new Ambient(glm::vec3(0.24725, 0.1995, 0.0745)));
         cube_material_2->setLigth(new Diffuse(glm::vec3(0.75164, 0.60648, 0.22648)));
         cube_material_2->setLigth(new Specular(glm::vec3(0.5f, 0.5f, 0.5f), 0.5));
-        cube_material_2->setLigth(new Spot(position, direction, 7.5, 15.5));
-
-
-        cube_material_2->setTexture(new Texture(0, "material.diffuse", "../resources/container2.png"));
-        cube_material_2->setTexture(new Texture(1, "material.specular", "../resources/container2_specular.png"));
-
-//      cube_material_2->setColor(glm::vec3(1.0, 1.0, 0.0));
-
+        cube_material_2->setLigth(new Spot(glm::vec3(1.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 1.0), 2.5, 7.5));
+        cube_material_2->setLigth(new Directional(direction));
+        for (unsigned j = 0; j < points.size(); ++j) {
+            cube_material_2->setLigth(points[j]);
+        }
         if (i % 2 == 0) {
             cube->addComponent(cube_material_1);
         } else {
             cube->addComponent(cube_material_2);
         }
         _GameObjects.push_back(cube);
-        std::cerr << "Cube " << i << '\n';
     }
 
     Material *lamp_mat = new Material(cube_mesh);
@@ -84,11 +97,16 @@ void ObjectFactory::generateDemoObjects()
     lamp_mat->setLigth(new Ambient(glm::vec3(5.05, 5.05, 5.05)));
     lamp_mat->setLigth(new Diffuse(glm::vec3(0.5, 0.5, 0.5)));
     lamp_mat->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
-//    lamp_mat->setLigth(new Spot(position, direction, 12.5));
+    for (unsigned i = 0; i < points.size(); ++i) {
+        lamp_mat->setLigth(points[i]);
+    }
+    lamp_mat->setLigth(new Directional(direction));
 
-    GameObject *lamp = new GameObject(9, "*** LAMP *** ");
-    lamp->addComponent(lamp_mat);
-    _GameObjects.push_back(lamp);
+    for (unsigned i = 0; i < points.size(); ++i) {
+        GameObject *lamp = new GameObject(9 + i, "*** LAMP *** ");
+        lamp->addComponent(lamp_mat);
+        _GameObjects.push_back(lamp);
+    }
 }
 
 Mesh* ObjectFactory::getPlaneMesh() {
@@ -133,20 +151,61 @@ Mesh* ObjectFactory::getPlaneMesh() {
     mesh->_vertexPos = position;
     mesh->_vertexNormal = normal;
     mesh->_vertexTexCoord = textCoord;
-    mesh->_triangleIndex = index;
-    mesh->_NTriangleIndex = index.size();
+    mesh->_index = index;
     return mesh;
 }
 
 
 Mesh* ObjectFactory::getCubeMesh() {
-    Mesh *mesh = new Mesh();
+    std::vector<__Texture__> textures;
+    std::vector<Vertex> vertices;
 
+    __Texture__ texture;
+
+    texture.type = "texture_diffuse";
+    texture.path = "../resources/";
+    texture.filename = "container2.png";
+    textures.push_back(texture);
+
+    texture.type = "texture_specular";
+    texture.path = "../resources/";
+    texture.filename = "container2_specular.png";
+    textures.push_back(texture);
+
+    for (unsigned i = 0; i < cubeVertexPos.size(); i += 3) {
+        Vertex vertex;
+
+        for (unsigned j = 0; j < 3; ++j) {
+            glm::vec3 normal;
+            glm::vec3 position;
+            glm::vec2 text;
+            if (j == 0) {
+                std::cout << "X" << '\n';
+                normal.x = cubeVertexNormal[i + j];
+                position.x = cubeVertexPos[i + j];
+                text.x = cubeVertexTexCoord[i + j];
+            }
+            if (j == 1) {
+                std::cout << "Y" << '\n';
+                normal.y = cubeVertexNormal[i + j];
+                position.y = cubeVertexPos[i + j];
+                text.y = cubeVertexTexCoord[i + j];
+            }
+            if (j == 2) {
+                std::cout << "Z" << '\n';
+                normal.z = cubeVertexNormal[i + j];
+                position.z = cubeVertexPos[i + j];
+            }
+            vertex.Normal = normal;
+        }
+        vertices.push_back(vertex);
+    }
+    Mesh *mesh = new Mesh(vertices, cubeTriangleIndex, textures);
+
+    mesh->_index = cubeTriangleIndex;
     mesh->_vertexPos = cubeVertexPos;
     mesh->_vertexNormal = cubeVertexNormal;
     mesh->_vertexTexCoord = cubeVertexTexCoord;
-    mesh->_triangleIndex = cubeTriangleIndex;
-    mesh->_NTriangleIndex = cubeTriangleIndex.size();
     return mesh;
 }
 
@@ -224,8 +283,7 @@ Mesh* ObjectFactory::getSphereMesh() {
     mesh->_vertexPos = posVertex;
     mesh->_vertexNormal = normals;
     mesh->_vertexTexCoord = texCoords;
-    mesh->_triangleIndex = indices;
-    mesh->_NTriangleIndex = indices.size();
+    mesh->_index = indices;
     return mesh;
 }
 
