@@ -4,10 +4,9 @@
 #include "stb_image.h"
 
 Mesh::Mesh() :
-    _vertexPos(),
-    _vertexNormal(),
-    _vertexTexCoord(),
-    _index(),
+    _vertices(),
+    _indices(),
+    _textures(),
     _VAO(0),
     _VBO(0),
     _VBO2(0),
@@ -26,10 +25,9 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, std::vec
 }
 
 Mesh::~Mesh() {
-    _vertexPos.clear();
-    _vertexNormal.clear();
-    _vertexTexCoord.clear();
-    _index.clear();
+    _indices.clear();
+    _vertices.clear();
+    _textures.clear();
 }
 
 void Mesh::loadTextures()
@@ -39,7 +37,7 @@ void Mesh::loadTextures()
     }
 }
 
-void Mesh::active2()
+void Mesh::active()
 {
     glGenVertexArrays(1, &_VAO);
     glGenBuffers(1, &_VBO);
@@ -68,7 +66,7 @@ void Mesh::active2()
     glBindVertexArray(0);
 }
 
-void Mesh::draw2(Program *program) {
+void Mesh::draw(Program *program) {
     Uniforms uniforms = Uniforms();
 
     unsigned diffuseNr = 0;
@@ -95,73 +93,11 @@ void Mesh::draw2(Program *program) {
     glBindVertexArray(0);
 }
 
-void Mesh::active() {
-    vertexArrayID();
-    genVertexBufferPosition();
-    genVertexBufferNormal();
-    genVertexBufferTextCoord();
-    genVertexBufferIndex();
-}
-
-void Mesh::vertexArrayID() {
-    // Active Vertex Buffer....
-    glGenVertexArrays(1, &_VAO);
-    glBindVertexArray(_VAO);
-}
-
-void Mesh::genVertexBufferPosition() {
-    // Position attribute...
-    glGenBuffers(1, &_VBO);  // Create VertexArrayObject.
-    glBindBuffer(GL_ARRAY_BUFFER, _VBO); // Bind Vertex VAO...
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * _vertexPos.size(), _vertexPos.data(), GL_STATIC_DRAW); // Assign buffer to VBO
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, (void*) 0);
-    glEnableVertexAttribArray(0);
-
-}
-void Mesh::genVertexBufferNormal() {
-    // Normal attribute...
-    glGenBuffers(1, &_VBO2); // Create VertexArrayObject.
-    glBindBuffer(GL_ARRAY_BUFFER, _VBO2);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * _vertexNormal.size(), _vertexNormal.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, (void*) 0);
-    glEnableVertexAttribArray(1);
-}
-void Mesh::genVertexBufferTextCoord() {
-    // Text Coord attribute...
-    glGenBuffers(1, &_VBO3); // Create VertexArrayObject.
-    glBindBuffer(GL_ARRAY_BUFFER, _VBO3);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * _vertexTexCoord.size(), _vertexTexCoord.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, (void*) 0);
-    glEnableVertexAttribArray(2);
-}
-
-void Mesh::genVertexBufferIndex() {
-    // Buffer indexes...
-    glGenBuffers(1, &_EBO);  // Create VertexArrayObject.
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, _index.size() * sizeof(GLuint), _index.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0); // Unbind the VBO.
-    glBindVertexArray(0); // Unbind the VAO.
-}
-
-void Mesh::draw() {
-    glBindVertexArray(_VAO); // Activa la geometría que se va a pintar.
-    glBindBuffer(GL_ARRAY_BUFFER, _VBO); // Activar el buffer de vertices a pintar.
-    glVertexAttribPointer(
-        0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-        3,                  // size
-        GL_FLOAT,           // type
-        GL_FALSE,           // normalized
-        0,                  // stride
-        (void*) 0           // array buffer offset
-    );
-    // Draw the cube!
-    glDrawElements(GL_TRIANGLES, _index.size(), GL_UNSIGNED_INT, 0);
-}
-
 unsigned Mesh::TextureFromFile(std::string directory, const char *filename) {
     unsigned textureID = 0;
-    std::string path = directory + std::string(filename);
+    std::string path = directory + "/" + std::string(filename);
+
+    std::cout << "Path : " << path << '\n';
 
     std::ifstream file(path);
     if (file.fail()) {

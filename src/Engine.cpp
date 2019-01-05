@@ -146,12 +146,18 @@ void Engine::mainLoop() {
         glm::vec3(1.0, 1.0, -1.0)
     };
 
+    GameObject *nanosuit = _scene->getGameObject(30);
+
+    _scene->_cameras[0]->setGameObject(nanosuit);
+
     do {
         float angle = std::fmod(glfwGetTime(), 2.0f * M_PI);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
 
+        nanosuit->translate(glm::vec3(0.0, 0.0, -2.0));
+        nanosuit->scale(glm::vec3(15.0, 15.0, 15.0));
         for (unsigned i = 0; i < cube_positions.size(); ++i) {
             cubes[i]->translate(cube_positions[i]);
         }
@@ -164,12 +170,6 @@ void Engine::mainLoop() {
             points[i]->translate(positions[i]);
             points[i]->scale(glm::vec3(0.05, 0.05, 0.05));
         }
-
-//        Component *component = lamp->getComponent(TypeComp::MATERIAL);
-//        if (Material *material = dynamic_cast<Material*>(component)) {
-//            material->eraseLigth(CompLigth::POINT);
-//            material->setLigth(new Point(lightPos));
-//        }
 
 //        for (unsigned i = 0; i < 5; ++i) {
 //            Component *component = cubes[i]->getComponent(TypeComp::MATERIAL);

@@ -104,10 +104,9 @@ Directional::~Directional()
 void Directional::setParameters(Uniforms *uniforms)
 {
     uniforms->setUniformVec3("directional.direction", this->_direction);
-
-    uniforms->setUniformVec3("directional.ambient", glm::vec3(0.01f));
-    uniforms->setUniformVec3("directional.diffuse", glm::vec3(0.01f));
-    uniforms->setUniformVec3("directional.specular", glm::vec3(0.01f));
+    uniforms->setUniformVec3("directional.ambient", glm::vec3(0.51f));
+    uniforms->setUniformVec3("directional.diffuse", glm::vec3(0.51f));
+    uniforms->setUniformVec3("directional.specular", glm::vec3(0.51f));
 }
 
 Point::Point() :

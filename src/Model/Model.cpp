@@ -8,7 +8,6 @@ Model::Model() :
 
 }
 
-
 Model::Model(std::string path) :
     Model::Model()
 {
@@ -32,19 +31,19 @@ void Model::loadModel(std::string path)
         return;
     }
     _directory = path.substr(0, path.find_last_of('/'));
-    processNode(scene->mRootNode, scene);
+    this->processNode(scene->mRootNode, scene);
 }
 
 void Model::processNode(aiNode *node, const aiScene *scene)
 {
     // process all the node's meshes (if any)
-    for(unsigned int i = 0; i < node->mNumMeshes; i++) {
+    for (unsigned i = 0; i < node->mNumMeshes; i++) {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        addMesh(processMesh(mesh, scene));
+        this->addMesh(processMesh(mesh, scene));
     }
     // then do the same for each of its children
-    for(unsigned int i = 0; i < node->mNumChildren; i++) {
-        processNode(node->mChildren[i], scene);
+    for (unsigned i = 0; i < node->mNumChildren; i++) {
+        this->processNode(node->mChildren[i], scene);
     }
 }
 
@@ -54,7 +53,7 @@ Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene)
     std::vector<unsigned> indices;
     std::vector<__Texture__> textures;
 
-    for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+    for (unsigned i = 0; i < mesh->mNumVertices; i++) {
         Vertex vertex;
 
         glm::vec3 vector;
@@ -67,7 +66,7 @@ Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene)
         vector.z = mesh->mNormals[i].z;
         vertex.Normal = vector;
 
-        if(mesh->mTextureCoords[0])  {
+        if (mesh->mTextureCoords[0])  {
             // does the mesh contain texture coordinates?
             glm::vec2 vec;
             vec.x = mesh->mTextureCoords[0][i].x;
@@ -81,9 +80,9 @@ Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene)
     }
 
     // process indices
-    for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
+    for (unsigned i = 0; i < mesh->mNumFaces; i++) {
         aiFace face = mesh->mFaces[i];
-        for(unsigned int j = 0; j < face.mNumIndices; j++) {
+        for(unsigned j = 0; j < face.mNumIndices; j++) {
             indices.push_back(face.mIndices[j]);
         }
     }
@@ -102,22 +101,22 @@ std::vector<__Texture__> Model::loadMaterialTextures(aiMaterial *mat, aiTextureT
 {
     std::vector<__Texture__> textures;
 
-    for(unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
+    for (unsigned i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str;
         mat->GetTexture(type, i, &str);
         bool skip = false;
-        for(unsigned int j = 0; j < _textures_loaded.size(); j++) {
-            if(std::strcmp(_textures_loaded[j].path.data(), str.C_Str()) == 0) {
+        for (unsigned j = 0; j < _textures_loaded.size() && !skip; j++) {
+            if (std::strcmp(_textures_loaded[j].path.data(), str.C_Str()) == 0) {
                 textures.push_back(_textures_loaded[j]);
                 skip = true;
-                break;
             }
         }
         if (!skip) {   // if texture hasn't been loaded already, load it
             __Texture__ texture;
-            texture.id = Mesh::TextureFromFile(_directory, str.C_Str());
+//            texture.id = Mesh::TextureFromFile(_directory, str.C_Str());
+            texture.path = "../models/nanosuit/";
             texture.type = typeName;
-            texture.path = str.C_Str();
+            texture.filename = str.C_Str();
             textures.push_back(texture);
             _textures_loaded.push_back(texture); // add to loaded textures
         }
@@ -138,7 +137,7 @@ void Model::active() {
 
 void Model::render(Program *program) {
     for (unsigned i = 0; i < _meshes.size(); ++i) {
-        _meshes[i]->draw2(program);
+        _meshes[i]->draw(program);
     }
 }
 

@@ -28,7 +28,6 @@ public:
     GameObject(unsigned id, std::string _name);
     virtual ~GameObject();
 
-
     Component* getComponent(TypeComp type) const;
     void addComponent(Component *component);
     bool hasComponent(TypeComp type);

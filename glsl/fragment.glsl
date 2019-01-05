@@ -21,6 +21,7 @@ struct Directional {
 
     vec3 direction;
 };
+
 uniform Directional directional;
 
 struct Point {

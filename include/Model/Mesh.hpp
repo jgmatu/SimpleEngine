@@ -65,20 +65,12 @@ public:
     ~Mesh();
 
     void active();
-    void active2();
-    void draw();
-    void draw2(Program *program);
+    void draw(Program *program);
     void loadTextures();
 
-
-    std::vector<unsigned> _indices;
     std::vector<Vertex> _vertices;
+    std::vector<unsigned> _indices;
     std::vector<__Texture__> _textures;
-
-    std::vector<float> _vertexPos;
-    std::vector<float> _vertexNormal;
-    std::vector<float> _vertexTexCoord;
-    std::vector<unsigned> _index;
 
     friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
 

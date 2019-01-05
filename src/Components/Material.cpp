@@ -28,20 +28,16 @@ void Material::start() {
 }
 
 void Material::awakeStart() {
-    for (unsigned i = 0; i < _ligths.size(); ++i) {
-        _ligths[i]->setParameters(_uniforms);
-    }
-    if (_program) {
-        _program->setUniforms(_uniforms);
-    }
-    if (_model) {
-        if (_program) {
-            _model->render(_program);
-            _program->render();
+    if (_model && _program && _uniforms) {
+        for (unsigned i = 0; i < _ligths.size(); ++i) {
+            _ligths[i]->setParameters(_uniforms);
         }
-    }
-    if (_program) {
+        _program->setUniforms(_uniforms);
+        _model->render(_program);
+        _program->render();
         _program->clearUniforms(_uniforms);
+    } else {
+        throw;
     }
 }
 
