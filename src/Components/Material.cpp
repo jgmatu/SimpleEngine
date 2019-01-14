@@ -29,19 +29,24 @@ void Material::start() {
 
 void Material::awakeStart() {
     if (_model && _program && _uniforms) {
+
         for (unsigned i = 0; i < _ligths.size(); ++i) {
             _ligths[i]->setParameters(_uniforms);
         }
+
         _program->setUniforms(_uniforms);
+
         _model->render(_program);
         _program->render();
+
         _program->clearUniforms(_uniforms);
     } else {
         throw;
     }
 }
 
-void Material::update() {
+void Material::update()
+{
     ;
 }
 

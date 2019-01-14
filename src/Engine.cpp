@@ -31,24 +31,24 @@ static void keyCallback(GLFWwindow *window, int key, int scancode, int action, i
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
-
     if (key == GLFW_KEY_UP) {
-        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(0.0, 0.0, 0.1));
+        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(0.0, 0.0, 0.01));
     }
     if (key == GLFW_KEY_DOWN) {
-        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(0.0, 0.0, -0.1));
+        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(0.0, 0.0, -0.01));
     }
     if (key == GLFW_KEY_LEFT) {
-        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(0.1, 0.0, 0.0));
+        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(0.01, 0.0, 0.0));
     }
     if (key == GLFW_KEY_RIGHT) {
-        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(-0.1, 0.0, 0.0));
+        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(-0.01, 0.0, 0.0));
     }
-
     if (key == GLFW_KEY_Q) {
         _cameraEvent->_tf->_model = glm::rotate(_cameraEvent->_tf->_model, 0.01f, glm::vec3(-1.0f, 0.0f, 0.0f));
     }
-
+    if (key == GLFW_KEY_E) {
+        _cameraEvent->_tf->_model = glm::rotate(_cameraEvent->_tf->_model, 0.01f, glm::vec3(1.0f, 0.0f, 0.0f));
+    }
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
         _sceneEvent->_camera = (_sceneEvent->_camera + 1) % _sceneEvent->MAX_CAMERAS;
         _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
@@ -84,6 +84,8 @@ void Engine::initWindow() {
     // Make the window visible.
     glfwShowWindow(_window);
     gladLoadGL();
+
+    // Enabled depth buffer...
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -118,10 +120,11 @@ void Engine::update(float dt) {
 }
 
 void Engine::mainLoop() {
-    std::vector<GameObject*> cubes(5);
-    for (unsigned i = 0; i < 5; ++i) {
-        cubes[i] = _scene->getGameObject(i);
-    }
+//    std::vector<GameObject*> cubes(1);
+//    for (unsigned i = 0; i < 1; ++i) {
+//        cubes[i] = _scene->getGameObject(i);
+//    }
+
     std::vector<glm::vec3> positions = {
         glm::vec3( 2.0,  2.0, -1.0),
         glm::vec3(-2.0,  1.0,  1.0),
@@ -129,14 +132,15 @@ void Engine::mainLoop() {
         glm::vec3( 0.0, -2.0,  0.0)
     };
 
-    std::vector<GameObject*> points;
-    for (unsigned i = 0; i < positions.size(); ++i) {
-        points.push_back(_scene->getGameObject(i + 9));
-    }
+//    std::vector<GameObject*> points;
+//    for (unsigned i = 0; i < positions.size(); ++i) {
+//        points.push_back(_scene->getGameObject(i + 9));
+//    }
 
     _scene->_cameras[0]->setGameObject(_scene);
-    _scene->_cameras[1]->setGameObject(cubes[0]);
-    _scene->_cameras[2]->setGameObject(cubes[1]);
+
+//    _scene->_cameras[1]->setGameObject(cubes[0]);
+//    _scene->_cameras[2]->setGameObject(cubes[1]);
 
     std::vector<glm::vec3> cube_positions = {
         glm::vec3(2.0,  2.0, -2.0),
@@ -147,29 +151,30 @@ void Engine::mainLoop() {
     };
 
     GameObject *nanosuit = _scene->getGameObject(30);
-
-    _scene->_cameras[0]->setGameObject(nanosuit);
+    _scene->_cameras[1]->setGameObject(nanosuit);
 
     do {
-        float angle = std::fmod(glfwGetTime(), 2.0f * M_PI);
+//        float angle = std::fmod(glfwGetTime(), 2.0f * M_PI);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
 
-        nanosuit->translate(glm::vec3(0.0, 0.0, -2.0));
-        nanosuit->scale(glm::vec3(15.0, 15.0, 15.0));
-        for (unsigned i = 0; i < cube_positions.size(); ++i) {
-            cubes[i]->translate(cube_positions[i]);
-        }
-        for (unsigned i = 0; i < cubes.size(); ++i) {
-            cubes[i]->rotate(glm::vec3(1.0f, 0.3f, 0.5f), angle);
-        }
-        glm::vec3 lightPos = glm::vec3(0, 0, 10.0);
+        nanosuit->rotate(glm::vec3(0.0f, 1.0f, 0.0f), 0.0f);
+        nanosuit->scale(glm::vec3(0.05, 0.05, 0.05));
+        nanosuit->translate(glm::vec3(0.0, -12.0, 0.0));
 
-        for (unsigned i = 0; i < points.size(); ++i) {
-            points[i]->translate(positions[i]);
-            points[i]->scale(glm::vec3(0.05, 0.05, 0.05));
-        }
+//        for (unsigned i = 0; i < cube_positions.size() - 5; ++i) {
+//            cubes[i]->translate(cube_positions[i]);
+//        }
+//        for (unsigned i = 0; i < cubes.size(); ++i) {
+//            cubes[i]->rotate(glm::vec3(1.0f, 0.3f, 0.5f), angle);
+//        }
+//        glm::vec3 lightPos = glm::vec3(0, 0, 10.0);
+
+//        for (unsigned i = 0; i < points.size(); ++i) {
+//            points[i]->translate(positions[i]);
+//            points[i]->scale(glm::vec3(0.05, 0.05, 0.05));
+//        }
 
 //        for (unsigned i = 0; i < 5; ++i) {
 //            Component *component = cubes[i]->getComponent(TypeComp::MATERIAL);
@@ -184,9 +189,11 @@ void Engine::mainLoop() {
 //                material->setColor(lightColor);
 //            }
 //        }
+
         this->update(0);
         glfwSwapBuffers(_window); // swap the color buffers.
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
     } while(!glfwWindowShouldClose(_window));
     glfwTerminate();
 }

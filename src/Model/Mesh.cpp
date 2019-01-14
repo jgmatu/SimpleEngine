@@ -24,7 +24,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, std::vec
     this->_textures = textures;
 }
 
-Mesh::~Mesh() {
+Mesh::~Mesh()
+{
     _indices.clear();
     _vertices.clear();
     _textures.clear();
@@ -51,15 +52,15 @@ void Mesh::active()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(unsigned int), &_indices[0], GL_STATIC_DRAW);
 
-    // vertex positions
+    // Vertex positions...
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 0);
 
-    // vertex normals
+    // Vertex normals...
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, Normal));
 
-    // vertex texture coords
+    // Vertex texture coords...
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, TexCoords));
 
@@ -67,14 +68,13 @@ void Mesh::active()
 }
 
 void Mesh::draw(Program *program) {
-    Uniforms uniforms = Uniforms();
-
     unsigned diffuseNr = 0;
     unsigned specularNr = 0;
 
-    for(unsigned int i = 0; i < _textures.size(); i++) {
+    for(unsigned i = 0; i < _textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
-        // retrieve texture number (the N in diffuse_textureN)
+
+        // Retrieve texture number (the N in diffuse_textureN)
         std::string number;
         std::string name = _textures[i].type;
         if(name == "texture_diffuse") {
@@ -82,26 +82,27 @@ void Mesh::draw(Program *program) {
         } else if(name == "texture_specular") {
             number = std::to_string(specularNr++);
         }
-        uniforms.setUniformInt("material." + name + number, i);
+        int value = i;
+        program->setUniform("material." + name + number, value);
         glBindTexture(GL_TEXTURE_2D, _textures[i].id);
     }
-    program->setUniforms(&uniforms);
 
-    // draw mesh
+    // Draw mesh
     glBindVertexArray(_VAO);
     glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+
+    // Always good practice to set everything back to defaults once configured...
+    glActiveTexture(GL_TEXTURE0);
 }
 
 unsigned Mesh::TextureFromFile(std::string directory, const char *filename) {
     unsigned textureID = 0;
     std::string path = directory + "/" + std::string(filename);
 
-    std::cout << "Path : " << path << '\n';
-
     std::ifstream file(path);
     if (file.fail()) {
-        std::cerr << "Texture file not exists" << '\n';
+        std::cerr << "Texture file not exists : " << directory << "/" << filename  << '\n';
         throw;
     }
     int width, heigth, channels;

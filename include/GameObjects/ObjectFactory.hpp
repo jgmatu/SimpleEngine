@@ -41,7 +41,6 @@ private:
     Mesh* getSphereMesh();
 
     std::vector<GameObject*> _GameObjects;
-
 };
 
 #endif // OBJECT_FACTORY_H

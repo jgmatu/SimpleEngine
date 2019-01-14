@@ -53,14 +53,14 @@ public:
     void setUniforms(Uniforms *uniforms);
     void clearUniforms(Uniforms *uniforms);
 
-private:
-
     void createUniform(std::string uniformName);
 
     void setUniform(std::string name, glm::mat4 value);
     void setUniform(std::string name, glm::vec3 value);
     void setUniform(std::string name, int value);
     void setUniform(std::string name, float value);
+
+private:
 
     void createVertexShader();
     void createFragmentShader();

@@ -12,7 +12,6 @@ struct Material {
 
     float shininess;
 };
-uniform Material material;
 
 struct Directional {
     vec3 ambient;
@@ -21,8 +20,6 @@ struct Directional {
 
     vec3 direction;
 };
-
-uniform Directional directional;
 
 struct Point {
     vec3 position;
@@ -36,8 +33,6 @@ struct Point {
     float linear;
     float quadratic;
 };
-#define NR_POINT_LIGHTS 4
-uniform Point points[NR_POINT_LIGHTS];
 
 struct Spot {
     vec3 position;
@@ -54,6 +49,14 @@ struct Spot {
     float linear;
     float quadratic;
 };
+
+uniform Material material;
+
+uniform Directional directional;
+
+#define NR_POINT_LIGHTS 4
+uniform Point points[NR_POINT_LIGHTS];
+
 uniform Spot spot;
 
 // Viewer position...
@@ -87,6 +90,7 @@ void main()
     result += calcSpotLight(spot, norm, fragPos, viewDir);
 
     fragColor = vec4(result, 1.0);
+//      fragColor = texture(material.texture_diffuse0, texCoord);
 }
 
 
