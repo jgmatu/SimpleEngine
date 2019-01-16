@@ -45,6 +45,7 @@ void Draw::draw(Camera *camera, GameObject *gameObject)
         material->setParameter("projection", camera->_projection); // Vertex...
         material->setParameter("view", camera->_tf->_gModel);      // Vertex...
         material->setParameter("viewPos", -camera->_tf->position()); // Fragments...
+
         // Last step, uniforms first. After draw the object!!
         material->awakeStart();
     }
@@ -54,6 +55,7 @@ void Draw::update(float dt, Scene *scene) {
     std::vector<Camera*> cameras = this->updateCameras(scene);
     std::vector<unsigned> keys = scene->getKeysObjects();
     std::map<float, GameObject*> sorted;
+    Camera *active_camera = cameras[scene->_camera];
 
     for (unsigned i = 0; i < keys.size(); ++i) {
         GameObject *gameObject = scene->getGameObject(keys[i]);
@@ -63,18 +65,19 @@ void Draw::update(float dt, Scene *scene) {
             if (material->isTransparent()) {
                 Component *component = gameObject->getComponent(TypeComp::TRANSFORM);
                 if (Transform *tf = dynamic_cast<Transform*>(component)) {
-                    float distance = glm::length(-cameras[scene->_camera]->_tf->position() - tf->position());
+                    float distance = glm::length(-active_camera->_tf->position() - tf->position());
                     sorted[distance] = gameObject;
                 }
             } else {
                 // Opaque objects draw first and in any order...
-                this->draw(cameras[scene->_camera], gameObject);
+                this->draw(active_camera, gameObject);
             }
         }
     }
+
     for(std::map<float, GameObject*>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) {
         // Draw sorted transparent objects on the scene...
-        this->draw(cameras[scene->_camera], it->second);
+        this->draw(active_camera, it->second);
     }
 }
 

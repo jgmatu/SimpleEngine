@@ -37,11 +37,10 @@ void Material::awakeStart() {
         }
 
         _program->setUniforms(_uniforms);
-
-        _model->render(_program);
         _program->render();
-
+        _model->render(_program);
         _program->clearUniforms(_uniforms);
+//        _program->cleanup();
     } else {
         throw;
     }

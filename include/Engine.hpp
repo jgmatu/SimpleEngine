@@ -3,7 +3,6 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #define _USE_MATH_DEFINES
-#define STB_IMAGE_IMPLEMENTATION
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -38,6 +37,7 @@ private:
 
     void initWindow();
     void genFrameBuffer();
+    void genRenderBuffer();
 
     GLFWwindow *_window;
 
@@ -45,6 +45,9 @@ private:
     Scene *_scene;
     Camera *_camera;
 
+    GLuint _FB0;
+    GLuint _RB0;
+    GLuint _texture;
 };
 
 #endif // ENGINE_H

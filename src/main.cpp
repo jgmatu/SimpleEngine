@@ -14,22 +14,15 @@ int main(int argc, char* argv[]) {
     try {
         objectFactory = new ObjectFactory();
         objectFactory->generateDemoObjects();
-
         engine = new Engine(objectFactory);
         engine->add(new Update());
         engine->add(new Draw());
         engine->init();
-
         engine->mainLoop();
-
     } catch (std::exception &ex) {
-
         std::cerr << "Engine Error : " << ex.what() << '\n';
-
     } catch (...) {
-
         std::cerr << "Engine fatal!" << '\n';
-
     }
     delete engine;
 }

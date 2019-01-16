@@ -50,6 +50,8 @@ public:
 
     void active();
     void render();
+    void cleanup();
+
     void setUniforms(Uniforms *uniforms);
     void clearUniforms(Uniforms *uniforms);
 
@@ -68,7 +70,6 @@ private:
 
     void bind();
     void unbind();
-    void cleanup();
 
     std::string getDataFile(const std::string& filename);
     int createShader(const std::string& sc, int shaderType);

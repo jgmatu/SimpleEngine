@@ -1,13 +1,13 @@
 #include "Engine.hpp"
 
+Camera *_cameraEvent;
+Scene *_sceneEvent;
+
 Engine::Engine() :
     _systems()
 {
     _scene = new Scene(0, "********************* SCENE *********************** ");
 }
-
-Camera *_cameraEvent;
-Scene *_sceneEvent;
 
 Engine::Engine(ObjectFactory *objectFactory) :
     Engine::Engine()
@@ -85,10 +85,10 @@ void Engine::initWindow() {
     glfwShowWindow(_window);
     gladLoadGL();
 
-    // Depth buffer-z...
+    // Depth buffer-z... 24 bits...
     glEnable(GL_DEPTH_TEST);
 
-    // Stencil buffer...
+    // Stencil buffer... 8 bits...
     glEnable(GL_STENCIL_TEST);
 
     // Enabling transparency...
@@ -97,8 +97,11 @@ void Engine::initWindow() {
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
     // Perfomance Culling draw...
-//    glEnable(GL_CULL_F1ACE);
+//    glEnable(GL_CULL_FACE);
 //    glCullFace(GL_BACK);
+
+//    this->genRenderBuffer();
+//    this->genFrameBuffer();
 }
 
 void Engine::init() {
@@ -117,29 +120,36 @@ void Engine::init() {
     }
 }
 
+void Engine::genRenderBuffer()
+{
+    glGenRenderbuffers(1, &_RB0);
+    glBindRenderbuffer(GL_RENDERBUFFER, _RB0);
+
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _RB0);
+}
+
 void Engine::genFrameBuffer()
 {
-    unsigned fbo;
+    glGenFramebuffers(1, &_FB0);
+    glBindFramebuffer(GL_FRAMEBUFFER, _FB0);
 
-    glGenFramebuffers(1, &fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        std::cerr << "Error bindinig new frame buffer...." << '\n';
-        return;
-    }
-    unsigned texture;
-
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glGenTextures(1, &_texture);
+    glBindTexture(GL_TEXTURE_2D, _texture);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDeleteFramebuffers(1, &fbo);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _texture, 0);
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cerr << "Error bindinig new framebuffer...." << '\n';
+    }
+    glDeleteFramebuffers(1, &_FB0);
 }
 
 void Engine::add(System *sys) {
@@ -176,26 +186,49 @@ void Engine::mainLoop() {
         glm::vec3( 2.0f,  0.0f,  0.00f)
     };
 
-//    GameObject *nanosuit = _scene->getGameObject(30);
-//    _scene->_cameras[1]->setGameObject(nanosuit);
+    GameObject *nanosuit = _scene->getGameObject(30);
+    _scene->_cameras[1]->setGameObject(nanosuit);
 //    GameObject *_floor = _scene->getGameObject(0);
+
     std::vector<GameObject*> vegetation(vegetation_position.size());
     for (unsigned i = 0; i < vegetation.size(); ++i) {
         vegetation[i] = _scene->getGameObject(111 + i);
     }
+
     do {
 //        float angle = std::fmod(glfwGetTime(), 2.0f * M_PI);
         glfwPollEvents();
 
-//        nanosuit->rotate(glm::vec3(0.0f, 1.0f, 0.0f), 0.0f);
-//        nanosuit->scale(glm::vec3(0.05, 0.05, 0.05));
-//        nanosuit->translate(glm::vec3(0.0, -12.0, -10.0));
+//        glBindFramebuffer(GL_FRAMEBUFFER, _FB0);
+//        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
+//        glEnable(GL_DEPTH_TEST);
+
+        nanosuit->scale(glm::vec3(0.1, 0.1, 0.1));
+        nanosuit->rotate(glm::vec3(0.0f, 1.0f, 0.0f), 0.0f);
+        nanosuit->translate(glm::vec3(8.0, -12.0, -10.0));
+
         for (unsigned i = 0; i < vegetation_position.size(); ++i) {
             vegetation[i]->translate(vegetation_position[i]);
         }
         for (unsigned i = 0; i < cubes.size(); ++i) {
             cubes[i]->translate(cube_positions[i]);
         }
+        // second pass
+//        glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
+//        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+//        glClear(GL_COLOR_BUFFER_BIT);
+
+//        glBindVertexArray(13);
+//        glDisable(GL_DEPTH_TEST);
+//        glBindTexture(GL_TEXTURE_2D, 13);
+//        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        this->update(0); // Draw Scene...
+        glfwSwapBuffers(_window); // Swap the color buffers.
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
 //        glm::vec3 lightPos = glm::vec3(0, 0, 10.0);
 
 //        for (unsigned i = 0; i < points.size(); ++i) {
@@ -216,10 +249,6 @@ void Engine::mainLoop() {
 //                material->setColor(lightColor);
 //            }
 //        }
-        this->update(0);
-        glfwSwapBuffers(_window); // swap the color buffers.
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     } while(!glfwWindowShouldClose(_window));
     glfwTerminate();
 }

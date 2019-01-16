@@ -38,6 +38,9 @@ private:
     void addSkyBox(std::string directory);
     void addSceneLigths(Material *material);
 
+    std::vector<Mesh*> getVerticesRenderBufferTexture();
+
+    Mesh* getMeshFromVerticesPosTex(std::vector<float> vertices, __Texture__ texture);
     Mesh* getPlantMesh();
     Mesh* getPlaneMesh();
     Mesh* getCubeMesh();

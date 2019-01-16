@@ -204,7 +204,6 @@ void Program::bind() {
     glUseProgram(_programId);
 }
 
-
 void Program::unbind() {
     glUseProgram(0);
 }

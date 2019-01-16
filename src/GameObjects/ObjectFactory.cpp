@@ -95,13 +95,25 @@ void ObjectFactory::generateDemoObjects()
 //        _GameObjects.push_back(lamp);
 //    }
 
+    Program *grass_program = new Program("../glsl/grass_vs.glsl", "../glsl/grass_fs.glsl");
+    Material *grass = new Material(new Model(getPlantMesh()));
+    grass->setProgram(grass_program);
+    grass->setTransparent();
+    this->addSceneLigths(grass);
+
+    for (unsigned i = 0; i < 5; ++i) {
+        GameObject *grass_go = new GameObject(111 + i, "Grass");
+        grass_go->addComponent(grass);
+        _GameObjects.push_back(grass_go);
+    }
+
     Material *nanosuit = new Material(new Model("../models/nanosuit/nanosuit.obj"));
     nanosuit->setProgram(program);
     this->addSceneLigths(nanosuit);
 
     GameObject *nanosuit_go = new GameObject(30, "Complex model");
     nanosuit_go->addComponent(nanosuit);
-//    _GameObjects.push_back(nanosuit_go);
+    _GameObjects.push_back(nanosuit_go);
 
     Material *_floor = new Material(new Model(getPlaneMesh()));
     _floor->setProgram(program);
@@ -109,19 +121,129 @@ void ObjectFactory::generateDemoObjects()
 
     GameObject *_floor_go = new GameObject(0, "Floor model...");
     _floor_go->addComponent(_floor);
-
     _GameObjects.push_back(_floor_go);
 
-    for (unsigned i = 0; i < 5; ++i) {
-        Material *grass = new Material(new Model(getPlantMesh()));
-        grass->setProgram(program);
-        grass->setTransparent();
-        this->addSceneLigths(grass);
+/*
+    std::vector<Mesh*> meshes = getVerticesRenderBufferTexture();
+    for (unsigned i = 0; i < meshes.size() - 1; ++i) {
+        Material *material = new Material(new Model(meshes[i]));
+        material->setProgram(new Program("../glsl/5.1.vertexbuffers.glsl", "../glsl/5.1.framebuffers.glsl"));
 
-        GameObject *grass_go = new GameObject(111 + i, "Grass");
-        grass_go->addComponent(grass);
-        _GameObjects.push_back(grass_go);
+        GameObject *gameObject = new GameObject(i, "example");
+        gameObject->addComponent(material);
+        _GameObjects.push_back(gameObject);
     }
+
+    Material *material = new Material(new Model(meshes[meshes.size() - 1]));
+    material->setProgram(new Program("../glsl/5.1.vertexbuffers_screen.glsl", "../glsl/5.1.framebuffers_screen.glsl"));
+    GameObject *gameObject = new GameObject(20, "screen");
+    gameObject->addComponent(material);
+    _GameObjects.push_back(gameObject);
+*/
+
+}
+
+Mesh* ObjectFactory::getMeshFromVerticesPosTex(std::vector<float> verPosTex, __Texture__ texture)
+{
+    std::vector<Vertex> vertices;
+    std::vector<unsigned> indices;
+
+    for (unsigned i = 0; i < verPosTex.size(); i += 5) {
+        Vertex vertex;
+
+        vertex.Position = glm::vec3(verPosTex[i], verPosTex[i + 1], verPosTex[i + 2]);
+        vertex.Normal = glm::normalize(vertex.Position);
+        vertex.TexCoords = glm::vec2(verPosTex[i + 3], verPosTex[i + 4]);
+        vertices.push_back(vertex);
+    }
+
+    for (unsigned i = 0; i < vertices.size(); ++i) {
+        indices.push_back(i);
+    }
+    std::vector<__Texture__> textures;
+    textures.push_back(texture);
+    return new Mesh(vertices, indices, textures);
+}
+
+std::vector<Mesh*> ObjectFactory::getVerticesRenderBufferTexture()
+{
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+    std::vector<float> cubeVertices = {
+        // positions          // texture Coords
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    };
+    std::vector<float> planeVertices = {
+        // positions          // texture Coords
+         5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+        -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
+        -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+
+         5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+        -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+         5.0f, -0.5f, -5.0f,  2.0f, 2.0f
+    };
+    std::vector<float> quadVertices = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+        // positions   // texCoords
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+
+        -1.0f,  1.0f,  0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f, 1.0f
+    };
+    std::vector<Mesh*> meshes;
+    __Texture__ texture;
+    texture.path = "../resources/";
+    texture.filename = "marble.png";
+    meshes.push_back(getMeshFromVerticesPosTex(cubeVertices, texture));
+
+    texture.path = "../resources/";
+    texture.filename = "floor.jpg";
+    meshes.push_back(getMeshFromVerticesPosTex(planeVertices, texture));
+    meshes.push_back(getMeshFromVerticesPosTex(quadVertices, texture));
+    return meshes;
 }
 
 Mesh* ObjectFactory::getPlantMesh() {
@@ -155,9 +277,8 @@ Mesh* ObjectFactory::getPlantMesh() {
         Vertex vertex;
 
         vertex.Position = glm::vec3(positions[i], positions[i + 1], positions[i + 2]);
-        vertex.Normal = glm::vec3(1.0f, 0.0f, 0.0f);
+        vertex.Normal = glm::normalize(vertex.Position);
         vertex.TexCoords = glm::vec2(textCoords[j], textCoords[j + 1]);
-
         vertices.push_back(vertex);
     }
 
@@ -201,20 +322,12 @@ Mesh* ObjectFactory::getPlaneMesh() {
         0.0f, 2.0f,
         2.0f, 2.0f
     };
-    std::vector<GLfloat> normal = {
-        0.0f,   1.0f,   0.0f,
-        0.0f,   1.0f,   0.0f,
-        0.0f,   1.0f,   0.0f,
-        0.0f,   1.0f,   0.0f,
-        0.0f,   1.0f,   0.0f
-    };
-
     std::vector<Vertex> vertices;
     for (unsigned i = 0, j = 0; i < position.size(); i += 3, j += 2) {
         Vertex vertex;
 
         vertex.Position = glm::vec3(position[i], position[i + 1], position[i + 2]);
-        vertex.Normal = glm::vec3(normal[i], normal[i + 1], normal[i + 2]);
+        vertex.Normal = glm::normalize(vertex.Position);
         vertex.TexCoords = glm::vec2(textCoord[j], textCoord[j + 1]);
         vertices.push_back(vertex);
     }

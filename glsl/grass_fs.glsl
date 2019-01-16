@@ -94,7 +94,11 @@ void main()
 //    float depth = linearizeDepth(gl_FragCoord.z);
 //    fragColor = vec4(result, 1.0);
 
-    fragColor = vec4(result, 1.0);
+    vec4 textColor = texture(material.texture_diffuse0, texCoord);
+    if (textColor.a < 0.01) {
+        discard;
+    }
+    fragColor = textColor;
 }
 
 
