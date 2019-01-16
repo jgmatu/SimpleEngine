@@ -31,11 +31,14 @@ public:
     GameObject* getGameObject(unsigned id);
     void addGameObject(GameObject *gameObject);
     unsigned size();
-
     void generateDemoObjects();
 
 private:
 
+    void addSkyBox(std::string directory);
+    void addSceneLigths(Material *material);
+
+    Mesh* getPlantMesh();
     Mesh* getPlaneMesh();
     Mesh* getCubeMesh();
     Mesh* getSphereMesh();

@@ -1,4 +1,3 @@
-
 #include "GameObjects/ObjectFactory.hpp"
 
 #include "Data/BOX.h"
@@ -28,16 +27,37 @@ GameObject* ObjectFactory::getGameObject(unsigned id)
     return _GameObjects[id];
 }
 
-void ObjectFactory::generateDemoObjects()
+std::vector<Light*> getLigthPoints()
 {
-    Program *program = new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl");
-
     std::vector<glm::vec3> point_positions = {
         glm::vec3( 2.0,  2.0, -1.0),
         glm::vec3(-2.0,  1.0,  1.0),
         glm::vec3(-1.0,  2.0,  3.0),
         glm::vec3( 0.0, -2.0,  0.0)
     };
+
+    std::vector<Light*> points;
+    for (unsigned i = 0; i < point_positions.size(); ++i) {
+        points.push_back(new Point(i, point_positions[i]));
+    }
+    return points;
+}
+
+void ObjectFactory::addSceneLigths(Material *material)
+{
+    std::vector<Light*> points = getLigthPoints();
+
+    for (unsigned i = 0; i < points.size(); ++i) {
+        material->setLigth(points[i]);
+    }
+    material->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
+    material->setLigth(new Spot(glm::vec3(1.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 1.0), 2.5, 7.5));
+    material->setLigth(new Directional(glm::vec3(0.0, -1.0, 0.0)));
+}
+
+void ObjectFactory::generateDemoObjects()
+{
+    Program *program = new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl");
 
     std::vector<glm::vec3> cube_positions = {
         glm::vec3(2.0,  2.0, -2.0),
@@ -47,37 +67,20 @@ void ObjectFactory::generateDemoObjects()
         glm::vec3(1.0, 1.0, -1.0)
     };
 
-    std::vector<Light*> points;
-    for (unsigned i = 0; i < point_positions.size(); ++i) {
-        points.push_back(new Point(i, point_positions[i]));
+    for (unsigned i = 0; i < 2; ++i) {
+        Material *cube_material = new Material(new Model(getCubeMesh()));
+        cube_material->setProgram(program);
+        this->addSceneLigths(cube_material);
+
+        GameObject *cube = new GameObject(i + 1, "*** CUBE ***");
+        cube->addComponent(cube_material);
+
+        _GameObjects.push_back(cube);
     }
-    glm::vec3 direction = glm::vec3(0.0, -1.0, 0.0);
-
-    Model *cube_mesh = new Model();
-    cube_mesh->addMesh(getCubeMesh());
-//    for (unsigned i = 0; i < 1; ++i) {
-//        GameObject *cube = new GameObject(i, "*** CUBE ***");
-
-//        Material *cube_material = new Material(cube_mesh);
-//        cube_material->setProgram(program);
-
-//        cube_material->setLigth(new Specular(glm::vec3(0.5f, 0.5f, 0.5f), 0.5));
-//        cube_material->setLigth(new Spot(glm::vec3(1.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 1.0), 2.5, 7.5));
-//        cube_material->setLigth(new Directional(direction));
-//        for (unsigned j = 0; j < points.size(); ++j) {
-//            cube_material->setLigth(points[j]);
-//        }
-//        cube->addComponent(cube_material);
-//        _GameObjects.push_back(cube);
-//    }
 
 //    Material *lamp_mat = new Material(cube_mesh);
 
 //    lamp_mat->setProgram(program);
-//    lamp_mat->setColor(glm::vec3(1.0, 1.0, 1.0));
-
-//    lamp_mat->setLigth(new Ambient(glm::vec3(5.05, 5.05, 5.05)));
-//    lamp_mat->setLigth(new Diffuse(glm::vec3(0.5, 0.5, 0.5)));
 
 //    lamp_mat->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
 //    for (unsigned i = 0; i < points.size(); ++i) {
@@ -92,64 +95,137 @@ void ObjectFactory::generateDemoObjects()
 //        _GameObjects.push_back(lamp);
 //    }
 
-
     Material *nanosuit = new Material(new Model("../models/nanosuit/nanosuit.obj"));
     nanosuit->setProgram(program);
-
-    nanosuit->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
-    for (unsigned i = 0; i < points.size(); ++i) {
-        nanosuit->setLigth(points[i]);
-    }
-    nanosuit->setLigth(new Spot(glm::vec3(1.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 1.0), 2.5, 7.5));
-    nanosuit->setLigth(new Directional(direction));
+    this->addSceneLigths(nanosuit);
 
     GameObject *nanosuit_go = new GameObject(30, "Complex model");
     nanosuit_go->addComponent(nanosuit);
-    _GameObjects.push_back(nanosuit_go);
+//    _GameObjects.push_back(nanosuit_go);
+
+    Material *_floor = new Material(new Model(getPlaneMesh()));
+    _floor->setProgram(program);
+    this->addSceneLigths(_floor);
+
+    GameObject *_floor_go = new GameObject(0, "Floor model...");
+    _floor_go->addComponent(_floor);
+
+    _GameObjects.push_back(_floor_go);
+
+    for (unsigned i = 0; i < 5; ++i) {
+        Material *grass = new Material(new Model(getPlantMesh()));
+        grass->setProgram(program);
+        grass->setTransparent();
+        this->addSceneLigths(grass);
+
+        GameObject *grass_go = new GameObject(111 + i, "Grass");
+        grass_go->addComponent(grass);
+        _GameObjects.push_back(grass_go);
+    }
+}
+
+Mesh* ObjectFactory::getPlantMesh() {
+    std::vector<GLfloat> positions = {
+        0.0f,  0.5f,  0.0f,
+        0.0f, -0.5f,  0.0f,
+        1.0f, -0.5f,  0.0f,
+
+        0.0f,  0.5f,  0.0f,
+        1.0f, -0.5f,  0.0f,
+        1.0f,  0.5f,  0.0f,
+    };
+
+    std::vector<unsigned> inidices = {
+        0, 1, 2,
+        2, 3, 4,
+        4, 5, 0
+    };
+
+    std::vector<GLfloat> textCoords = {
+        0.0f,  0.0f,
+        0.0f,  1.0f,
+        1.0f,  1.0f,
+        0.0f,  0.0f,
+        1.0f,  1.0f,
+        1.0f,  0.0f
+    };
+
+    std::vector<Vertex> vertices;
+    for (unsigned i = 0, j = 0; i < positions.size(); i += 3, j += 2) {
+        Vertex vertex;
+
+        vertex.Position = glm::vec3(positions[i], positions[i + 1], positions[i + 2]);
+        vertex.Normal = glm::vec3(1.0f, 0.0f, 0.0f);
+        vertex.TexCoords = glm::vec2(textCoords[j], textCoords[j + 1]);
+
+        vertices.push_back(vertex);
+    }
+
+    std::vector<__Texture__> textures;
+    __Texture__ texture;
+    texture.path = "../resources/";
+//    texture.filename = "grass.png";
+    texture.filename = "blending_transparent_window.png";
+    textures.push_back(texture);
+
+    return new Mesh(vertices, inidices, textures);
+}
+
+void ObjectFactory::addSkyBox(std::string directory)
+{
+    ;
 }
 
 Mesh* ObjectFactory::getPlaneMesh() {
-    Mesh *mesh = new Mesh();
-
     std::vector<GLfloat> position = {
-         0.0f,  0.0f,  0.0f, // 0
-         0.5f,  0.0f,  0.0f, // 1
+         5.0f, -0.5f,  5.0f, // 0
+        -5.0f, -0.5f,  5.0f, // 1
+        -5.0f, -0.5f, -5.0f, // 2
 
-         0.0f,  0.5f,  0.0f, // 2
-
-        -0.5f,  0.0f,  0.0f, // 3
-         0.0f, -0.5f,  0.0f, // 4
+         5.0f, -0.5f,  5.0f, // 3
+        -5.0f, -0.5f, -5.0f, // 4
+         5.0f, -0.5f, -5.0f  // 5
     };
-
-    std::vector<GLuint> index = {
-        0, 1, 2,
-        0, 2, 3,
-        0, 3, 4,
-        0, 4, 1,
+    std::vector<GLuint> indices = {
+        1, 2, 0,
+        4, 2, 3,
+        5, 4, 3,
+        2, 5, 1
     };
-
     std::vector<GLfloat> textCoord = {
-        // Cara z = 1
+        2.0f, 0.0f,
         0.0f, 0.0f,
-        1.0f, 0.0f,
-        0.0f, 1.0f,
-        1.0f, 1.0f,
+        0.0f, 2.0f,
 
-        // Cara z = -1
-        0.0f, 1.0f,
-        1.0f, 1.0f,
-        0.0f, 0.0f,
-        1.0f, 0.0f,
+        2.0f, 0.0f,
+        0.0f, 2.0f,
+        2.0f, 2.0f
     };
-
     std::vector<GLfloat> normal = {
         0.0f,   1.0f,   0.0f,
         0.0f,   1.0f,   0.0f,
-
         0.0f,   1.0f,   0.0f,
         0.0f,   1.0f,   0.0f,
+        0.0f,   1.0f,   0.0f
     };
-    return mesh;
+
+    std::vector<Vertex> vertices;
+    for (unsigned i = 0, j = 0; i < position.size(); i += 3, j += 2) {
+        Vertex vertex;
+
+        vertex.Position = glm::vec3(position[i], position[i + 1], position[i + 2]);
+        vertex.Normal = glm::vec3(normal[i], normal[i + 1], normal[i + 2]);
+        vertex.TexCoords = glm::vec2(textCoord[j], textCoord[j + 1]);
+        vertices.push_back(vertex);
+    }
+    std::vector<__Texture__> textures;
+
+    __Texture__ texture;
+    texture.path = "../resources/";
+    texture.filename = "marble.png";
+    textures.push_back(texture);
+
+    return new Mesh(vertices, indices, textures);
 }
 
 
@@ -170,24 +246,22 @@ Mesh* ObjectFactory::getCubeMesh() {
     texture.filename = "container2_specular.png";
     textures.push_back(texture);
 
-    for (unsigned i = 0, j = 0; i < cubeVertexPos.size(); i += 3, j += 2) {
+    for (unsigned i = 0; i < __cubeVertices.size(); i += 5) {
         Vertex vertex;
 
         glm::vec3 normal;
         glm::vec3 position;
         glm::vec2 text;
 
-        position.x = cubeVertexPos[i];
+        position.x = __cubeVertices[i];
+        position.y = __cubeVertices[i + 1];
+        position.z = __cubeVertices[i + 2];
+        text.x = __cubeVertices[i + 3];
+        text.y = __cubeVertices[i + 4];
+
         normal.x = cubeVertexNormal[i];
-
-        position.y = cubeVertexPos[i + 1];
         normal.y = cubeVertexNormal[i + 1];
-
         normal.z = cubeVertexNormal[i + 2];
-        position.z = cubeVertexPos[i + 2];
-
-        text.x = cubeVertexTexCoord[j];
-        text.y = cubeVertexTexCoord[j + 1];
 
         vertex.Normal = normal;
         vertex.Position = position;

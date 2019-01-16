@@ -119,7 +119,7 @@ void GameObject::rotate(glm::vec3 vec3, float angle) {
 
 std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
     os << gameObject._name << std::endl;
-      Component *component = gameObject.getComponent(TypeComp::TRANSFORM);
+    Component *component = gameObject.getComponent(TypeComp::TRANSFORM);
     if (Transform *tf = dynamic_cast<Transform*>(component)) {
         os << (*tf);
     }

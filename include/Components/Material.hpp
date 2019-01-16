@@ -34,7 +34,9 @@ public:
     void setLigth(Light *ligth);
     void eraseLigth(CompLigth type);
 
-    void setColor(glm::vec3);
+    void setTransparent();
+    void setOpaque();
+    bool isTransparent();
 
     friend std::ostream& operator<<(std::ostream& os, const Material& material);
 
@@ -44,6 +46,8 @@ private:
     Program *_program;
     Model *_model;
     std::vector<Light*> _ligths;
+
+    bool _tranparent;
 
 };
 

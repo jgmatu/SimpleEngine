@@ -50,13 +50,12 @@ struct Spot {
     float quadratic;
 };
 
+#define NR_POINT_LIGHTS 4
+
 uniform Material material;
 
 uniform Directional directional;
-
-#define NR_POINT_LIGHTS 4
 uniform Point points[NR_POINT_LIGHTS];
-
 uniform Spot spot;
 
 // Viewer position...
@@ -73,6 +72,7 @@ out vec4 fragColor;
 vec3 calcPointLight(Point light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 calcDirLight(Directional light, vec3 normal, vec3 viewDir);
 vec3 calcSpotLight(Spot spot, vec3 norm, vec3 fragPos, vec3 viewDir);
+float linearizeDepth(float depth);
 
 void main()
 {
@@ -89,8 +89,15 @@ void main()
     // phase 3: Spot light
     result += calcSpotLight(spot, norm, fragPos, viewDir);
 
-    fragColor = vec4(result, 1.0);
-//      fragColor = texture(material.texture_diffuse0, texCoord);
+//    fragColor = vec4(result, 1.0);
+//    float depth = linearizeDepth(gl_FragCoord.z);
+//    fragColor = vec4(result, 1.0);
+
+    vec4 texColor = texture(material.texture_diffuse0, texCoord);
+    if(texColor.a < 0.01) {
+        discard;
+    }
+    fragColor = texColor;
 }
 
 
@@ -99,10 +106,10 @@ vec3 calcDirLight(Directional light, vec3 normal, vec3 viewDir)
     // Directional...
     vec3 lightDir = normalize(-light.direction);
 
-    // diffuse shading
+    // Diffuse shading...
     float diff = max(dot(normal, lightDir), 0.0);
 
-    // specular shading
+    // Specular shading...
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
@@ -174,4 +181,13 @@ vec3 calcSpotLight(Spot spot, vec3 norm, vec3 fragPos, vec3 viewDir)
     specular = ambient * attenuation;
 
     return ambient + diffuse + specular;
+}
+
+float linearizeDepth(float depth)
+{
+    float near = 0.1;
+    float far  = 100.0;
+
+    float z = depth * 2.0 - 1.0; // back to NDC
+    return (2.0 * near * far) / (far + near - z * (far - near));
 }

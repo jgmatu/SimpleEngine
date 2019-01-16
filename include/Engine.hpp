@@ -37,13 +37,14 @@ public:
 private:
 
     void initWindow();
+    void genFrameBuffer();
 
     GLFWwindow *_window;
 
     std::vector<System*> _systems;
     Scene *_scene;
     Camera *_camera;
-    
+
 };
 
 #endif // ENGINE_H

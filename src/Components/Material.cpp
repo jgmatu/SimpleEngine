@@ -1,6 +1,8 @@
 #include "Components/Material.hpp"
 
-Material::Material() {
+Material::Material() :
+    _tranparent(false)
+{
     this->_type = TypeComp::MATERIAL;
     this->_uniforms = new Uniforms();
 
@@ -88,8 +90,19 @@ void Material::setProgram(Program *program) {
     _program = program;
 }
 
-void Material::setColor(glm::vec3 color) {
-//    _uniforms->setUniformVec3("color", color);
+void Material::setTransparent()
+{
+    this->_tranparent = true;
+}
+
+void Material::setOpaque()
+{
+    this->_tranparent = false;
+}
+
+bool Material::isTransparent()
+{
+    return this->_tranparent;
 }
 
 std::ostream& operator<<(std::ostream& os, const Material& material) {

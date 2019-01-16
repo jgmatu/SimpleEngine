@@ -17,6 +17,7 @@ class Model {
 public:
 
     Model(std::string path);
+    Model(Mesh *mesh);
     Model();
     ~Model();
 

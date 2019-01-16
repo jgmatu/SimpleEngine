@@ -8,6 +8,12 @@ Model::Model() :
     ;
 }
 
+Model::Model(Mesh *mesh) :
+    Model::Model()
+{
+    _meshes.push_back(mesh);
+}
+
 Model::Model(std::string path) :
     Model::Model()
 {
@@ -104,7 +110,7 @@ Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene)
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
     return new Mesh(vertices, indices, textures);
-    }
+}
 
 std::vector<__Texture__> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
 {

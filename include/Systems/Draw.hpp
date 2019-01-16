@@ -24,9 +24,9 @@ public:
     void sendMessage (Message *msg);
 
 private:
-
-//    Uniforms *_uniforms;
-//    Program *_program;
+    void draw(Camera *camera, GameObject *gameObject);
+    
+    std::vector<Camera*> updateCameras(Scene *scene);
 
 };
 
