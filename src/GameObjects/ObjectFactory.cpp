@@ -27,121 +27,57 @@ GameObject* ObjectFactory::getGameObject(unsigned id)
     return _GameObjects[id];
 }
 
-std::vector<Light*> getLigthPoints()
+std::vector<GameObject*> ObjectFactory::getGameObjects()
 {
-    std::vector<glm::vec3> point_positions = {
-        glm::vec3( 2.0,  2.0, -1.0),
-        glm::vec3(-2.0,  1.0,  1.0),
-        glm::vec3(-1.0,  2.0,  3.0),
-        glm::vec3( 0.0, -2.0,  0.0)
-    };
-
-    std::vector<Light*> points;
-    for (unsigned i = 0; i < point_positions.size(); ++i) {
-        points.push_back(new Point(i, point_positions[i]));
-    }
-    return points;
-}
-
-void ObjectFactory::addSceneLigths(Material *material)
-{
-    std::vector<Light*> points = getLigthPoints();
-
-    for (unsigned i = 0; i < points.size(); ++i) {
-        material->setLigth(points[i]);
-    }
-    material->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
-    material->setLigth(new Spot(glm::vec3(1.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 1.0), 2.5, 7.5));
-    material->setLigth(new Directional(glm::vec3(0.0, -1.0, 0.0)));
+    return _GameObjects;
 }
 
 void ObjectFactory::generateDemoObjects()
 {
-    Program *program = new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl");
-
     std::vector<glm::vec3> cube_positions = {
-        glm::vec3(2.0,  2.0, -2.0),
-        glm::vec3(-2.0, 1.0, 0.0),
+        glm::vec3(-5.0, 0.0, 0.0),
+        glm::vec3(-3.0, 1.0, -1.0),
         glm::vec3(-1.0,  2.0, 2.0),
         glm::vec3(0.0, -2.0, -1.0),
         glm::vec3(1.0, 1.0, -1.0)
     };
 
-    for (unsigned i = 0; i < 2; ++i) {
-        Material *cube_material = new Material(new Model(getCubeMesh()));
-        cube_material->setProgram(program);
-        this->addSceneLigths(cube_material);
-
-        GameObject *cube = new GameObject(i + 1, "*** CUBE ***");
-        cube->addComponent(cube_material);
-
-        _GameObjects.push_back(cube);
+    std::vector<Movement*> _moves;
+    for (unsigned i = 0; i < cube_positions.size(); ++i) {
+        _moves.push_back(new Translate(cube_positions[i]));
     }
 
-//    Material *lamp_mat = new Material(cube_mesh);
-
-//    lamp_mat->setProgram(program);
-
-//    lamp_mat->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
-//    for (unsigned i = 0; i < points.size(); ++i) {
-//        lamp_mat->setLigth(points[i]);
-//    }
-//    lamp_mat->setLigth(new Directional(direction));
-
-//    for (unsigned i = 0; i < points.size(); ++i) {
-//        GameObject *lamp = new GameObject(9 + i, "*** LAMP *** ");
-//        lamp->addComponent(lamp_mat);
-
-//        _GameObjects.push_back(lamp);
+//    for (unsigned i = 0; i < _moves.size(); ++i) {
+//        GameObject *cube = new GameObject(i + 1, "*** CUBE ***");
+//        cube->addComponent(new Material(new Model(getCubeMesh()), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
+//        cube->setMove(_moves[i]);
+//        _GameObjects.push_back(cube);
 //    }
 
-    Program *grass_program = new Program("../glsl/grass_vs.glsl", "../glsl/grass_fs.glsl");
-    Material *grass = new Material(new Model(getPlantMesh()));
-    grass->setProgram(grass_program);
-    grass->setTransparent();
-    this->addSceneLigths(grass);
+    for (unsigned i = 0; i < _moves.size(); ++i) {
+        Material *grass = new Material(new Model(getPlantMesh()), new Program("../glsl/grass_vs.glsl", "../glsl/grass_fs.glsl"));
+        grass->setTransparent();
 
-    for (unsigned i = 0; i < 5; ++i) {
-        GameObject *grass_go = new GameObject(111 + i, "Grass");
+        GameObject *grass_go = new GameObject(10 + i, "**** GRASS **** ");
         grass_go->addComponent(grass);
+        grass_go->setMove(_moves[i]);
         _GameObjects.push_back(grass_go);
     }
 
-    Material *nanosuit = new Material(new Model("../models/nanosuit/nanosuit.obj"));
-    nanosuit->setProgram(program);
-    this->addSceneLigths(nanosuit);
-
-    GameObject *nanosuit_go = new GameObject(30, "Complex model");
-    nanosuit_go->addComponent(nanosuit);
-    _GameObjects.push_back(nanosuit_go);
-
-    Material *_floor = new Material(new Model(getPlaneMesh()));
-    _floor->setProgram(program);
-    this->addSceneLigths(_floor);
-
-    GameObject *_floor_go = new GameObject(0, "Floor model...");
-    _floor_go->addComponent(_floor);
+    GameObject *_floor_go = new GameObject(0, "*** FLOOR ***");
+    _floor_go->addComponent(new Material(new Model(getPlaneMesh()), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
+    _floor_go->setMove(new Translate(glm::vec3(0.0, 0.0, 0.0)));
     _GameObjects.push_back(_floor_go);
 
-/*
-    std::vector<Mesh*> meshes = getVerticesRenderBufferTexture();
-    for (unsigned i = 0; i < meshes.size() - 1; ++i) {
-        Material *material = new Material(new Model(meshes[i]));
-        material->setProgram(new Program("../glsl/5.1.vertexbuffers.glsl", "../glsl/5.1.framebuffers.glsl"));
-
-        GameObject *gameObject = new GameObject(i, "example");
-        gameObject->addComponent(material);
-        _GameObjects.push_back(gameObject);
-    }
-
-    Material *material = new Material(new Model(meshes[meshes.size() - 1]));
-    material->setProgram(new Program("../glsl/5.1.vertexbuffers_screen.glsl", "../glsl/5.1.framebuffers_screen.glsl"));
-    GameObject *gameObject = new GameObject(20, "screen");
-    gameObject->addComponent(material);
-    _GameObjects.push_back(gameObject);
-*/
+//    Material *nanosuit = new Material(new Model("../models/nanosuit/nanosuit.obj"), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
+//    GameObject *nanosuit_go = new GameObject(30, "Complex model");
+//    nanosuit_go->addComponent(nanosuit);
+//    nanosuit_go->setMove(new Scale(glm::vec3(1.0, 1.0, 1.0)));
+//    _GameObjects.push_back(nanosuit_go);
 
 }
+
+
 
 Mesh* ObjectFactory::getMeshFromVerticesPosTex(std::vector<float> verPosTex, __Texture__ texture)
 {
@@ -285,8 +221,8 @@ Mesh* ObjectFactory::getPlantMesh() {
     std::vector<__Texture__> textures;
     __Texture__ texture;
     texture.path = "../resources/";
-//    texture.filename = "grass.png";
-    texture.filename = "blending_transparent_window.png";
+    texture.filename = "grass.png";
+//    texture.filename = "blending_transparent_window.png";
     textures.push_back(texture);
 
     return new Mesh(vertices, inidices, textures);

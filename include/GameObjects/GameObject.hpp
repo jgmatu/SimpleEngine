@@ -17,6 +17,10 @@
 #include "Components/Material.hpp"
 #include "Constants/TypeComp.hpp"
 
+#include "Operations/Movement.hpp"
+
+class Camera;
+
 class GameObject {
 
     friend class Update;
@@ -25,33 +29,44 @@ class GameObject {
 public:
 
     GameObject();
-    GameObject(unsigned id, std::string _name);
+    GameObject(int id, std::string _name);
     virtual ~GameObject();
 
     Component* getComponent(TypeComp type) const;
     void addComponent(Component *component);
     bool hasComponent(TypeComp type);
 
-    GameObject* getGameObject(unsigned id);
-    bool hasGameObject(unsigned id);
+    GameObject* getGameObject(int id);
+    bool hasGameObject(int id);
     void addGameObject(GameObject *gameObject);
 
-    std::vector<unsigned> getKeysObjects();
+    void init();
+    void draw(Camera *camera);
+    void draw(Camera *active_camera, std::map<float, std::vector<GameObject*>>& sorted);
+    void update();
 
-    void scale(glm::vec3 vec3);
-    void translate(glm::vec3 vec3);
-    void rotate(glm::vec3 vec3, glm::quat quat);
-    void rotate(glm::vec3 vec3, float angle);
+    void setMoves(std::vector<Movement*> moves);
+    void setMove(Movement *move);
+
+    void addLigths(std::vector<Light*> ligths);
+    void addGameObjects(std::vector<GameObject*> objects) {
+        this->_gameObjects = objects;
+    }
 
     friend std::ostream& operator<<(std::ostream&, const GameObject& gameObject);
 
 protected:
 
-    unsigned _id;
+    int _id;
     std::string _name;
 
     std::vector<Component*> _components;
     std::vector<GameObject*> _gameObjects;
+
+private:
+
+    void addTransparentQueue(std::map<float, std::vector<GameObject*>>& sorted, float distance);
+
 };
 
 #endif

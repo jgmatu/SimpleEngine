@@ -3,7 +3,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include "GameObjects/GameObject.hpp"
+#include "Components/Transform.hpp"
 
 #include <iostream>
 #include <string>
@@ -15,7 +15,7 @@ class Camera : public Component {
 
 public:
 
-    Camera(GameObject *gameObject);
+    Camera();
     ~Camera();
 
     // Este método SOLO se llama una vez la primera vez que se crea el componente.
@@ -27,9 +27,7 @@ public:
     // Método que realiza transformaciones, cálculos de cosas.
     void update();
 
-    void setGameObject(GameObject *gameObject) {
-        this->_gameObject = gameObject;
-    };
+    void tracker(Transform *tf);
 
     friend std::ostream& operator<<(std::ostream& os, const Camera& camera);
 
@@ -37,9 +35,6 @@ public:
     glm::mat4 _projection;
 
 private:
-
-    GameObject *_gameObject; // La camara está asociado a un Game object de la escena
-                             // ya sea un objeto o la raiz de la escena...
 
     float near, far;
     const float aspectRatio = 4.0f / 3.0f;

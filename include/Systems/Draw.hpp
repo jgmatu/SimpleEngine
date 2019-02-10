@@ -23,11 +23,6 @@ public:
     void update(float dt, Scene *scene);
     void sendMessage (Message *msg);
 
-private:
-    void draw(Camera *camera, GameObject *gameObject);
-    
-    std::vector<Camera*> updateCameras(Scene *scene);
-
 };
 
 #endif

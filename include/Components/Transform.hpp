@@ -12,7 +12,8 @@
 #include <glm/ext.hpp>
 
 #include "Components/Component.hpp"
-#include "Operations/Operation.hpp"
+
+#include "Operations/Movement.hpp"
 #include "Operations/Rotate.hpp"
 #include "Operations/Scale.hpp"
 #include "Operations/Translate.hpp"
@@ -33,15 +34,12 @@ public:
     void rotate(glm::vec3 vec3, glm::quat quad);
     void rotate(glm::vec3 vec3, float angle);
 
-    glm::vec3 position();
+    glm::vec3 position() const;
 
     friend std::ostream& operator<<(std::ostream&, const Transform& tf);
 
+    std::vector<Movement*> _moves;
     glm::mat4 _gModel, _model;
-
-private:
-
-    std::vector<Operation*> _operations;
 
 };
 

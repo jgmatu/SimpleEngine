@@ -1,9 +1,9 @@
 #ifndef OP_SCALE_H
 #define OP_SCALE_H
 
-#include "Operation.hpp"
+#include "Movement.hpp"
 
-class Scale : public Operation {
+class Scale : public Movement {
 
 public:
 
@@ -17,6 +17,11 @@ public:
 
     glm::mat4 apply() {
         return glm::scale(this->_scale);
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Scale &scale) {
+        os << "*** Scale *** " << '\n';
+        return os;
     }
 
 private:

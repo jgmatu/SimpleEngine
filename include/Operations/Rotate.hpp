@@ -1,9 +1,9 @@
 #ifndef OP_ROTATE_H
 #define OP_ROTATE_H
 
-#include "Operation.hpp"
+#include "Movement.hpp"
 
-class Rotate : public Operation {
+class Rotate : public Movement {
 
 public:
 
@@ -24,6 +24,11 @@ public:
     glm::mat4 apply() {
         return glm::rotate(this->_angle, this->_axis);
     };
+
+    friend std::ostream& operator<<(std::ostream& os, const Rotate &rotate) {
+        os << "*** Rotate *** " << '\n';
+        return os;
+    }
 
 private:
 

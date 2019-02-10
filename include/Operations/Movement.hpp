@@ -5,13 +5,18 @@
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-class Operation {
+
+class Movement {
 
 public:
 
-    virtual ~Operation() {};
+    virtual ~Movement() {};
     virtual glm::mat4 apply() = 0;
 
+    friend std::ostream& operator<<(std::ostream& os, const Movement &move) {
+        os << " *** Move ***" << std::endl;
+        return os;
+    }
 };
 
 #endif

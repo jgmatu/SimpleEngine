@@ -9,6 +9,7 @@
 
 #include "Components/Component.hpp"
 #include "Components/Light.hpp"
+#include "Components/Camera.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -18,12 +19,15 @@ class Material : public Component {
 public:
 
     Material();
-    Material(Model *model);
+    Material(Model *model, Program *program);
     ~Material();
 
     void start();
     void awakeStart();
     void update();
+    void addLigths(std::vector<Light*> ligths);
+
+    void setView(Camera *camera);
 
     void setParameter(std::string, glm::vec3);
     void setParameter(std::string, glm::mat4);
@@ -31,8 +35,6 @@ public:
     void setParameter(std::string, float);
 
     void setProgram(Program *program);
-    void setLigth(Light *ligth);
-    void eraseLigth(CompLigth type);
 
     void setTransparent();
     void setOpaque();
@@ -45,7 +47,6 @@ private:
     Uniforms *_uniforms;
     Program *_program;
     Model *_model;
-    std::vector<Light*> _ligths;
 
     bool _tranparent;
 

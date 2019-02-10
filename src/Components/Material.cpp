@@ -6,13 +6,15 @@ Material::Material() :
     this->_type = TypeComp::MATERIAL;
     this->_uniforms = new Uniforms();
 
+    this->_model = nullptr;
     this->_program = nullptr;
 }
 
-Material::Material(Model *model) :
+Material::Material(Model *model, Program *program) :
     Material::Material()
 {
     this->_model = model;
+    this->_program = program;
 }
 
 Material::~Material()
@@ -29,18 +31,19 @@ void Material::start() {
     }
 }
 
+void Material::addLigths(std::vector<Light*> ligths)
+{
+    for (unsigned i = 0; i < ligths.size(); ++i) {
+        ligths[i]->setParameters(_uniforms);
+    }
+}
+
 void Material::awakeStart() {
     if (_model && _program && _uniforms) {
-
-        for (unsigned i = 0; i < _ligths.size(); ++i) {
-            _ligths[i]->setParameters(_uniforms);
-        }
-
-        _program->setUniforms(_uniforms);
         _program->render();
+        _program->setUniforms(_uniforms);
         _model->render(_program);
         _program->clearUniforms(_uniforms);
-//        _program->cleanup();
     } else {
         throw;
     }
@@ -49,6 +52,13 @@ void Material::awakeStart() {
 void Material::update()
 {
     ;
+}
+
+void Material::setView(Camera *camera)
+{
+    this->setParameter("projection", camera->_projection); // Vertex...
+    this->setParameter("view", camera->_tf->_gModel);      // Vertex...
+    this->setParameter("viewPos", -camera->_tf->position()); // Fragments...
 }
 
 void Material::setParameter(std::string name, glm::vec3 val) {
@@ -65,28 +75,6 @@ void Material::setParameter(std::string name, int val) {
 
 void Material::setParameter(std::string name, float val) {
     _uniforms->setUniformFloat(name, val);
-}
-
-void Material::setLigth(Light *ligth)
-{
-    this->_ligths.push_back(ligth);
-}
-
-void Material::eraseLigth(CompLigth component)
-{
-    bool erase = false;
-
-    for (unsigned i = 0 ; i < _ligths.size() && !erase; ++i) {
-        if (_ligths[i]->_type == component) {
-            delete _ligths[i];
-            _ligths.erase (_ligths.begin() + i);
-            erase = true;
-        }
-    }
-}
-
-void Material::setProgram(Program *program) {
-    _program = program;
 }
 
 void Material::setTransparent()

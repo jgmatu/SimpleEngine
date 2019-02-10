@@ -13,7 +13,7 @@ Engine::Engine(ObjectFactory *objectFactory) :
     Engine::Engine()
 {
     for (unsigned i = 0; i < objectFactory->size(); ++i) {
-        this->add(objectFactory->getGameObject(i));
+        this->_scene->addGameObjects(objectFactory->getGameObjects());
     }
     _sceneEvent = this->_scene;
     _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
@@ -99,9 +99,6 @@ void Engine::initWindow() {
     // Perfomance Culling draw...
 //    glEnable(GL_CULL_FACE);
 //    glCullFace(GL_BACK);
-
-//    this->genRenderBuffer();
-//    this->genFrameBuffer();
 }
 
 void Engine::init() {
@@ -120,44 +117,8 @@ void Engine::init() {
     }
 }
 
-void Engine::genRenderBuffer()
-{
-    glGenRenderbuffers(1, &_RB0);
-    glBindRenderbuffer(GL_RENDERBUFFER, _RB0);
-
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _RB0);
-}
-
-void Engine::genFrameBuffer()
-{
-    glGenFramebuffers(1, &_FB0);
-    glBindFramebuffer(GL_FRAMEBUFFER, _FB0);
-
-    glGenTextures(1, &_texture);
-    glBindTexture(GL_TEXTURE_2D, _texture);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _texture, 0);
-    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        std::cerr << "Error bindinig new framebuffer...." << '\n';
-    }
-    glDeleteFramebuffers(1, &_FB0);
-}
-
 void Engine::add(System *sys) {
     _systems.push_back(sys);
-}
-
-void Engine::add(GameObject *gameObject) {
-    _scene->addGameObject(gameObject);
 }
 
 void Engine::update(float dt) {
@@ -167,88 +128,13 @@ void Engine::update(float dt) {
 }
 
 void Engine::mainLoop() {
-    std::vector<glm::vec3> vegetation_position = {
-        glm::vec3(-1.5f,  0.0f, -0.48f),
-        glm::vec3( 1.5f,  0.0f,  0.51f),
-        glm::vec3( 0.0f,  0.0f,  0.7f),
-        glm::vec3(-0.3f,  0.0f, -2.3f),
-        glm::vec3( 0.5f,  0.0f, -0.6f)
-    };
-
-    std::vector<GameObject*> cubes(2);
-    for (unsigned i = 0; i < 2; ++i) {
-        cubes[i] = _scene->getGameObject(i + 1);
-    }
-    _scene->_cameras[0]->setGameObject(_scene);
-
-    std::vector<glm::vec3> cube_positions = {
-        glm::vec3(-1.0f,  0.0f, -0.99f),
-        glm::vec3( 2.0f,  0.0f,  0.00f)
-    };
-
-    GameObject *nanosuit = _scene->getGameObject(30);
-    _scene->_cameras[1]->setGameObject(nanosuit);
-//    GameObject *_floor = _scene->getGameObject(0);
-
-    std::vector<GameObject*> vegetation(vegetation_position.size());
-    for (unsigned i = 0; i < vegetation.size(); ++i) {
-        vegetation[i] = _scene->getGameObject(111 + i);
-    }
-
     do {
-//        float angle = std::fmod(glfwGetTime(), 2.0f * M_PI);
         glfwPollEvents();
-
-//        glBindFramebuffer(GL_FRAMEBUFFER, _FB0);
-//        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
-//        glEnable(GL_DEPTH_TEST);
-
-        nanosuit->scale(glm::vec3(0.1, 0.1, 0.1));
-        nanosuit->rotate(glm::vec3(0.0f, 1.0f, 0.0f), 0.0f);
-        nanosuit->translate(glm::vec3(8.0, -12.0, -10.0));
-
-        for (unsigned i = 0; i < vegetation_position.size(); ++i) {
-            vegetation[i]->translate(vegetation_position[i]);
-        }
-        for (unsigned i = 0; i < cubes.size(); ++i) {
-            cubes[i]->translate(cube_positions[i]);
-        }
-        // second pass
-//        glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
-//        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-//        glClear(GL_COLOR_BUFFER_BIT);
-
-//        glBindVertexArray(13);
-//        glDisable(GL_DEPTH_TEST);
-//        glBindTexture(GL_TEXTURE_2D, 13);
-//        glDrawArrays(GL_TRIANGLES, 0, 6);
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         this->update(0); // Draw Scene...
         glfwSwapBuffers(_window); // Swap the color buffers.
+
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
-//        glm::vec3 lightPos = glm::vec3(0, 0, 10.0);
-
-//        for (unsigned i = 0; i < points.size(); ++i) {
-//            points[i]->translate(positions[i]);
-//            points[i]->scale(glm::vec3(0.05, 0.05, 0.05));
-//        }
-
-//        for (unsigned i = 0; i < 5; ++i) {
-//            Component *component = cubes[i]->getComponent(TypeComp::MATERIAL);
-
-//            if (Material *material = dynamic_cast<Material*>(component)) {
-//                material->eraseLigth(CompLigth::SCENE);
-//                material->setLigth(new LightScene(lightPos));
-//                glm::vec3 lightColor;
-//                lightColor.x = sin(glfwGetTime() * 2.0f);
-//                lightColor.y = sin(glfwGetTime() * 0.7f);
-//                lightColor.z = sin(glfwGetTime() * 1.3f);
-//                material->setColor(lightColor);
-//            }
-//        }
     } while(!glfwWindowShouldClose(_window));
     glfwTerminate();
 }

@@ -1,11 +1,12 @@
 #include "Components/Camera.hpp"
 
-Camera::Camera(GameObject *gameObject) :
+Camera::Camera() :
     _projection(1)
 {
-    this->_gameObject = gameObject;
     this->_tf = new Transform();
+
     this->_projection = glm::perspective(glm::radians(60.0f), aspectRatio, 0.1f, 100.0f);
+    this->_tf->_gModel = glm::translate(glm::vec3(0.0, 0.0, -10.0));
 }
 
 Camera::~Camera()
@@ -25,20 +26,18 @@ void Camera::awakeStart() {
 
 // Método que realiza transformaciones, cálculos de cosas.
 void Camera::update() {
-    Component *component = _gameObject->getComponent(TypeComp::TRANSFORM);
+    ;
+}
 
-    if (Transform *_tfGo = dynamic_cast<Transform*>(component)) {
-        this->_tf->_gModel = _tfGo->_gModel * this->_tf->_model;
-        this->_tf->_gModel = glm::inverse(this->_tf->_gModel);
-    }
+void Camera::tracker(Transform *tf) {
+    this->_tf->_gModel = tf->_gModel * this->_tf->_model;
+    this->_tf->_gModel = glm::inverse(this->_tf->_gModel);
 }
 
 std::ostream& operator<<(std::ostream& os, const Camera& camera) {
-    os << "*** Camera *** " << std::endl;
     os << "G_Model : " << '\n';
     os << glm::to_string(camera._tf->_gModel) << std::endl;
     os << "Model :" << '\n';
     os << glm::to_string(camera._projection) << std::endl;
-    os << "*** *** *** *** *** *** ***" << std::endl;
     return os;
 }

@@ -11,10 +11,10 @@
 #include <glm/ext.hpp>
 
 #include "GameObjects/GameObject.hpp"
-
 #include "Components/Camera.hpp"
 #include "Components/Material.hpp"
 #include "Components/Light.hpp"
+#include "Operations/Movement.hpp"
 
 #include "Model/Model.hpp"
 #include "Model/Mesh.hpp"
@@ -29,6 +29,8 @@ public:
     ~ObjectFactory();
 
     GameObject* getGameObject(unsigned id);
+    std::vector<GameObject*> getGameObjects();
+
     void addGameObject(GameObject *gameObject);
     unsigned size();
     void generateDemoObjects();

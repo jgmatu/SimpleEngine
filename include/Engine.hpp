@@ -31,7 +31,6 @@ public:
     void update(float dt);
     void mainLoop();
     void add(System *sys);
-    void add(GameObject *gameObject);
 
 private:
 
@@ -42,6 +41,7 @@ private:
     GLFWwindow *_window;
 
     std::vector<System*> _systems;
+
     Scene *_scene;
     Camera *_camera;
 
