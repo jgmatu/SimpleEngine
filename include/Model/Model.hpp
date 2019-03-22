@@ -18,6 +18,7 @@ public:
 
     Model(std::string path);
     Model(Mesh *mesh);
+
     Model();
     ~Model();
 
@@ -39,7 +40,6 @@ private:
     std::vector<__Texture__> _textures_loaded;
     std::string _directory;
 
-    friend class GameObject;
 };
 
 #endif

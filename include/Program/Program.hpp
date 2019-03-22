@@ -32,6 +32,7 @@ struct ProgramException : public std::exception {
 
     const char* what () const throw () {
         char *data = (char*) malloc(1024 * sizeof(char));
+
         if (!data) {
             fprintf(stderr, "%s\n", strerror(errno));
         }

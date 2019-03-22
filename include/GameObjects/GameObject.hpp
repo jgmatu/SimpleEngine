@@ -66,6 +66,7 @@ protected:
 private:
 
     void addTransparentQueue(std::map<float, std::vector<GameObject*>>& sorted, float distance);
+    void updateCamera();
 
 };
 

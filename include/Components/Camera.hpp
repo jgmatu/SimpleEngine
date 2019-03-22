@@ -1,3 +1,4 @@
+
 #ifndef CAMERA_H
 #define CAMERA_H
 
@@ -27,11 +28,9 @@ public:
     // Método que realiza transformaciones, cálculos de cosas.
     void update();
 
-    void tracker(Transform *tf);
-
     friend std::ostream& operator<<(std::ostream& os, const Camera& camera);
 
-    Transform *_tf;
+    Transform *_view;
     glm::mat4 _projection;
 
 private:

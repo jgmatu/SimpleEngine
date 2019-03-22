@@ -39,15 +39,8 @@ private:
     void genRenderBuffer();
 
     GLFWwindow *_window;
-
     std::vector<System*> _systems;
-
     Scene *_scene;
-    Camera *_camera;
-
-    GLuint _FB0;
-    GLuint _RB0;
-    GLuint _texture;
 };
 
 #endif // ENGINE_H

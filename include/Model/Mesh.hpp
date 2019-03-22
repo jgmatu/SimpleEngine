@@ -32,14 +32,16 @@ public:
         char *msg = (char *) malloc(sizeof(char) * 1024);
 
         if (!msg) {
-            fprintf(stderr, "Mesh alloc error : %s\n", strerror(errno));
+            fprintf(stderr, "Mesh malloc error : %s\n", strerror(errno));
             return "";
         }
         sprintf(msg, "Mesh error : %s\n", _msg.c_str());
         return msg;
     }
+
 private:
     std::string _msg;
+
 };
 
 struct Vertex {

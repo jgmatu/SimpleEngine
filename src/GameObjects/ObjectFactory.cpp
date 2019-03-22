@@ -34,50 +34,85 @@ std::vector<GameObject*> ObjectFactory::getGameObjects()
 
 void ObjectFactory::generateDemoObjects()
 {
-    std::vector<glm::vec3> cube_positions = {
-        glm::vec3(-5.0, 0.0, 0.0),
-        glm::vec3(-3.0, 1.0, -1.0),
-        glm::vec3(-1.0,  2.0, 2.0),
-        glm::vec3(0.0, -2.0, -1.0),
-        glm::vec3(1.0, 1.0, -1.0)
-    };
+    // this->simulation1();
+    this->solarSystem();
+}
 
+void ObjectFactory::solarSystem() {
+    GameObject *sun = new GameObject(0, "*** SUN ***");
+
+    sun->setMove(new Translate(glm::vec3(0.0, 0.0, 0.0)));
+    sun->addComponent(new Material(new Model(getSphereMesh("sun.png")), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
+
+    GameObject *earth = new GameObject(0, "*** EARTH ***");
+    earth->setMove(new Translate(glm::vec3(-5.0, 0.0, 0.0)));
+    earth->setMove(new Rotate(M_PI / 4.0f, glm::vec3(0.0, -1.0, 0.0)));
+    earth->setMove(new Scale(glm::vec3(0.5, 0.5, 0.5)));
+    earth->addComponent(new Material(new Model(getSphereMesh("earth_diffuse.jpg")), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
+    earth->addComponent(new Camera());
+
+    GameObject *mars = new GameObject(0, "*** MARS ***");
+    mars->setMove(new Translate(glm::vec3(5.0, 0.0, 0.0)));
+    mars->setMove(new Rotate(M_PI / 4.0f, glm::vec3(0.0, -1.0, 0.0)));
+    mars->setMove(new Scale(glm::vec3(0.5, 0.5, 0.5)));
+    mars->addComponent(new Material(new Model(getSphereMesh("mars.png")), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
+    mars->addComponent(new Camera());
+
+    GameObject *moon = new GameObject(0, "*** MOON ***");
+    moon->setMove(new Translate(glm::vec3(2.0, 0.0, 0.0)));
+    moon->setMove(new Rotate(M_PI / 4.0f, glm::vec3(0.0, -1.0, 0.0)));
+    moon->setMove(new Scale(glm::vec3(0.25, 0.25, 0.25)));
+    moon->addComponent(new Material(new Model(getSphereMesh("moon.png")), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
+    moon->addComponent(new Camera());
+
+    earth->addGameObject(moon);
+    _GameObjects.push_back(mars);
+    _GameObjects.push_back(earth);
+    _GameObjects.push_back(sun);
+}
+
+void ObjectFactory::simulation1() {
+    std::vector<glm::vec3> cube_positions = {
+        glm::vec3(-5.0 ,0.0, 0.0),
+        glm::vec3(-3.0 ,1.0, -1.0),
+        glm::vec3(-1.0 ,2.0, 2.0),
+        glm::vec3(0.0  ,-2.0, -1.0),
+        glm::vec3(1.0  ,1.0, -1.0)
+    };
     std::vector<Movement*> _moves;
     for (unsigned i = 0; i < cube_positions.size(); ++i) {
         _moves.push_back(new Translate(cube_positions[i]));
     }
-
-//    for (unsigned i = 0; i < _moves.size(); ++i) {
-//        GameObject *cube = new GameObject(i + 1, "*** CUBE ***");
-//        cube->addComponent(new Material(new Model(getCubeMesh()), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
-//        cube->setMove(_moves[i]);
-//        _GameObjects.push_back(cube);
-//    }
+    for (unsigned i = 0; i < _moves.size(); ++i) {
+        GameObject *cube = new GameObject(i + 1, "*** CUBE ***");
+        cube->addComponent(new Material(new Model(getCubeMesh()), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
+        cube->setMove(_moves[i]);
+        cube->addComponent(new Camera());
+        _GameObjects.push_back(cube);
+    }
 
     for (unsigned i = 0; i < _moves.size(); ++i) {
         Material *grass = new Material(new Model(getPlantMesh()), new Program("../glsl/grass_vs.glsl", "../glsl/grass_fs.glsl"));
         grass->setTransparent();
 
-        GameObject *grass_go = new GameObject(10 + i, "**** GRASS **** ");
+        GameObject *grass_go = new GameObject(i + 1, "**** GRASS **** ");
         grass_go->addComponent(grass);
         grass_go->setMove(_moves[i]);
         _GameObjects.push_back(grass_go);
     }
-
     GameObject *_floor_go = new GameObject(0, "*** FLOOR ***");
     _floor_go->addComponent(new Material(new Model(getPlaneMesh()), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
     _floor_go->setMove(new Translate(glm::vec3(0.0, 0.0, 0.0)));
     _GameObjects.push_back(_floor_go);
 
-//    Material *nanosuit = new Material(new Model("../models/nanosuit/nanosuit.obj"), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
-//    GameObject *nanosuit_go = new GameObject(30, "Complex model");
-//    nanosuit_go->addComponent(nanosuit);
-//    nanosuit_go->setMove(new Scale(glm::vec3(1.0, 1.0, 1.0)));
-//    _GameObjects.push_back(nanosuit_go);
+    Material *nanosuit = new Material(new Model("../models/nanosuit/nanosuit.obj"), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
+    GameObject *nanosuit_go = new GameObject(30, "Complex model");
+    nanosuit_go->addComponent(nanosuit);
+    nanosuit_go->setMove(new Scale(glm::vec3(0.15, 0.15, 0.15)));
+    nanosuit_go->setMove(new Translate(glm::vec3(20.0, 0.0, 0.0)));
+    _GameObjects.push_back(nanosuit_go);
 
 }
-
-
 
 Mesh* ObjectFactory::getMeshFromVerticesPosTex(std::vector<float> verPosTex, __Texture__ texture)
 {
@@ -150,7 +185,7 @@ std::vector<Mesh*> ObjectFactory::getVerticesRenderBufferTexture()
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
     std::vector<float> planeVertices = {
-        // positions          // texture Coords
+        // positions   // texture Coords
          5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
         -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
         -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
@@ -221,8 +256,8 @@ Mesh* ObjectFactory::getPlantMesh() {
     std::vector<__Texture__> textures;
     __Texture__ texture;
     texture.path = "../resources/";
-    texture.filename = "grass.png";
-//    texture.filename = "blending_transparent_window.png";
+    //texture.filename = "grass.png";
+    texture.filename = "blending_transparent_window.png";
     textures.push_back(texture);
 
     return new Mesh(vertices, inidices, textures);
@@ -320,7 +355,7 @@ Mesh* ObjectFactory::getCubeMesh() {
     return new Mesh(vertices, indices, textures);
 }
 
-Mesh* ObjectFactory::getSphereMesh() {
+Mesh* ObjectFactory::getSphereMesh(std::string filename) {
     int idx = 0;
 
     /* Statement Exercise ... */
@@ -329,7 +364,6 @@ Mesh* ObjectFactory::getSphereMesh() {
     // Buffers
     std::vector<GLfloat> posVertex;
     std::vector<GLfloat> normals;
-    std::vector<GLfloat> texCoords;
     std::vector<GLuint> indices;
 
     float heightSegments = 25.0f;
@@ -348,7 +382,7 @@ Mesh* ObjectFactory::getSphereMesh() {
                 float u = ix / width;
 
                 // Vertex. X.
-                vertex.x = -radius * cos( u * M_PI * 2.0f ) * sin( v * M_PI );
+                vertex.x = radius * cos( u * M_PI * 2.0f ) * sin( v * M_PI );
 
                 // Vertex. Y.
                 vertex.y = radius * cos( v * M_PI );
@@ -356,7 +390,7 @@ Mesh* ObjectFactory::getSphereMesh() {
                 // Vertex. Z.
                 vertex.z = radius * sin( u * M_PI * 2.0f ) * sin( v * M_PI );
 
-                GLfloat aux[] = {vertex.x, vertex.y, vertex.z};
+                GLfloat aux[] = {-vertex.x, -vertex.y, vertex.z};
                 posVertex.insert(posVertex.end(), aux, aux + 3);
 
                 // Normal.
@@ -368,14 +402,15 @@ Mesh* ObjectFactory::getSphereMesh() {
 
                 // TexCoord. Is good because draw the first texture...
                 double texCoord[] = {u, 1.0 - v};
-                texCoords.insert(texCoords.begin(), texCoord, texCoord + 2);
-                verticesRow.push_back( idx++ );
-                Vertex vertex;
 
+                Vertex vertex;
                 vertex.Position = glm::vec3(aux[0], aux[1], aux[2]);
-                vertex.Normal = normal;
                 vertex.TexCoords = glm::vec2(texCoord[0], texCoord[1]);
-                vertices.push_back(vertex);
+                vertex.Normal = normal;
+
+                vertices.insert(vertices.end(), vertex);
+
+                verticesRow.push_back( idx++ );
           }
           grid.push_back(verticesRow);
     }
@@ -392,11 +427,24 @@ Mesh* ObjectFactory::getSphereMesh() {
                 int aux[] = {a, b, d};
                 indices.insert(indices.end(), aux, aux + 3);
 
-                int bla[] = {b, c, d};
-                indices.insert(indices.end(), bla, bla + 3);
+                int aux2[] = {b, c, d};
+                indices.insert(indices.end(), aux2, aux2 + 3);
           }
     }
     std::vector<__Texture__> textures;
+
+    __Texture__ texture;
+
+    texture.type = "texture_diffuse";
+    texture.path = "../resources/";
+    texture.filename = filename;
+    textures.push_back(texture);
+
+//    texture.type = "texture_specular";
+//    texture.path = "../resources/";
+//    texture.filename = "container2_specular.png";
+//    textures.push_back(texture);
+
     return new Mesh(vertices, indices, textures);
 }
 

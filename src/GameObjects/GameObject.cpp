@@ -108,7 +108,7 @@ void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObj
         if (material->isTransparent()) {
             Component *component = getComponent(TypeComp::TRANSFORM);
             if (Transform *tf = dynamic_cast<Transform*>(component)) {
-                float distance = glm::length(-active_camera->_tf->position() - tf->position());
+                float distance = glm::length(-active_camera->_view->position() - tf->position());
                 this->addTransparentQueue(sorted, distance);
             }
         } else {
@@ -129,15 +129,14 @@ void GameObject::addTransparentQueue(std::map<float, std::vector<GameObject*>>& 
         aux.push_back(this);
         sorted[distance] = aux;
     } else {
-
         it->second.push_back(this);
     }
 }
 
+// Obtener la componente camara activa... Camara activa de todos los gameObject
+// de la escena... (Escena...) dibujar todos los gameObject respecto a la camara activa
+// de la escena...
 void GameObject::draw(Camera *camera) {
-    std::cout << "________________________ Draw Object ________________________________" << '\n';
-    std::cout << *this << '\n';
-
     Component *component = this->getComponent(TypeComp::MATERIAL);
 
     if (Material *material = dynamic_cast<Material*>(component)) {
@@ -151,17 +150,31 @@ void GameObject::draw(Camera *camera) {
 }
 
 void GameObject::update() {
+    this->updateCamera();
+
     Component *component = this->getComponent(TypeComp::TRANSFORM);
 
     if (Transform *tfRoot = dynamic_cast<Transform*>(component)) {
         for (unsigned i = 0; i < _gameObjects.size(); ++i) {
             component = _gameObjects[i]->getComponent(TypeComp::TRANSFORM);
-
             if (Transform *tfChild = dynamic_cast<Transform*>(component)) {
                 tfChild->update();
                 tfChild->_gModel = tfRoot->_gModel * tfChild->_model;
             }
             _gameObjects[i]->update();
+        }
+    }
+}
+
+void GameObject::updateCamera()
+{
+    Component *component = this->getComponent(TypeComp::CAMERA);
+
+    if (Camera *camera = dynamic_cast<Camera*>(component)) {
+        component = this->getComponent(TypeComp::TRANSFORM);
+        if (Transform *tf = dynamic_cast<Transform*>(component)) {
+            camera->_view->_gModel = tf->_gModel * camera->_view->_model;
+            camera->_view->_gModel = glm::inverse(camera->_view->_gModel);
         }
     }
 }

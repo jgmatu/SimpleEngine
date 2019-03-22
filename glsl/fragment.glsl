@@ -91,9 +91,6 @@ void main()
     // phase 3: Spot light
     result += calcSpotLight(spot, norm, fragPos, viewDir);
 
-//    float depth = linearizeDepth(gl_FragCoord.z);
-//    fragColor = vec4(result, 1.0);
-
     fragColor = vec4(result, 1.0);
 }
 
@@ -108,13 +105,14 @@ vec3 calcDirLight(Directional light, vec3 normal, vec3 viewDir)
 
     // Specular shading...
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64.0);
 
     vec3 ambient  = light.ambient * vec3(texture(material.texture_diffuse0, texCoord));
     vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.texture_diffuse0, texCoord));
     vec3 specular = light.specular * spec * vec3(texture(material.texture_specular0, texCoord));
 
     return ambient + diffuse + specular;
+//    return ambient + diffuse;
 }
 
 vec3 calcPointLight(Point light, vec3 normal, vec3 fragPos, vec3 viewDir)

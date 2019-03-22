@@ -3,6 +3,8 @@
 
 #include "Transform.hpp"
 #include "Constants/TypeComp.hpp"
+#include "Program/Program.hpp"
+#include "Program/Uniforms.hpp"
 
 class Light {
 

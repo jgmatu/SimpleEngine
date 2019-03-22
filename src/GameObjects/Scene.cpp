@@ -1,19 +1,15 @@
 #include "GameObjects/Scene.hpp"
 
 Scene::Scene() :
-    _cameras(MAX_CAMERAS)
+    _cameras()
 {
     this->_root = new GameObject();
-    for (unsigned i = 0; i < MAX_CAMERAS; ++i) {
-        this->_cameras[i] = new Camera();
 
-        // Tracking on root game Object... :/
-//        Component *component = this->_root->getComponent(TypeComp::TRANSFORM);
-//        if (Transform *tf = dynamic_cast<Transform*>(component)) {
-//            this->_cameras[i]->tracker(tf);
-//        }
-    }
-    addDefaultLigths();
+    Camera *main_camera = new Camera();
+    this->_root->addComponent(main_camera);
+    this->_cameras.push_back(main_camera);
+
+    this->addDefaultLigths();
     std::cout << "Create GameObject Scene" << '\n';
 }
 
@@ -24,7 +20,7 @@ Scene::Scene(unsigned id, std::string name) :
 }
 
 Scene::~Scene() {
-    for (unsigned i = 0; i < MAX_CAMERAS; ++i) {
+    for (unsigned i = 0; i < 3; ++i) {
         delete this->_cameras[i];
     }
 }
@@ -54,7 +50,7 @@ void Scene::addDefaultLigths()
     }
     this->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
     this->setLigth(new Spot(glm::vec3(1.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 1.0), 2.5, 7.5));
-    this->setLigth(new Directional(glm::vec3(0.0, -1.0, 0.0)));
+    this->setLigth(new Directional(glm::vec3(0.0, 0.0, 0.0)));
 }
 
 void Scene::setLigth(Light *ligth)
@@ -80,7 +76,7 @@ void Scene::init() {
 
 Camera* Scene::updateCameras()
 {
-    for (unsigned i = 0; i < this->MAX_CAMERAS; ++i) {
+    for (unsigned i = 0; i < this->_cameras.size(); ++i) {
         this->_cameras[i]->update();
     }
     return this->_cameras[this->_camera];
@@ -93,13 +89,15 @@ void Scene::draw() {
     _root->addLigths(_ligths);
     _root->draw(active_camera, sorted);
 
+    // Pintar los objetos ordenados, por transparencia...
     for(std::map<float, std::vector<GameObject*>>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) {
-        std::vector<GameObject*> v = it->second;
+        std::vector<GameObject*> vObjs = it->second;
 
-        for (unsigned i = 0; i < v.size(); ++i) {
-            v[i]->draw(active_camera);
+        for (unsigned i = 0; i < vObjs.size(); ++i) {
+            vObjs[i]->draw(active_camera);
         }
     }
+//    std::cout << "Active Camera : " << *active_camera << '\n';
 }
 
 

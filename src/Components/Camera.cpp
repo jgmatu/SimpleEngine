@@ -3,10 +3,10 @@
 Camera::Camera() :
     _projection(1)
 {
-    this->_tf = new Transform();
-
+    this->_type = TypeComp::CAMERA;
+    this->_view = new Transform();
     this->_projection = glm::perspective(glm::radians(60.0f), aspectRatio, 0.1f, 100.0f);
-    this->_tf->_gModel = glm::translate(glm::vec3(0.0, 0.0, -10.0));
+    this->_view->_gModel = glm::translate(glm::vec3(0.0, 0.0, -10.0));
 }
 
 Camera::~Camera()
@@ -29,14 +29,9 @@ void Camera::update() {
     ;
 }
 
-void Camera::tracker(Transform *tf) {
-    this->_tf->_gModel = tf->_gModel * this->_tf->_model;
-    this->_tf->_gModel = glm::inverse(this->_tf->_gModel);
-}
-
 std::ostream& operator<<(std::ostream& os, const Camera& camera) {
     os << "G_Model : " << '\n';
-    os << glm::to_string(camera._tf->_gModel) << std::endl;
+    os << glm::to_string(camera._view->_gModel) << std::endl;
     os << "Model :" << '\n';
     os << glm::to_string(camera._projection) << std::endl;
     return os;

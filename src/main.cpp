@@ -4,12 +4,14 @@
 #include "GameObjects/ObjectFactory.hpp"
 #include "Systems/Draw.hpp"
 #include "Systems/Update.hpp"
+#include "Systems/IO.hpp"
+
 #include "Engine.hpp"
 
 
 int main(int argc, char* argv[]) {
-    Engine *engine = nullptr;
     ObjectFactory *objectFactory = nullptr;
+    Engine *engine = nullptr;
 
     try {
         objectFactory = new ObjectFactory();
@@ -17,6 +19,7 @@ int main(int argc, char* argv[]) {
         engine = new Engine(objectFactory);
         engine->add(new Update());
         engine->add(new Draw());
+        engine->add(new IO());
         engine->init();
         engine->mainLoop();
     } catch (std::exception &ex) {

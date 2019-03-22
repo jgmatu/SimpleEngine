@@ -29,14 +29,19 @@ public:
     void eraseLigth(CompLigth type);
 
     void addGameObjects(std::vector<GameObject*> objects) {
+        for (unsigned i = 0; i < objects.size(); ++i) {
+            Component *component = objects[i]->getComponent(TypeComp::CAMERA);
+            if (Camera *camera = dynamic_cast<Camera*>(component)) {
+                this->_cameras.push_back(camera);
+            }
+        }
         this->_root->addGameObjects(objects);
     }
-
-    const unsigned MAX_CAMERAS = 3;
 
     std::vector<Light*> _ligths;
     std::vector<Camera*> _cameras;
     unsigned _camera = 0;
+    unsigned _size = 0;
 
 private:
 

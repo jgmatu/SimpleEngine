@@ -46,7 +46,11 @@ private:
     Mesh* getPlantMesh();
     Mesh* getPlaneMesh();
     Mesh* getCubeMesh();
-    Mesh* getSphereMesh();
+    Mesh* getSphereMesh(std::string filename);
+
+
+    void solarSystem();
+    void simulation1();
 
     std::vector<GameObject*> _GameObjects;
 };

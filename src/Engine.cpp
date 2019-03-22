@@ -17,6 +17,7 @@ Engine::Engine(ObjectFactory *objectFactory) :
     }
     _sceneEvent = this->_scene;
     _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
+    std::cout << "Camera Event : " << _sceneEvent->_camera << '\n';
 }
 
 Engine::~Engine() {
@@ -28,30 +29,32 @@ Engine::~Engine() {
 
 static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
+    std::cout << "**** Key Callback ****" << '\n';
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
     if (key == GLFW_KEY_UP) {
-        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(0.0, 0.0, 0.1));
+        _cameraEvent->_view->_model = glm::translate(_cameraEvent->_view->_model, glm::vec3(0.0, 0.0, 0.1));
     }
     if (key == GLFW_KEY_DOWN) {
-        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(0.0, 0.0, -0.1));
+        _cameraEvent->_view->_model = glm::translate(_cameraEvent->_view->_model, glm::vec3(0.0, 0.0, -0.1));
     }
     if (key == GLFW_KEY_LEFT) {
-        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(0.01, 0.0, 0.0));
+        _cameraEvent->_view->_model = glm::translate(_cameraEvent->_view->_model, glm::vec3(0.1, 0.0, 0.0));
     }
     if (key == GLFW_KEY_RIGHT) {
-        _cameraEvent->_tf->_model = glm::translate(_cameraEvent->_tf->_model, glm::vec3(-0.01, 0.0, 0.0));
+        _cameraEvent->_view->_model = glm::translate(_cameraEvent->_view->_model, glm::vec3(-0.1, 0.0, 0.0));
     }
     if (key == GLFW_KEY_Q) {
-        _cameraEvent->_tf->_model = glm::rotate(_cameraEvent->_tf->_model, 0.01f, glm::vec3(-1.0f, 0.0f, 0.0f));
+        _cameraEvent->_view->_model = glm::rotate(_cameraEvent->_view->_model, 0.01f, glm::vec3(-1.0f, 0.0f, 0.0f));
     }
     if (key == GLFW_KEY_E) {
-        _cameraEvent->_tf->_model = glm::rotate(_cameraEvent->_tf->_model, 0.01f, glm::vec3(1.0f, 0.0f, 0.0f));
+        _cameraEvent->_view->_model = glm::rotate(_cameraEvent->_view->_model, 0.01f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-        _sceneEvent->_camera = (_sceneEvent->_camera + 1) % _sceneEvent->MAX_CAMERAS;
+        _sceneEvent->_camera = (_sceneEvent->_camera + 1) % 3;
         _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
+        std::cout << "Change Camera : " << _sceneEvent->_camera << " Size : " << _sceneEvent->_cameras.size() << '\n';
     }
 }
 
@@ -130,10 +133,8 @@ void Engine::update(float dt) {
 void Engine::mainLoop() {
     do {
         glfwPollEvents();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        this->update(0); // Draw Scene...
+        this->update(0); // ... Draw Scene ...
         glfwSwapBuffers(_window); // Swap the color buffers.
-
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     } while(!glfwWindowShouldClose(_window));
     glfwTerminate();
