@@ -1,8 +1,64 @@
- #include "Components/SkyBox.hpp"
+
+#include "Components/SkyBox.hpp"
+
+float skyboxVertices[] = {
+    // positions
+    -1.0f,  1.0f, -1.0f,
+    -1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+    -1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+
+    -1.0f, -1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+
+    -1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+    -1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f
+};
 
 SkyBox::SkyBox()
 {
-    ;
+    std::cout << "Creating new SkyBox... " << '\n';
+    this->_uniforms = new Uniforms();
+    this->_type = TypeComp::SKYBOX;
+}
+
+SkyBox::SkyBox(std::vector<std::string> faces, Program *program) :
+    SkyBox::SkyBox()
+{
+    std::cout << "Creating new SkyBox with faces... " << '\n';
+    this->_faces = faces;
+    this->_program = program;
 }
 
 SkyBox::~SkyBox()
@@ -10,17 +66,49 @@ SkyBox::~SkyBox()
     ;
 }
 
-
 // Este método SOLO se llama una vez la primera vez que se crea el componente.
 void SkyBox::start()
 {
-    ;
+    _textureID = Mesh::TextureCubeMap(_faces);
+    this->active();
+    _program->active();
+    std::cout << "Starting skybox..." << '\n';
+    std::cout << " VAO : " << _VAO << " VBO : " << _VBO << '\n';
+    std::cout << "Texture ID : " << _textureID << '\n';
 }
 
 // Método que se llama cada vez que el Componente se activa.
 void SkyBox::awakeStart()
 {
-    ;
+//    std::cout << "awakeStart SkyBox" << '\n';
+    glDepthMask(GL_FALSE);
+    _program->setUniforms(_uniforms);
+    _program->render();
+    this->draw();
+    _program->clearUniforms(_uniforms);
+    glDepthMask(GL_TRUE);
+}
+
+void SkyBox::active()
+{
+    glGenVertexArrays(1, &_VAO);
+    glGenBuffers(1, &_VBO);
+    glBindVertexArray(_VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, _VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+}
+
+void SkyBox::draw()
+{
+    glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+    glBindVertexArray(_VAO);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, _textureID);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+    glDepthFunc(GL_LESS); // set depth function back to default
 }
 
 // Método que realiza transformaciones, cálculos de cosas.
@@ -29,26 +117,25 @@ void SkyBox::update()
     ;
 }
 
-unsigned SkyBox::loadCubemap()
+void SkyBox::setView(Camera *camera)
 {
-    unsigned textureID;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+    this->setParameter("projection", camera->_projection); // Vertex...
+    this->setParameter("view", glm::mat4(glm::mat3(camera->_view->_gModel)));      // Vertex...
+    this->setParameter("skybox", 0);
+}
 
-    int width, height, nrChannels;
-    for (unsigned int i = 0; i < faces.size(); i++) {
-        unsigned char *data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
-        if (data) {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,  0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        } else {
-            std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
-        }
-        stbi_image_free(data);
-    }
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    return textureID;
+void SkyBox::setParameter(std::string name, glm::vec3 val) {
+    _uniforms->setUniformVec3(name, val);
+}
+
+void SkyBox::setParameter(std::string name, glm::mat4 val) {
+    _uniforms->setUniformMat4(name, val);
+}
+
+void SkyBox::setParameter(std::string name, int val) {
+    _uniforms->setUniformInt(name, val);
+}
+
+void SkyBox::setParameter(std::string name, float val) {
+    _uniforms->setUniformFloat(name, val);
 }

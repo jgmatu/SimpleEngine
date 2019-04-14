@@ -14,6 +14,7 @@
 #include "Components/Camera.hpp"
 #include "Components/Material.hpp"
 #include "Components/Light.hpp"
+#include "Components/SkyBox.hpp"
 #include "Operations/Movement.hpp"
 
 #include "Model/Model.hpp"
@@ -47,7 +48,7 @@ private:
     Mesh* getPlaneMesh();
     Mesh* getCubeMesh();
     Mesh* getSphereMesh(std::string filename);
-
+    Mesh* getSkyBox();
 
     void solarSystem();
     void simulation1();

@@ -10,13 +10,13 @@ Scene::Scene() :
     this->_cameras.push_back(main_camera);
 
     this->addDefaultLigths();
-    std::cout << "Create GameObject Scene" << '\n';
+//    std::cout << "Create GameObject Scene" << '\n';
 }
 
 Scene::Scene(unsigned id, std::string name) :
     Scene()
 {
-    std::cout << "Create GameObject Scene" << '\n';
+//    std::cout << "Create GameObject Scene" << '\n';
 }
 
 Scene::~Scene() {

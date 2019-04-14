@@ -1,11 +1,11 @@
 #include "Systems/Update.hpp"
 
 Update::Update() {
-    std::cout << "Create system UPDATE" << '\n';
+//    std::cout << "Create system UPDATE" << '\n';
 }
 
 Update::~Update() {
-    std::cout << "Destroy system update... " << '\n';
+//    std::cout << "Destroy system update... " << '\n';
 }
 
 void Update::init(Scene *scene) {

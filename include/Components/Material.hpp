@@ -28,13 +28,12 @@ public:
     void addLigths(std::vector<Light*> ligths);
 
     void setView(Camera *camera);
+    void setViewSkyBox(Camera *camera);
 
     void setParameter(std::string, glm::vec3);
     void setParameter(std::string, glm::mat4);
     void setParameter(std::string, int);
     void setParameter(std::string, float);
-
-    void setProgram(Program *program);
 
     void setTransparent();
     void setOpaque();

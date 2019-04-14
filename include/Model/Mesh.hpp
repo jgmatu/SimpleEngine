@@ -77,6 +77,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
 
     static unsigned TextureFromFile(std::string directory, const char *filename);
+    static unsigned TextureCubeMap(std::vector<std::string> _faces);
 
 private:
 

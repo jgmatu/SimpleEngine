@@ -5,12 +5,12 @@
 ObjectFactory::ObjectFactory() :
     _GameObjects()
 {
-    std::cout << "Creating Factory Objects..." << '\n';
+//    std::cout << "Creating Factory Objects..." << '\n';
 }
 
 ObjectFactory::~ObjectFactory()
 {
-    std::cout << "Delete All Game Objects!" << '\n';
+//    std::cout << "Delete All Game Objects!" << '\n';
 
     for (unsigned i = 0; i < _GameObjects.size(); ++i) {
         delete _GameObjects[i];
@@ -64,20 +64,32 @@ void ObjectFactory::solarSystem() {
     moon->setMove(new Scale(glm::vec3(0.25, 0.25, 0.25)));
     moon->addComponent(new Material(new Model(getSphereMesh("moon.png")), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
     moon->addComponent(new Camera());
-
     earth->addGameObject(moon);
+
+    // Skybox :)
+    GameObject *skybox = new GameObject(0, "*** SKYBOX ***");
+
+    skybox->addComponent(new SkyBox(std::vector<std::string> {
+        "../skybox/ame_nebula/rigth.tga", "../skybox/ame_nebula/left.tga",
+        "../skybox/ame_nebula/top.tga", "../skybox/ame_nebula/bottom.tga",
+        "../skybox/ame_nebula/front.tga", "../skybox/ame_nebula/back.tga"
+    }, new Program("../glsl/skybox_vs.glsl", "../glsl/skybox_fs.glsl")));
+    skybox->setMove(new Translate(glm::vec3(0.0, 0.0, 0.0)));
+//    skybox->setMove(new Scale(glm::vec3(25.0, 25.0, 25.0)));
+
     _GameObjects.push_back(mars);
     _GameObjects.push_back(earth);
     _GameObjects.push_back(sun);
+    _GameObjects.push_back(skybox);
 }
 
 void ObjectFactory::simulation1() {
     std::vector<glm::vec3> cube_positions = {
-        glm::vec3(-5.0 ,0.0, 0.0),
-        glm::vec3(-3.0 ,1.0, -1.0),
-        glm::vec3(-1.0 ,2.0, 2.0),
-        glm::vec3(0.0  ,-2.0, -1.0),
-        glm::vec3(1.0  ,1.0, -1.0)
+        glm::vec3(-5.0,  0.0,  0.0),
+        glm::vec3(-3.0,  1.0, -1.0),
+        glm::vec3(-1.0,  2.0,  2.0),
+        glm::vec3( 0.0, -2.0, -1.0),
+        glm::vec3( 1.0,  1.0, -1.0)
     };
     std::vector<Movement*> _moves;
     for (unsigned i = 0; i < cube_positions.size(); ++i) {
@@ -135,6 +147,7 @@ Mesh* ObjectFactory::getMeshFromVerticesPosTex(std::vector<float> verPosTex, __T
     textures.push_back(texture);
     return new Mesh(vertices, indices, textures);
 }
+
 
 std::vector<Mesh*> ObjectFactory::getVerticesRenderBufferTexture()
 {
@@ -263,11 +276,6 @@ Mesh* ObjectFactory::getPlantMesh() {
     return new Mesh(vertices, inidices, textures);
 }
 
-void ObjectFactory::addSkyBox(std::string directory)
-{
-    ;
-}
-
 Mesh* ObjectFactory::getPlaneMesh() {
     std::vector<GLfloat> position = {
          5.0f, -0.5f,  5.0f, // 0
@@ -357,11 +365,9 @@ Mesh* ObjectFactory::getCubeMesh() {
 
 Mesh* ObjectFactory::getSphereMesh(std::string filename) {
     int idx = 0;
-
-    /* Statement Exercise ... */
     std::vector<std::vector<int>> grid;
 
-    // Buffers
+    // Buffers...
     std::vector<GLfloat> posVertex;
     std::vector<GLfloat> normals;
     std::vector<GLuint> indices;

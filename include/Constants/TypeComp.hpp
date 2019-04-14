@@ -2,7 +2,7 @@
 #define TYPECOMP_H
 
 enum class TypeComp {
-    MATERIAL, TRANSFORM, TEXTURE, CAMERA
+    MATERIAL, TRANSFORM, TEXTURE, CAMERA, SKYBOX
 };
 
 enum class CompLigth {

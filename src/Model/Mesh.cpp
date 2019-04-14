@@ -96,6 +96,7 @@ void Mesh::draw(Program *program) {
     glActiveTexture(GL_TEXTURE0);
 }
 
+
 unsigned Mesh::TextureFromFile(std::string directory, const char *filename) {
     unsigned textureID = 0;
     std::string path = directory + "/" + std::string(filename);
@@ -125,6 +126,31 @@ unsigned Mesh::TextureFromFile(std::string directory, const char *filename) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glGenerateMipmap(GL_TEXTURE_2D);
     return textureID;
+}
+
+unsigned Mesh::TextureCubeMap(std::vector<std::string> _faces) {
+    unsigned _textureID;
+    int width, height, nrChannels;
+
+    glGenTextures(1, &_textureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, _textureID);
+
+    for (unsigned int i = 0; i < _faces.size(); ++i) {
+        unsigned char *data = stbi_load(_faces[i].c_str(), &width, &height, &nrChannels, 0);
+        if (!data) {
+            std::cout << "Cubemap texture failed to load at path: " << _faces[i] << std::endl;
+            continue;
+        }
+        std::cout << "Success loaded texture cubemap : " << _faces[i] << " Width : " << width << " Height : " << height << " Channels : " << nrChannels << '\n';
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,  0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        stbi_image_free(data);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    return _textureID;
 }
 
 std::ostream& operator<<(std::ostream& os, const Mesh& mesh) {

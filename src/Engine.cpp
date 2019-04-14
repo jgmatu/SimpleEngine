@@ -17,7 +17,7 @@ Engine::Engine(ObjectFactory *objectFactory) :
     }
     _sceneEvent = this->_scene;
     _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
-    std::cout << "Camera Event : " << _sceneEvent->_camera << '\n';
+//    std::cout << "Camera Event : " << _sceneEvent->_camera << '\n';
 }
 
 Engine::~Engine() {
@@ -29,7 +29,7 @@ Engine::~Engine() {
 
 static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-    std::cout << "**** Key Callback ****" << '\n';
+//    std::cout << "**** Key Callback ****" << '\n';
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
@@ -54,7 +54,7 @@ static void keyCallback(GLFWwindow *window, int key, int scancode, int action, i
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
         _sceneEvent->_camera = (_sceneEvent->_camera + 1) % 3;
         _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
-        std::cout << "Change Camera : " << _sceneEvent->_camera << " Size : " << _sceneEvent->_cameras.size() << '\n';
+//        std::cout << "Change Camera : " << _sceneEvent->_camera << " Size : " << _sceneEvent->_cameras.size() << '\n';
     }
 }
 
@@ -105,7 +105,7 @@ void Engine::initWindow() {
 }
 
 void Engine::init() {
-    std::cout << "Iniciar Engine!!" << '\n';
+//    std::cout << "Iniciar Engine!!" << '\n';
     try {
         this->initWindow();
         for (unsigned i = 0; i < _systems.size(); ++i) {

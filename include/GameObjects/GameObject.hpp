@@ -15,6 +15,8 @@
 #include "Components/Component.hpp"
 #include "Components/Transform.hpp"
 #include "Components/Material.hpp"
+#include "Components/SkyBox.hpp"
+
 #include "Constants/TypeComp.hpp"
 
 #include "Operations/Movement.hpp"

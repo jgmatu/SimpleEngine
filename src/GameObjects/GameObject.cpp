@@ -93,8 +93,12 @@ bool GameObject::hasGameObject(int id) {
 void GameObject::init() {
     Component *component = this->getComponent(TypeComp::MATERIAL);
     if (Material *material = dynamic_cast<Material*>(component)) {
-        // Load Material...
         material->start();
+    }
+
+    component = this->getComponent(TypeComp::SKYBOX);
+    if (SkyBox *skybox = dynamic_cast<SkyBox*>(component)) {
+        skybox->start();
     }
     for (unsigned i = 0; i < _gameObjects.size(); ++i) {
         _gameObjects[i]->init();
@@ -102,6 +106,7 @@ void GameObject::init() {
 }
 
 void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObject*>>& sorted) {
+    // GameObject with a SkyBox...
     Component *component = getComponent(TypeComp::MATERIAL);
 
     if (Material *material = dynamic_cast<Material*>(component)) {
@@ -115,6 +120,12 @@ void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObj
             this->draw(active_camera);
         }
     }
+    component = getComponent(TypeComp::SKYBOX);
+    if (SkyBox *skybox = dynamic_cast<SkyBox*>(component)) {
+        skybox->setView(active_camera);
+        skybox->awakeStart();
+    }
+
     for (unsigned i = 0; i < _gameObjects.size(); ++i) {
         _gameObjects[i]->draw(active_camera, sorted);
     }
