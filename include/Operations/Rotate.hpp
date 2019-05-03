@@ -7,9 +7,10 @@ class Rotate : public Movement {
 
 public:
 
-    Rotate(float angle, glm::vec3 axis) {
+    Rotate(float delta_angle, glm::vec3 axis) {
         this->_axis = axis;
-        this->_angle = angle;
+        this->_delta_angle = delta_angle;
+        this->_angle = 0.0f;
     };
 
     Rotate(glm::vec3 axis, glm::quat quat) {
@@ -22,6 +23,10 @@ public:
     }
 
     glm::mat4 apply() {
+        // Aplicar el movimiento angular con un incremento del angulo
+        // de manera circular...
+        this->_angle += this->_delta_angle * (MOVEMENT_TIME / 1000.0f);
+//        std::cout << "Delta angle : " << this->_angle << '\n';
         return glm::rotate(this->_angle, this->_axis);
     };
 
@@ -33,6 +38,7 @@ public:
 private:
 
     glm::vec3 _axis;
+    float _delta_angle;
     float _angle;
     glm::quat _quat;
 

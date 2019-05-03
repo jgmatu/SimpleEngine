@@ -21,11 +21,31 @@ void Transform::awakeStart() {
 }
 
 void Transform::update() {
-    this->_model = glm::mat4(1.0f);
+    this->_model = getInitialPosition();
 
     for (unsigned i = 0; i < this->_moves.size(); ++i) {
         this->_model = this->_model * this->_moves[i]->apply();
     }
+}
+
+glm::mat4 Transform::getInitialPosition()
+{
+    glm::mat4 _initialModel(1.0);
+
+    for (unsigned i = 0; i < _position.size(); ++i) {
+        _initialModel = _initialModel * _position[i]->apply();
+    }
+    return _initialModel;
+}
+
+void Transform::init(glm::vec3 axis, float angle)
+{
+    this->_position.push_back(new Position(axis, angle));
+}
+
+void Transform::init(glm::vec3 position)
+{
+    this->_position.push_back(new Position(position));
 }
 
 void Transform::scale(glm::vec3 vec3) {
@@ -53,7 +73,6 @@ glm::vec3 Transform::position() const {
 std::ostream& operator<<(std::ostream& os, const Transform& tf) {
     os << "Model : " << std::endl << glm::to_string(tf._model) << std::endl;
     os << "GModel : " << std::endl << glm::to_string(tf._gModel) << std::endl;
-
     os << "Position : " << std::endl << glm::to_string(tf.position()) << std::endl;
     return os;
 }

@@ -29,57 +29,72 @@ void Program::setUniforms(Uniforms *uniforms) {
     names = uniforms->getUniformsNamesInt();
     for (unsigned i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
+//            std::cout << "Create : " << names[i] << " : " <<  '\n';
             this->createUniform(names[i]);
+        } else {
+//            std::cout << "Update : " << names[i] << " : " << uniforms->getUniformValueInt(names[i]) << '\n';
+            this->setUniform(names[i], uniforms->getUniformValueInt(names[i]));
         }
-        this->setUniform(names[i], uniforms->getUniformValueInt(names[i]));
     }
 
     names = uniforms->getUniformsNamesFloat();
     for (unsigned i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
+//            std::cout << "Create : " << names[i] << '\n';
             this->createUniform(names[i]);
+        } else {
+//            std::cout << "Update : " << names[i] << " : " << uniforms->getUniformValueFloat(names[i]) << '\n';
+            this->setUniform(names[i], uniforms->getUniformValueFloat(names[i]));
         }
-        this->setUniform(names[i], uniforms->getUniformValueFloat(names[i]));
     }
 
     names = uniforms->getUniformsNamesVec3();
     for (unsigned i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
+//            std::cout << "Create : " << names[i] << '\n';
             this->createUniform(names[i]);
+        } else {
+//            std::cout << "Update : " << names[i] << " : " << glm::to_string(uniforms->getUniformValueVec3(names[i])) << '\n';
+            this->setUniform(names[i], uniforms->getUniformValueVec3(names[i]));
         }
-        this->setUniform(names[i], uniforms->getUniformValueVec3(names[i]));
     }
 
     names = uniforms->getUniformsNamesMat4();
     for (unsigned i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
+//            std::cout << "Create : " << names[i] << '\n';
             this->createUniform(names[i]);
+        } else {
+//            std::cout << "Update : " << names[i] << " : " << glm::to_string(uniforms->getUniformValueMat4(names[i])) << '\n';
+            this->setUniform(names[i], uniforms->getUniformValueMat4(names[i]));
         }
-        this->setUniform(names[i], uniforms->getUniformValueMat4(names[i]));
     }
 }
 
 void Program::clearUniforms(Uniforms *uniforms)
 {
     std::vector<std::string> names;
-
     names = uniforms->getUniformsNamesInt();
     for (unsigned i = 0; i < names.size(); ++i) {
+//        std::cout << "Clear : " << names[i] << '\n';
         this->setUniform(names[i], 0);
     }
 
     names = uniforms->getUniformsNamesFloat();
     for (unsigned i = 0; i < names.size(); ++i) {
+//        std::cout << "Clear : " << names[i] << '\n';
         this->setUniform(names[i], 0.0f);
     }
 
     names = uniforms->getUniformsNamesVec3();
     for (unsigned i = 0; i < names.size(); ++i) {
+//        std::cout << "Clear : " << names[i] << '\n';
         this->setUniform(names[i], glm::vec3(0.0, 0.0, 0.0));
     }
 
     names = uniforms->getUniformsNamesMat4();
     for (unsigned i = 0; i < names.size(); ++i) {
+//        std::cout << "Clear : " << names[i] << '\n';
         this->setUniform(names[i], glm::mat4(1.0));
     }
 }
@@ -105,7 +120,7 @@ std::string Program::getDataFile(const std::string& filename) {
 
     file.open("r");
     if (!file.is_open()) {
-        throw ProgramException("Failing opening file...");
+        throw ProgramException("Fail opening file...");
     }
     std::string data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     file.close();

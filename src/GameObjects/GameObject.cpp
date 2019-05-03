@@ -22,6 +22,22 @@ GameObject::~GameObject() {
     }
 }
 
+
+void GameObject::getCameras(std::vector<Camera*>& cameras) {
+    Component *component = this->getComponent(TypeComp::CAMERA);
+
+    if (Camera *camera = dynamic_cast<Camera*>(component)) {
+        std::cout << "Push new Camera.." << '\n';
+        cameras.push_back(camera);
+    }
+    std::cout << "Name : " << _name << '\n';
+    std::cout << "Size " << _gameObjects.size() << '\n';
+    for (unsigned i = 0; i < _gameObjects.size(); ++i) {
+        std::cout << "New GO" << '\n';
+        _gameObjects[i]->getCameras(cameras);
+    }
+};
+
 void GameObject::setMoves(std::vector<Movement*> moves)
 {
     Component *component = this->getComponent(TypeComp::TRANSFORM);
@@ -36,6 +52,14 @@ void GameObject::setMove(Movement *move) {
 
     if (Transform *tf = dynamic_cast<Transform*>(component)) {
         tf->_moves.push_back(move);
+    }
+}
+
+void GameObject::setPosition(Position *position) {
+    Component *component = this->getComponent(TypeComp::TRANSFORM);
+
+    if (Transform *tf = dynamic_cast<Transform*>(component)) {
+        tf->_position.push_back(position);
     }
 }
 
@@ -106,7 +130,6 @@ void GameObject::init() {
 }
 
 void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObject*>>& sorted) {
-    // GameObject with a SkyBox...
     Component *component = getComponent(TypeComp::MATERIAL);
 
     if (Material *material = dynamic_cast<Material*>(component)) {
@@ -121,6 +144,7 @@ void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObj
         }
     }
     component = getComponent(TypeComp::SKYBOX);
+    // GameObject with a SkyBox...
     if (SkyBox *skybox = dynamic_cast<SkyBox*>(component)) {
         skybox->setView(active_camera);
         skybox->awakeStart();
@@ -148,6 +172,8 @@ void GameObject::addTransparentQueue(std::map<float, std::vector<GameObject*>>& 
 // de la escena... (Escena...) dibujar todos los gameObject respecto a la camara activa
 // de la escena...
 void GameObject::draw(Camera *camera) {
+//    std::cout << "DRAW : " << _name << '\n';
+
     Component *component = this->getComponent(TypeComp::MATERIAL);
 
     if (Material *material = dynamic_cast<Material*>(component)) {
@@ -160,21 +186,23 @@ void GameObject::draw(Camera *camera) {
     }
 }
 
-void GameObject::update() {
-    this->updateCamera();
-
+void GameObject::update()
+{
     Component *component = this->getComponent(TypeComp::TRANSFORM);
 
     if (Transform *tfRoot = dynamic_cast<Transform*>(component)) {
         for (unsigned i = 0; i < _gameObjects.size(); ++i) {
             component = _gameObjects[i]->getComponent(TypeComp::TRANSFORM);
             if (Transform *tfChild = dynamic_cast<Transform*>(component)) {
-                tfChild->update();
+                // std::cout << "Updating : " << _gameObjects[i]->_name << '\n';
+                // std::cout << *tfChild << '\n';
                 tfChild->_gModel = tfRoot->_gModel * tfChild->_model;
+                tfChild->update();
             }
             _gameObjects[i]->update();
         }
     }
+    this->updateCamera();
 }
 
 void GameObject::updateCamera()

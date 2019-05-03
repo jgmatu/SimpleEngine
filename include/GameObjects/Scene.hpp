@@ -13,7 +13,6 @@ class Scene {
 
 public:
 
-
     Scene();
     Scene(unsigned id, std::string name);
     ~Scene();
@@ -21,6 +20,8 @@ public:
     void init();
     void draw();
     void update();
+
+    void initCameras();
 
     void setCamera(Camera *camera);
     void eraseCamera(int idx);

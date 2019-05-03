@@ -10,6 +10,8 @@ struct Material {
     sampler2D texture_specular0;
     sampler2D texture_specular1;
 
+    sampler2D texture_normal0;
+
     float shininess;
 };
 
@@ -78,8 +80,12 @@ uniform sampler2D screenTexture;
 
 void main()
 {
-    vec3 norm = normalize(normal);
+    vec3 _normal = texture(material.texture_normal0, texCoord).rgb;
+    vec3 norm = normal + _normal;
+    norm = normalize(norm * 2.0 - 1.0);
     vec3 viewDir = normalize(viewPos - fragPos);
+
+//    norm = texture(material.texture_normal0, texCoord).rgb;
 
     // phase 1: Directional lights
 //    vec3 result = calcDirLight(directional, norm, viewDir);
@@ -126,7 +132,7 @@ vec3 calcPointLight(Point point, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64.0);
+    float spec = pow(max(dot(-viewDir, reflectDir), 0.0), 32.0);
 
     // attenuation
     float distance = length(point.position - fragPos);

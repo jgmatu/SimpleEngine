@@ -17,6 +17,7 @@
 #include "Operations/Rotate.hpp"
 #include "Operations/Scale.hpp"
 #include "Operations/Translate.hpp"
+#include "Operations/Position.hpp"
 
 class Transform : public Component {
 
@@ -34,12 +35,20 @@ public:
     void rotate(glm::vec3 vec3, glm::quat quad);
     void rotate(glm::vec3 vec3, float angle);
 
+    void init(glm::vec3 axis, float angle);
+    void init(glm::vec3 position);
+
     glm::vec3 position() const;
 
     friend std::ostream& operator<<(std::ostream&, const Transform& tf);
 
-    std::vector<Movement*> _moves;
     glm::mat4 _gModel, _model;
+
+    std::vector<Movement*> _moves;
+    std::vector<Position*> _position;
+
+private:
+    glm::mat4 getInitialPosition();
 
 };
 

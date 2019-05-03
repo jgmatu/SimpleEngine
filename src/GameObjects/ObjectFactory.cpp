@@ -36,50 +36,100 @@ void ObjectFactory::generateDemoObjects()
 {
     // this->simulation1();
     this->solarSystem();
+    // this->wallNormalMapping();
+}
+
+void ObjectFactory::wallNormalMapping()
+{
+    Mesh* plane_mesh = getPlaneMesh();
+
+    __Texture__ plane_normal;
+    plane_normal.type = "texture_normal";
+    plane_normal.path = "../resources/";
+    plane_normal.filename = "brickwall_normal.jpg";
+
+    plane_mesh->setTexture(plane_normal);
+
+    GameObject *plane = new GameObject(0, " *** WALL *** ");
+
+    plane->addComponent(new Material(new Model(plane_mesh), new Program("../glsl/wall_vs.glsl", "../glsl/wall_fs.glsl")));
+    plane->setPosition(new Position(glm::vec3(1.0, 0.0, 0.0), M_PI / 2.0f));
+    plane->setPosition(new Position(glm::vec3(0.0, 0.0, -1.0), M_PI / 12.0f));
+    _GameObjects.push_back(plane);
 }
 
 void ObjectFactory::solarSystem() {
     GameObject *sun = new GameObject(0, "*** SUN ***");
 
     sun->setMove(new Translate(glm::vec3(0.0, 0.0, 0.0)));
-    sun->addComponent(new Material(new Model(getSphereMesh("sun.png")), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
 
+    sun->addComponent(new Material(new Model(getSphereMesh("sun.png")), new Program("../glsl/sun_vs.glsl", "../glsl/sun_fs.glsl")));
     GameObject *earth = new GameObject(0, "*** EARTH ***");
-    earth->setMove(new Translate(glm::vec3(-5.0, 0.0, 0.0)));
-    earth->setMove(new Rotate(M_PI / 4.0f, glm::vec3(0.0, -1.0, 0.0)));
-    earth->setMove(new Scale(glm::vec3(0.5, 0.5, 0.5)));
-    earth->addComponent(new Material(new Model(getSphereMesh("earth_diffuse.jpg")), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
+
+    earth->setMove(new Rotate(0.3, glm::vec3(0.0, 1.0, 0.0)));
+    earth->setMove(new Translate(glm::vec3(-2.0, 0.0, 0.0)));
+    earth->setMove(new Rotate(0.8, glm::vec3(0.0, 1.0, -0.5)));
+    earth->setMove(new Scale(glm::vec3(0.25, 0.25, 0.25)));
+
+    Mesh *earth_mesh = getSphereMesh("2k_earth_daymap.jpg");
+
+    __Texture__ earth_specular;
+    earth_specular.type = "texture_specular";
+    earth_specular.path = "../resources/";
+    earth_specular.filename = "2k_earth_specular_map.tif";
+    earth_mesh->setTexture(earth_specular);
+
+    __Texture__ earth_normal;
+    earth_normal.type = "texture_normal";
+    earth_normal.path = "../resources/";
+    earth_normal.filename = "2k_earth_normal_map.tif";
+    earth_mesh->setTexture(earth_normal);
+
+    earth->addComponent(new Material(new Model(earth_mesh), new Program("../glsl/earth_vs.glsl", "../glsl/earth_fs.glsl")));
     earth->addComponent(new Camera());
 
     GameObject *mars = new GameObject(0, "*** MARS ***");
-    mars->setMove(new Translate(glm::vec3(5.0, 0.0, 0.0)));
-    mars->setMove(new Rotate(M_PI / 4.0f, glm::vec3(0.0, -1.0, 0.0)));
-    mars->setMove(new Scale(glm::vec3(0.5, 0.5, 0.5)));
+
+    mars->setMove(new Rotate(0.3, glm::vec3(0.0, -1.0, 0.0)));
+    mars->setMove(new Translate(glm::vec3(3.0, 0.0, 0.0)));
+    mars->setMove(new Rotate(0.8, glm::vec3(0.0, -1.0, -0.1)));
+    mars->setMove(new Scale(glm::vec3(0.25, 0.25, 0.25)));
+
     mars->addComponent(new Material(new Model(getSphereMesh("mars.png")), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
     mars->addComponent(new Camera());
 
     GameObject *moon = new GameObject(0, "*** MOON ***");
+    moon->setMove(new Rotate(2.3, glm::vec3(0.0, -1.0, 0.0)));
     moon->setMove(new Translate(glm::vec3(2.0, 0.0, 0.0)));
-    moon->setMove(new Rotate(M_PI / 4.0f, glm::vec3(0.0, -1.0, 0.0)));
-    moon->setMove(new Scale(glm::vec3(0.25, 0.25, 0.25)));
-    moon->addComponent(new Material(new Model(getSphereMesh("moon.png")), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
-    moon->addComponent(new Camera());
+    moon->setMove(new Rotate(1.8, glm::vec3(0.0, -1.0, 0.0)));
+    moon->setMove(new Scale(glm::vec3(0.15, 0.15, 0.15)));
+
+    Mesh *moon_mesh = getSphereMesh("moon.png");
+
+    __Texture__ moon_normal;
+    moon_normal.type = "texture_normal";
+    moon_normal.path = "../resources/";
+    moon_normal.filename = "moon_normal.jpg";
+    moon_mesh->setTexture(moon_normal);
+
+    moon->addComponent(new Material(new Model(moon_mesh), new Program("../glsl/moon_vs.glsl", "../glsl/moon_fs.glsl")));
     earth->addGameObject(moon);
 
     // Skybox :)
     GameObject *skybox = new GameObject(0, "*** SKYBOX ***");
-
     skybox->addComponent(new SkyBox(std::vector<std::string> {
         "../skybox/ame_nebula/rigth.tga", "../skybox/ame_nebula/left.tga",
         "../skybox/ame_nebula/top.tga", "../skybox/ame_nebula/bottom.tga",
         "../skybox/ame_nebula/front.tga", "../skybox/ame_nebula/back.tga"
     }, new Program("../glsl/skybox_vs.glsl", "../glsl/skybox_fs.glsl")));
-    skybox->setMove(new Translate(glm::vec3(0.0, 0.0, 0.0)));
-//    skybox->setMove(new Scale(glm::vec3(25.0, 25.0, 25.0)));
 
-    _GameObjects.push_back(mars);
-    _GameObjects.push_back(earth);
     _GameObjects.push_back(sun);
+
+    sun->addGameObject(earth);
+    sun->addGameObject(mars);
+
+//    _GameObjects.push_back(mars);
+//    _GameObjects.push_back(earth);
     _GameObjects.push_back(skybox);
 }
 
@@ -104,7 +154,7 @@ void ObjectFactory::simulation1() {
     }
 
     for (unsigned i = 0; i < _moves.size(); ++i) {
-        Material *grass = new Material(new Model(getPlantMesh()), new Program("../glsl/grass_vs.glsl", "../glsl/grass_fs.glsl"));
+        Material *grass = new Material(new Model(getPlantMesh("grass.png")), new Program("../glsl/grass_vs.glsl", "../glsl/grass_fs.glsl"));
         grass->setTransparent();
 
         GameObject *grass_go = new GameObject(i + 1, "**** GRASS **** ");
@@ -230,7 +280,7 @@ std::vector<Mesh*> ObjectFactory::getVerticesRenderBufferTexture()
     return meshes;
 }
 
-Mesh* ObjectFactory::getPlantMesh() {
+Mesh* ObjectFactory::getPlantMesh(std::string texture_diffuse) {
     std::vector<GLfloat> positions = {
         0.0f,  0.5f,  0.0f,
         0.0f, -0.5f,  0.0f,
@@ -261,7 +311,7 @@ Mesh* ObjectFactory::getPlantMesh() {
         Vertex vertex;
 
         vertex.Position = glm::vec3(positions[i], positions[i + 1], positions[i + 2]);
-        vertex.Normal = glm::normalize(vertex.Position);
+        vertex.Normal = glm::vec3(0.0, 0.0, 1.0);
         vertex.TexCoords = glm::vec2(textCoords[j], textCoords[j + 1]);
         vertices.push_back(vertex);
     }
@@ -269,22 +319,21 @@ Mesh* ObjectFactory::getPlantMesh() {
     std::vector<__Texture__> textures;
     __Texture__ texture;
     texture.path = "../resources/";
-    //texture.filename = "grass.png";
-    texture.filename = "blending_transparent_window.png";
+    texture.filename = texture_diffuse;
     textures.push_back(texture);
 
     return new Mesh(vertices, inidices, textures);
 }
 
 Mesh* ObjectFactory::getPlaneMesh() {
-    std::vector<GLfloat> position = {
-         5.0f, -0.5f,  5.0f, // 0
-        -5.0f, -0.5f,  5.0f, // 1
-        -5.0f, -0.5f, -5.0f, // 2
+/*    std::vector<GLfloat> position = {
+         1.0f, -0.5f,  1.0f, // 0
+        -1.0f, -0.5f,  1.0f, // 1
+        -1.0f, -0.5f, -1.0f, // 2
 
-         5.0f, -0.5f,  5.0f, // 3
-        -5.0f, -0.5f, -5.0f, // 4
-         5.0f, -0.5f, -5.0f  // 5
+         1.0f, -0.5f,  1.0f, // 3
+        -1.0f, -0.5f, -1.0f, // 4
+         1.0f, -0.5f, -1.0f  // 5
     };
     std::vector<GLuint> indices = {
         1, 2, 0,
@@ -293,20 +342,37 @@ Mesh* ObjectFactory::getPlaneMesh() {
         2, 5, 1
     };
     std::vector<GLfloat> textCoord = {
-        2.0f, 0.0f,
+        1.0f, 0.0f,
         0.0f, 0.0f,
-        0.0f, 2.0f,
+        0.0f, 1.0f,
 
-        2.0f, 0.0f,
-        0.0f, 2.0f,
-        2.0f, 2.0f
+        1.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f
+    };
+*/
+    std::vector<GLfloat> position = {
+        -1.0f,  1.0f,  0.0f, // 0
+        -1.0f, -1.0f,  0.0f, // 1
+         1.0f, -1.0f,  0.0f, // 2
+         1.0f,  1.0f,  1.0f, // 3
+    };
+    std::vector<GLuint> indices = {
+        0, 1, 2,
+        0, 2, 3
+    };
+    std::vector<GLfloat> textCoord = {
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f
     };
     std::vector<Vertex> vertices;
     for (unsigned i = 0, j = 0; i < position.size(); i += 3, j += 2) {
         Vertex vertex;
 
         vertex.Position = glm::vec3(position[i], position[i + 1], position[i + 2]);
-        vertex.Normal = glm::normalize(vertex.Position);
+        vertex.Normal = glm::normalize(glm::vec3(0.0, 0.0, 1.0));
         vertex.TexCoords = glm::vec2(textCoord[j], textCoord[j + 1]);
         vertices.push_back(vertex);
     }
@@ -314,7 +380,7 @@ Mesh* ObjectFactory::getPlaneMesh() {
 
     __Texture__ texture;
     texture.path = "../resources/";
-    texture.filename = "marble.png";
+    texture.filename = "brickwall.jpg";
     textures.push_back(texture);
 
     return new Mesh(vertices, indices, textures);
@@ -396,7 +462,7 @@ Mesh* ObjectFactory::getSphereMesh(std::string filename) {
                 // Vertex. Z.
                 vertex.z = radius * sin( u * M_PI * 2.0f ) * sin( v * M_PI );
 
-                GLfloat aux[] = {-vertex.x, -vertex.y, vertex.z};
+                GLfloat aux[] = {-vertex.x, -vertex.y, -vertex.z};
                 posVertex.insert(posVertex.end(), aux, aux + 3);
 
                 // Normal.

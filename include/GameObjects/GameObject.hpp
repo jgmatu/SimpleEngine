@@ -48,12 +48,16 @@ public:
     void update();
 
     void setMoves(std::vector<Movement*> moves);
+
     void setMove(Movement *move);
+    void setPosition(Position *position);
 
     void addLigths(std::vector<Light*> ligths);
     void addGameObjects(std::vector<GameObject*> objects) {
         this->_gameObjects = objects;
     }
+
+    void getCameras(std::vector<Camera*>& cameras);
 
     friend std::ostream& operator<<(std::ostream&, const GameObject& gameObject);
 

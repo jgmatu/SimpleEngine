@@ -31,9 +31,15 @@ Mesh::~Mesh()
     _textures.clear();
 }
 
+void Mesh::setTexture(__Texture__ texture)
+{
+    _textures.push_back(texture);
+}
+
 void Mesh::loadTextures()
 {
     for (unsigned i = 0; i < _textures.size(); ++i) {
+        std::cout << "Load texture : " <<  _textures[i].filename << '\n';
         _textures[i].id = TextureFromFile(_textures[i].path, _textures[i].filename.c_str());
     }
 }
@@ -70,6 +76,7 @@ void Mesh::active()
 void Mesh::draw(Program *program) {
     unsigned diffuseNr = 0;
     unsigned specularNr = 0;
+    unsigned normalNr = 0;
 
     for(unsigned i = 0; i < _textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
@@ -81,6 +88,8 @@ void Mesh::draw(Program *program) {
             number = std::to_string(diffuseNr++);
         } else if(name == "texture_specular") {
             number = std::to_string(specularNr++);
+        } else if (name == "texture_normal") {
+            number = std::to_string(normalNr++);
         }
         int value = i;
         program->setUniform("material." + name + number, value);

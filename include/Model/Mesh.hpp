@@ -66,6 +66,7 @@ public:
     Mesh();
     ~Mesh();
 
+    void setTexture(__Texture__ texture);
     void active();
     void draw(Program *program);
     void loadTextures();

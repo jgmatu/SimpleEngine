@@ -3,14 +3,11 @@
 Scene::Scene() :
     _cameras()
 {
-    this->_root = new GameObject();
+    this->_root = new GameObject(0, " SCENE ");
 
     Camera *main_camera = new Camera();
     this->_root->addComponent(main_camera);
-    this->_cameras.push_back(main_camera);
-
     this->addDefaultLigths();
-//    std::cout << "Create GameObject Scene" << '\n';
 }
 
 Scene::Scene(unsigned id, std::string name) :
@@ -25,13 +22,18 @@ Scene::~Scene() {
     }
 }
 
+void Scene::initCameras()
+{
+    this->_root->getCameras(this->_cameras);
+}
+
 std::vector<Light*> Scene::getLigthPoints()
 {
     std::vector<glm::vec3> point_positions = {
-        glm::vec3( 2.0,  2.0, -1.0),
-        glm::vec3(-2.0,  1.0,  1.0),
-        glm::vec3(-1.0,  2.0,  3.0),
-        glm::vec3( 0.0, -2.0,  0.0)
+        glm::vec3(0.0, 0.0, 0.0)
+//        glm::vec3(-2.0,  1.0,  1.0),
+//        glm::vec3(-1.0,  2.0,  3.0),
+//        glm::vec3( 0.0, -2.0,  0.0)
     };
 
     std::vector<Light*> points;
@@ -48,9 +50,9 @@ void Scene::addDefaultLigths()
     for (unsigned i = 0; i < points.size(); ++i) {
         this->setLigth(points[i]);
     }
-    this->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
-    this->setLigth(new Spot(glm::vec3(1.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 1.0), 2.5, 7.5));
-    this->setLigth(new Directional(glm::vec3(0.0, 0.0, 0.0)));
+//    this->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
+//    this->setLigth(new Spot(glm::vec3(1.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 1.0), 2.5, 7.5));
+//    this->setLigth(new Directional(glm::vec3(0.0, 0.0, 1.0)));
 }
 
 void Scene::setLigth(Light *ligth)
@@ -85,6 +87,9 @@ Camera* Scene::updateCameras()
 void Scene::draw() {
     Camera *active_camera = this->updateCameras();
     std::map<float, std::vector<GameObject*>> sorted;
+
+//    std::cout << "Active Camera : " << active_camera << '\n';
+//    std::cout << "Num Camera : " << this->_camera << '\n';
 
     _root->addLigths(_ligths);
     _root->draw(active_camera, sorted);

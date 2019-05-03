@@ -22,6 +22,7 @@ public:
 protected:
 
     glm::vec3 _value;
+    std::map<int, glm::vec3> _distances;
 
 };
 

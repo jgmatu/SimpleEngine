@@ -15,6 +15,7 @@ Engine::Engine(ObjectFactory *objectFactory) :
     for (unsigned i = 0; i < objectFactory->size(); ++i) {
         this->_scene->addGameObjects(objectFactory->getGameObjects());
     }
+    this->_scene->initCameras();
     _sceneEvent = this->_scene;
     _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
 //    std::cout << "Camera Event : " << _sceneEvent->_camera << '\n';
@@ -52,9 +53,9 @@ static void keyCallback(GLFWwindow *window, int key, int scancode, int action, i
         _cameraEvent->_view->_model = glm::rotate(_cameraEvent->_view->_model, 0.01f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-        _sceneEvent->_camera = (_sceneEvent->_camera + 1) % 3;
+        _sceneEvent->_camera = (_sceneEvent->_camera + 1) % _sceneEvent->_cameras.size();
         _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
-//        std::cout << "Change Camera : " << _sceneEvent->_camera << " Size : " << _sceneEvent->_cameras.size() << '\n';
+        std::cout << "Change Camera : " << _sceneEvent->_camera << " Size : " << _sceneEvent->_cameras.size() << '\n';
     }
 }
 
@@ -135,7 +136,7 @@ void Engine::mainLoop() {
         glfwPollEvents();
         this->update(0); // ... Draw Scene ...
         glfwSwapBuffers(_window); // Swap the color buffers.
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(LOOP_INTERVAL_TIME_MS));
     } while(!glfwWindowShouldClose(_window));
     glfwTerminate();
 }

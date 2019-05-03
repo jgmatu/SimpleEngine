@@ -44,7 +44,7 @@ private:
     std::vector<Mesh*> getVerticesRenderBufferTexture();
 
     Mesh* getMeshFromVerticesPosTex(std::vector<float> vertices, __Texture__ texture);
-    Mesh* getPlantMesh();
+    Mesh* getPlantMesh(std::string texture_diffuse);
     Mesh* getPlaneMesh();
     Mesh* getCubeMesh();
     Mesh* getSphereMesh(std::string filename);
@@ -52,6 +52,7 @@ private:
 
     void solarSystem();
     void simulation1();
+    void wallNormalMapping();
 
     std::vector<GameObject*> _GameObjects;
 };

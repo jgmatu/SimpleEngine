@@ -48,7 +48,6 @@ float skyboxVertices[] = {
 
 SkyBox::SkyBox()
 {
-    std::cout << "Creating new SkyBox... " << '\n';
     this->_uniforms = new Uniforms();
     this->_type = TypeComp::SKYBOX;
 }
@@ -56,7 +55,6 @@ SkyBox::SkyBox()
 SkyBox::SkyBox(std::vector<std::string> faces, Program *program) :
     SkyBox::SkyBox()
 {
-    std::cout << "Creating new SkyBox with faces... " << '\n';
     this->_faces = faces;
     this->_program = program;
 }
@@ -72,15 +70,12 @@ void SkyBox::start()
     _textureID = Mesh::TextureCubeMap(_faces);
     this->active();
     _program->active();
-    std::cout << "Starting skybox..." << '\n';
-    std::cout << " VAO : " << _VAO << " VBO : " << _VBO << '\n';
-    std::cout << "Texture ID : " << _textureID << '\n';
 }
 
 // Método que se llama cada vez que el Componente se activa.
 void SkyBox::awakeStart()
 {
-//    std::cout << "awakeStart SkyBox" << '\n';
+//    std::cout << " *** SkyBox *** " << '\n';
     glDepthMask(GL_FALSE);
     _program->setUniforms(_uniforms);
     _program->render();

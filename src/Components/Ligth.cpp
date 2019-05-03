@@ -2,7 +2,20 @@
 
 Light::Light()
 {
-    ;
+    this->_distances =  {
+        {7, glm::vec3(1.0f, 0.7f, 1.8f)},
+        {13, glm::vec3(1.0f, 0.35f, 0.44f)},
+        {20, glm::vec3(1.0f, 0.22f, 0.20f)},
+        {32, glm::vec3(1.0f, 0.14f, 0.07f)},
+        {50, glm::vec3(1.0f, 0.09f, 0.032f)},
+        {65, glm::vec3(1.0f, 0.07f, 0.017f)},
+        {100, glm::vec3(1.0f, 0.045f, 0.0075f)},
+        {160, glm::vec3(1.0f, 0.027f, 0.0028f)},
+        {200, glm::vec3(1.0f, 0.022f, 0.0019f)},
+        {325, glm::vec3(1.0f, 0.014f, 0.0007f)},
+        {600, glm::vec3(1.0f, 0.007f, 0.0002f)},
+        {3250, glm::vec3(1.0f, 0.0014f, 0.000007f)}
+    };
 }
 
 Light::Light(CompLigth type) :
@@ -104,9 +117,9 @@ Directional::~Directional()
 void Directional::setParameters(Uniforms *uniforms)
 {
     uniforms->setUniformVec3("directional.direction", this->_direction);
-    uniforms->setUniformVec3("directional.ambient", glm::vec3(0.51f));
-    uniforms->setUniformVec3("directional.diffuse", glm::vec3(0.51f));
-    uniforms->setUniformVec3("directional.specular", glm::vec3(0.51f));
+    uniforms->setUniformVec3("directional.ambient", glm::vec3(0.01f));
+    uniforms->setUniformVec3("directional.diffuse", glm::vec3(0.01f));
+    uniforms->setUniformVec3("directional.specular", glm::vec3(0.01f));
 }
 
 Point::Point() :
@@ -130,15 +143,16 @@ Point::~Point()
 void Point::setParameters(Uniforms *uniforms)
 {
     std::string index = std::string(std::to_string(this->_num));
+    glm::vec3 distance = _distances[3250];
 
-    uniforms->setUniformVec3("points[" + index + "].ambient", glm::vec3(0.6f));
-    uniforms->setUniformVec3("points[" + index + "].diffuse", glm::vec3(0.6f));
+    uniforms->setUniformVec3("points[" + index + "].ambient", glm::vec3(0.0f));
+    uniforms->setUniformVec3("points[" + index + "].diffuse", glm::vec3(1.0f));
     uniforms->setUniformVec3("points[" + index + "].specular", glm::vec3(1.0f));
     uniforms->setUniformVec3("points[" + index + "].position", this->_position);
 
-    uniforms->setUniformFloat("points[" + index + "].constant", 1.0f);
-    uniforms->setUniformFloat("points[" + index + "].linear", 0.7f);
-    uniforms->setUniformFloat("points[" + index + "].quadratic", 1.8f);
+    uniforms->setUniformFloat("points[" + index + "].constant", distance[0]);
+    uniforms->setUniformFloat("points[" + index + "].linear", distance[1]);
+    uniforms->setUniformFloat("points[" + index + "].quadratic", distance[2]);
 }
 
 Spot::Spot() :

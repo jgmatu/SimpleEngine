@@ -43,7 +43,6 @@ void Material::awakeStart() {
         _program->render();
         _program->setUniforms(_uniforms);
         _model->render(_program);
-        _program->clearUniforms(_uniforms);
     } else {
         throw;
     }
@@ -58,7 +57,7 @@ void Material::setView(Camera *camera)
 {
     this->setParameter("projection", camera->_projection); // Vertex...
     this->setParameter("view", camera->_view->_gModel);      // Vertex...
-    this->setParameter("viewPos", -camera->_view->position()); // Fragments...
+    this->setParameter("viewPos", camera->_view->position()); // Fragments...
 }
 
 void Material::setParameter(std::string name, glm::vec3 val) {

@@ -6,7 +6,6 @@ Camera::Camera() :
     this->_type = TypeComp::CAMERA;
     this->_view = new Transform();
     this->_projection = glm::perspective(glm::radians(60.0f), aspectRatio, 0.1f, 100.0f);
-    this->_view->_gModel = glm::translate(glm::vec3(0.0, 0.0, -10.0));
 }
 
 Camera::~Camera()
