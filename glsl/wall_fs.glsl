@@ -68,6 +68,7 @@ uniform vec3 viewPos;
 in vec3 normal;
 in vec3 fragPos;
 in vec2 texCoord;
+in mat3 TBN;
 
 // Final fragment...
 out vec4 fragColor;
@@ -81,8 +82,9 @@ uniform sampler2D screenTexture;
 
 void main()
 {
-    vec3 _normal = texture(material.texture_normal0, texCoord).rgb;
-    vec3 norm = normalize(1.0 - _normal * 2.0);
+    vec3 norm = texture(material.texture_normal0, texCoord).rgb;
+    norm = normalize(1.0 - norm * 2.0);
+    norm = normalize(TBN * norm);
 
 //    vec3 norm = normalize(normal);
     vec3 viewDir = normalize(viewPos - fragPos);

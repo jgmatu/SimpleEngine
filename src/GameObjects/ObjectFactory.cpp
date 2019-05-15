@@ -54,6 +54,7 @@ void ObjectFactory::wallNormalMapping()
     GameObject *plane = new GameObject(0, " *** WALL *** ");
 
     plane->addComponent(new Material(new Model(plane_mesh), new Program("../glsl/wall_vs.glsl", "../glsl/wall_fs.glsl")));
+    plane->setMove(new Rotate(0.8, glm::vec3(1.0, 0.0, 0.0)));
 //    plane->setPosition(new Position(glm::vec3(1.0, 0.0, 0.0), M_PI / 2.0f));
 //    plane->setPosition(new Position(glm::vec3(0.0, 0.0, -1.0), M_PI / 12.0f));
     _GameObjects.push_back(plane);
@@ -371,29 +372,28 @@ Mesh* ObjectFactory::getPlaneMesh() {
     };
 
     std::vector<Vertex> vertices;
-    for (unsigned i = 0, j = 0, k = 0; i < position.size(); i += 3, j += 2, k++) {
+    for (unsigned i = 0, j = 0; i < position.size(); i += 3, j += 2) {
         Vertex vertex;
 
         vertex.Position = glm::vec3(position[i], position[i + 1], position[i + 2]);
         vertex.Normal = glm::normalize(glm::vec3(0.0, 0.0, 1.0));
         vertex.TexCoords = glm::vec2(textCoord[j], textCoord[j + 1]);
 
-        // Si tengo tres vertices, calculo el vector tangente de ese triangulo.
-        if (vertices.size() > 0 && vertices.size() % 2 == 0) {
-            std::cout << "Calc Tangent vector" << '\n';
-            glm::vec3 edge1 = vertices[k + 1].Position - vertices[i].Position;
-            glm::vec3 edge2 = vertices[k + 2].Position - vertices[i].Position;
-            glm::vec2 deltaUV1 = vertices[k + 1].TexCoords - vertices[i].TexCoords;
-            glm::vec2 deltaUV2 = vertices[k + 2].TexCoords - vertices[i].TexCoords;
-
-            float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-
-            vertex.Tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
-            vertex.Tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
-            vertex.Tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
-            vertex.Tangent = glm::normalize(vertex.Tangent);
-        }
         vertices.push_back(vertex);
+    }
+
+    for (unsigned i = 0; i < vertices.size(); ++i) {
+        glm::vec3 edge1 = vertices[(i + 1) % vertices.size()].Position - vertices[i].Position;
+        glm::vec3 edge2 = vertices[(i + 2) % vertices.size()].Position - vertices[i].Position;
+        glm::vec2 deltaUV1 = vertices[(i + 1) % vertices.size()].TexCoords - vertices[i].TexCoords;
+        glm::vec2 deltaUV2 = vertices[(i + 2) % vertices.size()].TexCoords - vertices[i].TexCoords;
+
+        float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+        vertices[i].Tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        vertices[i].Tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        vertices[i].Tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+        vertices[i].Tangent = glm::normalize(vertices[i].Tangent);
     }
 
     std::vector<__Texture__> textures;
