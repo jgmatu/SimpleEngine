@@ -101,7 +101,7 @@ vec3 calcPointLight(Point point, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 lightDir = normalize(fragPos - point.position);
 
     // diffuse shading...
-    float diff = max(dot(normal, lightDir), 1.0);
+    float diff = max(dot(normal, lightDir), 0.7);
 
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);

@@ -54,6 +54,8 @@ private:
     void simulation1();
     void wallNormalMapping();
 
+    void getTBNMatrix();
+
     std::vector<GameObject*> _GameObjects;
 };
 

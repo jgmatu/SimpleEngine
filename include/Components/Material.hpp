@@ -28,7 +28,6 @@ public:
     void addLigths(std::vector<Light*> ligths);
 
     void setView(Camera *camera);
-    void setViewSkyBox(Camera *camera);
 
     void setParameter(std::string, glm::vec3);
     void setParameter(std::string, glm::mat4);

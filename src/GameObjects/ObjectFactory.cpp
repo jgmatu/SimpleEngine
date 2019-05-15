@@ -35,12 +35,13 @@ std::vector<GameObject*> ObjectFactory::getGameObjects()
 void ObjectFactory::generateDemoObjects()
 {
     // this->simulation1();
-    this->solarSystem();
-    // this->wallNormalMapping();
+    // this->solarSystem();
+    this->wallNormalMapping();
 }
 
 void ObjectFactory::wallNormalMapping()
 {
+//    Mesh* plane_mesh = getPlantMesh("brickwall.jpg");
     Mesh* plane_mesh = getPlaneMesh();
 
     __Texture__ plane_normal;
@@ -53,8 +54,8 @@ void ObjectFactory::wallNormalMapping()
     GameObject *plane = new GameObject(0, " *** WALL *** ");
 
     plane->addComponent(new Material(new Model(plane_mesh), new Program("../glsl/wall_vs.glsl", "../glsl/wall_fs.glsl")));
-    plane->setPosition(new Position(glm::vec3(1.0, 0.0, 0.0), M_PI / 2.0f));
-    plane->setPosition(new Position(glm::vec3(0.0, 0.0, -1.0), M_PI / 12.0f));
+//    plane->setPosition(new Position(glm::vec3(1.0, 0.0, 0.0), M_PI / 2.0f));
+//    plane->setPosition(new Position(glm::vec3(0.0, 0.0, -1.0), M_PI / 12.0f));
     _GameObjects.push_back(plane);
 }
 
@@ -85,7 +86,7 @@ void ObjectFactory::solarSystem() {
     earth_normal.filename = "2k_earth_normal_map.tif";
     earth_mesh->setTexture(earth_normal);
 
-    earth->addComponent(new Material(new Model(earth_mesh), new Program("../glsl/earth_vs.glsl", "../glsl/earth_fs.glsl")));
+    earth->addComponent(new Material(new Model(earth_mesh), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
     earth->addComponent(new Camera());
 
     GameObject *mars = new GameObject(0, "*** MARS ***");
@@ -112,7 +113,7 @@ void ObjectFactory::solarSystem() {
     moon_normal.filename = "moon_normal.jpg";
     moon_mesh->setTexture(moon_normal);
 
-    moon->addComponent(new Material(new Model(moon_mesh), new Program("../glsl/moon_vs.glsl", "../glsl/moon_fs.glsl")));
+    moon->addComponent(new Material(new Model(moon_mesh), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
     earth->addGameObject(moon);
 
     // Skybox :)
@@ -355,27 +356,46 @@ Mesh* ObjectFactory::getPlaneMesh() {
         -1.0f,  1.0f,  0.0f, // 0
         -1.0f, -1.0f,  0.0f, // 1
          1.0f, -1.0f,  0.0f, // 2
-         1.0f,  1.0f,  1.0f, // 3
+         1.0f,  1.0f,  0.0f, // 3
     };
     std::vector<GLuint> indices = {
         0, 1, 2,
         0, 2, 3
     };
+
     std::vector<GLfloat> textCoord = {
         0.0f, 1.0f,
         0.0f, 0.0f,
         1.0f, 0.0f,
         1.0f, 1.0f
     };
+
     std::vector<Vertex> vertices;
-    for (unsigned i = 0, j = 0; i < position.size(); i += 3, j += 2) {
+    for (unsigned i = 0, j = 0, k = 0; i < position.size(); i += 3, j += 2, k++) {
         Vertex vertex;
 
         vertex.Position = glm::vec3(position[i], position[i + 1], position[i + 2]);
         vertex.Normal = glm::normalize(glm::vec3(0.0, 0.0, 1.0));
         vertex.TexCoords = glm::vec2(textCoord[j], textCoord[j + 1]);
+
+        // Si tengo tres vertices, calculo el vector tangente de ese triangulo.
+        if (vertices.size() > 0 && vertices.size() % 2 == 0) {
+            std::cout << "Calc Tangent vector" << '\n';
+            glm::vec3 edge1 = vertices[k + 1].Position - vertices[i].Position;
+            glm::vec3 edge2 = vertices[k + 2].Position - vertices[i].Position;
+            glm::vec2 deltaUV1 = vertices[k + 1].TexCoords - vertices[i].TexCoords;
+            glm::vec2 deltaUV2 = vertices[k + 2].TexCoords - vertices[i].TexCoords;
+
+            float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+            vertex.Tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+            vertex.Tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+            vertex.Tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+            vertex.Tangent = glm::normalize(vertex.Tangent);
+        }
         vertices.push_back(vertex);
     }
+
     std::vector<__Texture__> textures;
 
     __Texture__ texture;
@@ -386,6 +406,13 @@ Mesh* ObjectFactory::getPlaneMesh() {
     return new Mesh(vertices, indices, textures);
 }
 
+void ObjectFactory::getTBNMatrix() {
+//    glm::vec3 edge1 = pos2 - pos1;
+//    glm::vec3 edge2 = pos3 - pos1;
+//    glm::vec2 deltaUV1 = uv2 - uv1;
+//    glm::vec2 deltaUV2 = uv3 - uv1;
+    ;
+}
 
 Mesh* ObjectFactory::getCubeMesh() {
     std::vector<__Texture__> textures;
@@ -429,51 +456,65 @@ Mesh* ObjectFactory::getCubeMesh() {
     return new Mesh(vertices, indices, textures);
 }
 
-Mesh* ObjectFactory::getSphereMesh(std::string filename) {
-    int idx = 0;
-    std::vector<std::vector<int>> grid;
-
-    // Buffers...
+Mesh* ObjectFactory::getSphereMesh(std::string filename)
+{
     std::vector<GLfloat> posVertex;
     std::vector<GLfloat> normals;
     std::vector<GLuint> indices;
 
-    float heightSegments = 25.0f;
-    float height = 25.0f;
-    float width = 25.0f;
     float radius = 1.0f;
+
+    float lengthInv = 1.0f / radius;    // vertex normal
+    float s, t;                                     // vertex texCoord
+
+    float sectorCount = 100.0f;
+    float stackCount = 100.0f;
+
+    float sectorStep = 2 * M_PI / sectorCount;
+    float stackStep = M_PI / stackCount;
+
+    float phy, theta;
+
+
     glm::vec3 vertex(1.0f); // Row vec3...
     std::vector<Vertex> vertices;
 
     // Generate vertices, normals and texCoords
-    for (int iy = 0; iy <= height; ++iy) {
+    for (int i = 0; i <= stackCount; ++i) {
           std::vector<int> verticesRow;
-          float v = iy / heightSegments;
 
-          for (int ix = 0; ix <= width; ++ix) {
-                float u = ix / width;
+          phy = M_PI / 2 - i * stackStep;
+
+          for (int j = 0; j <= sectorCount; ++j) {
+                theta =  j * sectorStep;
 
                 // Vertex. X.
-                vertex.x = radius * cos( u * M_PI * 2.0f ) * sin( v * M_PI );
+                vertex.x = radius * cosf( phy ) * cosf( theta );
 
                 // Vertex. Y.
-                vertex.y = radius * cos( v * M_PI );
+                vertex.y = radius * cosf( phy ) * sinf( theta );
 
                 // Vertex. Z.
-                vertex.z = radius * sin( u * M_PI * 2.0f ) * sin( v * M_PI );
+                vertex.z = radius * sinf( phy );
 
-                GLfloat aux[] = {-vertex.x, -vertex.y, -vertex.z};
+                GLfloat aux[] = {vertex.x, vertex.y, vertex.z};
                 posVertex.insert(posVertex.end(), aux, aux + 3);
 
                 // Normal.
-                glm::vec3 normal(vertex);
-                normal = glm::normalize(normal); // Normalize... Here!
+                glm::vec3 normal;
+
+                normal.x = vertex.x * lengthInv;
+                normal.y = vertex.y * lengthInv;
+                normal.z = vertex.z * lengthInv;
+                normal = glm::normalize(normal);
 
                 GLfloat norm[] = {normal.x, normal.y, normal.z};
                 normals.insert(normals.end(), norm, norm + 3);
 
                 // TexCoord. Is good because draw the first texture...
-                double texCoord[] = {u, 1.0 - v};
+                s = (float) j / sectorCount;
+                t = (float) i / stackCount;
+                double texCoord[] = {s, t};
 
                 Vertex vertex;
                 vertex.Position = glm::vec3(aux[0], aux[1], aux[2]);
@@ -481,28 +522,37 @@ Mesh* ObjectFactory::getSphereMesh(std::string filename) {
                 vertex.Normal = normal;
 
                 vertices.insert(vertices.end(), vertex);
-
-                verticesRow.push_back( idx++ );
-          }
-          grid.push_back(verticesRow);
-    }
-
-    // Generate índices
-    // Sorting of indices... (for triangles-strip)
-    for (int iy = 0; iy < height; ++iy ) {
-          for (int ix = 0; ix < width; ++ix ) {
-                int a = grid[ iy ][ ix + 1 ];
-                int b = grid[ iy ][ ix ];
-                int c = grid[ iy + 1 ][ ix ];
-                int d = grid[ iy + 1 ][ ix + 1 ];
-
-                int aux[] = {a, b, d};
-                indices.insert(indices.end(), aux, aux + 3);
-
-                int aux2[] = {b, c, d};
-                indices.insert(indices.end(), aux2, aux2 + 3);
           }
     }
+
+    // generate CCW index list of sphere triangles
+    int k1, k2;
+    for(int i = 0; i < stackCount; ++i)
+    {
+        k1 = i * (sectorCount + 1);     // beginning of current stack
+        k2 = k1 + sectorCount + 1;      // beginning of next stack
+
+        for(int j = 0; j < sectorCount; ++j, ++k1, ++k2)
+        {
+            // 2 triangles per sector excluding first and last stacks
+            // k1 => k2 => k1+1
+            if(i != 0)
+            {
+                indices.push_back(k1);
+                indices.push_back(k2);
+                indices.push_back(k1 + 1);
+            }
+
+            // k1+1 => k2 => k2+1
+            if(i != stackCount-1)
+            {
+                indices.push_back(k1 + 1);
+                indices.push_back(k2);
+                indices.push_back(k2 + 1);
+            }
+        }
+    }
+
     std::vector<__Texture__> textures;
 
     __Texture__ texture;

@@ -48,6 +48,7 @@ struct Vertex {
     glm::vec3 Position;
     glm::vec3 Normal;
     glm::vec2 TexCoords;
+    glm::vec3 Tangent;
 };
 
 struct __Texture__ {
@@ -74,6 +75,7 @@ public:
     std::vector<Vertex> _vertices;
     std::vector<unsigned> _indices;
     std::vector<__Texture__> _textures;
+
 
     friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
 

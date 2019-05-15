@@ -9,7 +9,7 @@ Update::~Update() {
 }
 
 void Update::init(Scene *scene) {
-    scene->init();
+    ;
 }
 
 void Update::update(float dt, Scene *scene) {

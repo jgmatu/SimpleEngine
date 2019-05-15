@@ -27,13 +27,9 @@ void GameObject::getCameras(std::vector<Camera*>& cameras) {
     Component *component = this->getComponent(TypeComp::CAMERA);
 
     if (Camera *camera = dynamic_cast<Camera*>(component)) {
-        std::cout << "Push new Camera.." << '\n';
         cameras.push_back(camera);
     }
-    std::cout << "Name : " << _name << '\n';
-    std::cout << "Size " << _gameObjects.size() << '\n';
     for (unsigned i = 0; i < _gameObjects.size(); ++i) {
-        std::cout << "New GO" << '\n';
         _gameObjects[i]->getCameras(cameras);
     }
 };
@@ -129,6 +125,35 @@ void GameObject::init() {
     }
 }
 
+void GameObject::addTransparentQueue(std::map<float, std::vector<GameObject*>>& sorted, float distance) {
+    std::map<float, std::vector<GameObject*>>::iterator it;
+    it = sorted.find(distance);
+
+    if (it == sorted.end()) {
+        std::vector<GameObject*> aux;
+        aux.push_back(this);
+        sorted[distance] = aux;
+    } else {
+        it->second.push_back(this);
+    }
+}
+
+// Obtener la componente camara activa... Camara activa de todos los gameObject
+// de la escena... (Escena...) dibujar todos los gameObject respecto a la camara activa
+// de la escena...
+void GameObject::draw(Camera *camera) {
+    Component *component = this->getComponent(TypeComp::MATERIAL);
+
+    if (Material *material = dynamic_cast<Material*>(component)) {
+        Component *component = this->getComponent(TypeComp::TRANSFORM);
+        if (Transform *tf = dynamic_cast<Transform*>(component)) {
+            material->setParameter("model", tf->_gModel);
+        }
+        material->setView(camera);
+        material->awakeStart();
+    }
+}
+
 void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObject*>>& sorted) {
     Component *component = getComponent(TypeComp::MATERIAL);
 
@@ -136,7 +161,7 @@ void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObj
         if (material->isTransparent()) {
             Component *component = getComponent(TypeComp::TRANSFORM);
             if (Transform *tf = dynamic_cast<Transform*>(component)) {
-                float distance = glm::length(-active_camera->_view->position() - tf->position());
+                float distance = glm::length(active_camera->_view->position() - tf->position());
                 this->addTransparentQueue(sorted, distance);
             }
         } else {
@@ -155,37 +180,6 @@ void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObj
     }
 }
 
-void GameObject::addTransparentQueue(std::map<float, std::vector<GameObject*>>& sorted, float distance) {
-    std::map<float, std::vector<GameObject*>>::iterator it;
-    it = sorted.find(distance);
-
-    if (it == sorted.end()) {
-        std::vector<GameObject*> aux;
-        aux.push_back(this);
-        sorted[distance] = aux;
-    } else {
-        it->second.push_back(this);
-    }
-}
-
-// Obtener la componente camara activa... Camara activa de todos los gameObject
-// de la escena... (Escena...) dibujar todos los gameObject respecto a la camara activa
-// de la escena...
-void GameObject::draw(Camera *camera) {
-//    std::cout << "DRAW : " << _name << '\n';
-
-    Component *component = this->getComponent(TypeComp::MATERIAL);
-
-    if (Material *material = dynamic_cast<Material*>(component)) {
-        Component *component = this->getComponent(TypeComp::TRANSFORM);
-        if (Transform *tf = dynamic_cast<Transform*>(component)) {
-            material->setParameter("model", tf->_gModel);
-        }
-        material->setView(camera);
-        material->awakeStart();
-    }
-}
-
 void GameObject::update()
 {
     Component *component = this->getComponent(TypeComp::TRANSFORM);
@@ -194,8 +188,6 @@ void GameObject::update()
         for (unsigned i = 0; i < _gameObjects.size(); ++i) {
             component = _gameObjects[i]->getComponent(TypeComp::TRANSFORM);
             if (Transform *tfChild = dynamic_cast<Transform*>(component)) {
-                // std::cout << "Updating : " << _gameObjects[i]->_name << '\n';
-                // std::cout << *tfChild << '\n';
                 tfChild->_gModel = tfRoot->_gModel * tfChild->_model;
                 tfChild->update();
             }

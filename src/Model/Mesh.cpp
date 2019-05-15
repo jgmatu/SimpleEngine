@@ -60,7 +60,7 @@ void Mesh::active()
 
     // Vertex positions...
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, Position));
 
     // Vertex normals...
     glEnableVertexAttribArray(1);
@@ -69,6 +69,10 @@ void Mesh::active()
     // Vertex texture coords...
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, TexCoords));
+
+    // Vertex Tangent...
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, Tangent));
 
     glBindVertexArray(0);
 }
