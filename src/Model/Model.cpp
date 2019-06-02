@@ -140,8 +140,8 @@ std::vector<__Texture__> Model::loadMaterialTextures(aiMaterial *mat, aiTextureT
 
 void Model::active() {
     for (unsigned i = 0; i < _meshes.size(); ++i) {
-        _meshes[i]->loadTextures();
         _meshes[i]->active();
+        _meshes[i]->loadTextures();
     }
 }
 

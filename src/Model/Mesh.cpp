@@ -59,20 +59,20 @@ void Mesh::active()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(unsigned int), &_indices[0], GL_STATIC_DRAW);
 
     // Vertex positions...
-    glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, Position));
+    glEnableVertexAttribArray(0);
 
     // Vertex normals...
-    glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, Normal));
+    glEnableVertexAttribArray(1);
 
     // Vertex texture coords...
-    glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, TexCoords));
+    glEnableVertexAttribArray(2);
 
     // Vertex Tangent...
-    glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, Tangent));
+    glEnableVertexAttribArray(3);
 
     glBindVertexArray(0);
 }
@@ -85,7 +85,6 @@ void Mesh::draw(Program *program) {
     for(unsigned i = 0; i < _textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
 
-        // Retrieve texture number (the N in diffuse_textureN)
         std::string number;
         std::string name = _textures[i].type;
         if(name == "texture_diffuse") {
@@ -104,15 +103,12 @@ void Mesh::draw(Program *program) {
     glBindVertexArray(_VAO);
     glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
-
-    // Always good practice to set everything back to defaults once configured...
-    glActiveTexture(GL_TEXTURE0);
 }
 
 
 unsigned Mesh::TextureFromFile(std::string directory, const char *filename) {
     unsigned textureID = 0;
-    std::string path = directory + "/" + std::string(filename);
+    std::string path = directory + std::string(filename);
 
     std::ifstream file(path);
     if (file.fail()) {
@@ -121,9 +117,14 @@ unsigned Mesh::TextureFromFile(std::string directory, const char *filename) {
     }
     int width, heigth, channels;
     unsigned char* pixels = stbi_load(path.c_str(), &width, &heigth, &channels, 0);
+    if (!pixels) {
+        std::cerr << "Error Loading texture on memory..." << '\n';
+        stbi_image_free(pixels);
+        throw;
+    }
 
     glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID); // all upcoming GL_TEXTURE_2D operations now have
+    glBindTexture(GL_TEXTURE_2D, textureID); // all upcoming GL_TEXTURE_2D.
 
     // set the texture wrapping parameters.
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -133,11 +134,10 @@ unsigned Mesh::TextureFromFile(std::string directory, const char *filename) {
     } else if (channels == 3) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, heigth, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
     }
-    free(pixels);
 
+    glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glGenerateMipmap(GL_TEXTURE_2D);
     return textureID;
 }
 
@@ -154,7 +154,6 @@ unsigned Mesh::TextureCubeMap(std::vector<std::string> _faces) {
             std::cout << "Cubemap texture failed to load at path: " << _faces[i] << std::endl;
             continue;
         }
-        std::cout << "Success loaded texture cubemap : " << _faces[i] << " Width : " << width << " Height : " << height << " Channels : " << nrChannels << '\n';
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,  0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         stbi_image_free(data);
     }

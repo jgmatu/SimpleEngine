@@ -10,8 +10,7 @@ ObjectFactory::ObjectFactory() :
 
 ObjectFactory::~ObjectFactory()
 {
-//    std::cout << "Delete All Game Objects!" << '\n';
-
+//    std::cout << "Delete All Game Objects!" << '\n'
     for (unsigned i = 0; i < _GameObjects.size(); ++i) {
         delete _GameObjects[i];
     }
@@ -34,9 +33,9 @@ std::vector<GameObject*> ObjectFactory::getGameObjects()
 
 void ObjectFactory::generateDemoObjects()
 {
-    // this->simulation1();
+    this->simulation1();
     // this->solarSystem();
-    this->wallNormalMapping();
+    // this->wallNormalMapping();
 }
 
 void ObjectFactory::wallNormalMapping()
@@ -137,16 +136,17 @@ void ObjectFactory::solarSystem() {
 
 void ObjectFactory::simulation1() {
     std::vector<glm::vec3> cube_positions = {
-        glm::vec3(-5.0,  0.0,  0.0),
-        glm::vec3(-3.0,  1.0, -1.0),
-        glm::vec3(-1.0,  2.0,  2.0),
-        glm::vec3( 0.0, -2.0, -1.0),
-        glm::vec3( 1.0,  1.0, -1.0)
+        glm::vec3(-1.0,  0.0,  0.0)
+//        glm::vec3(-1.0,  1.1,  0.0),
+//        glm::vec3(-1.0,  2.2,  0.0),
+//        glm::vec3(-1.0, -1.3,  0.0),
+//        glm::vec3(-1.0, -2.4,  0.0)
     };
     std::vector<Movement*> _moves;
     for (unsigned i = 0; i < cube_positions.size(); ++i) {
         _moves.push_back(new Translate(cube_positions[i]));
     }
+
     for (unsigned i = 0; i < _moves.size(); ++i) {
         GameObject *cube = new GameObject(i + 1, "*** CUBE ***");
         cube->addComponent(new Material(new Model(getCubeMesh()), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
@@ -155,26 +155,26 @@ void ObjectFactory::simulation1() {
         _GameObjects.push_back(cube);
     }
 
-    for (unsigned i = 0; i < _moves.size(); ++i) {
-        Material *grass = new Material(new Model(getPlantMesh("grass.png")), new Program("../glsl/grass_vs.glsl", "../glsl/grass_fs.glsl"));
-        grass->setTransparent();
+//    for (unsigned i = 0; i < _moves.size(); ++i) {
+//        Material *grass = new Material(new Model(getPlantMesh("grass.png")), new Program("../glsl/grass_vs.glsl", "../glsl/grass_fs.glsl"));
+//        grass->setTransparent();
 
-        GameObject *grass_go = new GameObject(i + 1, "**** GRASS **** ");
-        grass_go->addComponent(grass);
-        grass_go->setMove(_moves[i]);
-        _GameObjects.push_back(grass_go);
-    }
-    GameObject *_floor_go = new GameObject(0, "*** FLOOR ***");
-    _floor_go->addComponent(new Material(new Model(getPlaneMesh()), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
-    _floor_go->setMove(new Translate(glm::vec3(0.0, 0.0, 0.0)));
-    _GameObjects.push_back(_floor_go);
+//        GameObject *grass_go = new GameObject(i + 1, "**** GRASS **** ");
+//        grass_go->addComponent(grass);
+//        grass_go->setMove(_moves[i]);
+//        _GameObjects.push_back(grass_go);
+//    }
+//    GameObject *_floor_go = new GameObject(0, "*** FLOOR ***");
+//    _floor_go->addComponent(new Material(new Model(getPlaneMesh()), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
+//    _floor_go->setMove(new Translate(glm::vec3(0.0, 0.0, 0.0)));
+//    _GameObjects.push_back(_floor_go);
 
-    Material *nanosuit = new Material(new Model("../models/nanosuit/nanosuit.obj"), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
-    GameObject *nanosuit_go = new GameObject(30, "Complex model");
-    nanosuit_go->addComponent(nanosuit);
-    nanosuit_go->setMove(new Scale(glm::vec3(0.15, 0.15, 0.15)));
-    nanosuit_go->setMove(new Translate(glm::vec3(20.0, 0.0, 0.0)));
-    _GameObjects.push_back(nanosuit_go);
+//    Material *nanosuit = new Material(new Model("../models/nanosuit/nanosuit.obj"), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
+//    GameObject *nanosuit_go = new GameObject(30, "Complex model");
+//    nanosuit_go->addComponent(nanosuit);
+//    nanosuit_go->setMove(new Scale(glm::vec3(0.15, 0.15, 0.15)));
+//    nanosuit_go->setMove(new Translate(glm::vec3(20.0, 0.0, 0.0)));
+//    _GameObjects.push_back(nanosuit_go);
 
 }
 
@@ -419,19 +419,7 @@ Mesh* ObjectFactory::getCubeMesh() {
     std::vector<Vertex> vertices;
     std::vector<unsigned> indices = cubeTriangleIndex;
 
-    __Texture__ texture;
-
-    texture.type = "texture_diffuse";
-    texture.path = "../resources/";
-    texture.filename = "container2.png";
-    textures.push_back(texture);
-
-    texture.type = "texture_specular";
-    texture.path = "../resources/";
-    texture.filename = "container2_specular.png";
-    textures.push_back(texture);
-
-    for (unsigned i = 0; i < __cubeVertices.size(); i += 5) {
+    for (unsigned i = 0, j = 0; i < __cubeVertices.size(); i += 5, j += 3) {
         Vertex vertex;
 
         glm::vec3 normal;
@@ -444,15 +432,27 @@ Mesh* ObjectFactory::getCubeMesh() {
         text.x = __cubeVertices[i + 3];
         text.y = __cubeVertices[i + 4];
 
-        normal.x = cubeVertexNormal[i];
-        normal.y = cubeVertexNormal[i + 1];
-        normal.z = cubeVertexNormal[i + 2];
+        normal.x = cubeVertexNormal[j];
+        normal.y = cubeVertexNormal[j + 1];
+        normal.z = cubeVertexNormal[j + 2];
 
         vertex.Normal = normal;
         vertex.Position = position;
         vertex.TexCoords = text;
         vertices.push_back(vertex);
     }
+    __Texture__ texture;
+
+    texture.type = "texture_specular";
+    texture.path = "../resources/";
+    texture.filename = "container2_specular.png";
+    textures.push_back(texture);
+
+    texture.type = "texture_diffuse";
+    texture.path = "../resources/";
+    texture.filename = "container2.png";
+    textures.push_back(texture);
+
     return new Mesh(vertices, indices, textures);
 }
 
@@ -544,7 +544,7 @@ Mesh* ObjectFactory::getSphereMesh(std::string filename)
             }
 
             // k1+1 => k2 => k2+1
-            if(i != stackCount-1)
+            if(i != stackCount - 1)
             {
                 indices.push_back(k1 + 1);
                 indices.push_back(k2);
@@ -562,10 +562,10 @@ Mesh* ObjectFactory::getSphereMesh(std::string filename)
     texture.filename = filename;
     textures.push_back(texture);
 
-//    texture.type = "texture_specular";
-//    texture.path = "../resources/";
-//    texture.filename = "container2_specular.png";
-//    textures.push_back(texture);
+    texture.type = "texture_specular";
+    texture.path = "../resources/";
+    texture.filename = "container2_specular.png";
+    textures.push_back(texture);
 
     return new Mesh(vertices, indices, textures);
 }

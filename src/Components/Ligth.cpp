@@ -2,7 +2,7 @@
 
 Light::Light()
 {
-    this->_distances =  {
+    this->_distances = {
         {7, glm::vec3(1.0f, 0.7f, 1.8f)},
         {13, glm::vec3(1.0f, 0.35f, 0.44f)},
         {20, glm::vec3(1.0f, 0.22f, 0.20f)},
@@ -92,7 +92,6 @@ Specular::~Specular()
 
 void Specular::setParameters(Uniforms *uniforms)
 {
-//    uniforms->setUniformVec3("material.specular", _value);
     uniforms->setUniformFloat("material.shininess", _shininess);
 }
 
@@ -143,7 +142,7 @@ Point::~Point()
 void Point::setParameters(Uniforms *uniforms)
 {
     std::string index = std::string(std::to_string(this->_num));
-    glm::vec3 distance = _distances[20];
+    glm::vec3 distance = _distances[3250];
 
     uniforms->setUniformVec3("points[" + index + "].ambient", glm::vec3(0.0f));
     uniforms->setUniformVec3("points[" + index + "].diffuse", glm::vec3(1.0f));

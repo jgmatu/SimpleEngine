@@ -30,11 +30,12 @@ struct ProgramException : public std::exception {
         this->msg = msg;
     }
 
-    const char* what () const throw () {
+    const char* what() const throw () {
         char *data = (char*) malloc(1024 * sizeof(char));
 
         if (!data) {
             fprintf(stderr, "%s\n", strerror(errno));
+            return NULL;
         }
         strcpy(data, std::string("Program error: " + msg).c_str());
         sprintf(data, "%s", data);

@@ -23,11 +23,9 @@ Material::~Material()
 }
 
 void Material::start() {
-    if (_model) {
+    if (_model && _program) {
         _model->active();
-        if (_program) {
-            _program->active();
-        }
+        _program->active();
     }
 }
 

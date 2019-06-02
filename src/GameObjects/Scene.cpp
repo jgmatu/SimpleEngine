@@ -30,7 +30,7 @@ void Scene::initCameras()
 std::vector<Light*> Scene::getLigthPoints()
 {
     std::vector<glm::vec3> point_positions = {
-        glm::vec3(0.5, 0.5, 1.0)
+        glm::vec3(-1.0, 0.0, 1.0)
 //        glm::vec3(-2.0,  1.0,  1.0),
 //        glm::vec3(-1.0,  2.0,  3.0),
 //        glm::vec3( 0.0, -2.0,  0.0)
