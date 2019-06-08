@@ -5,13 +5,14 @@ Model::Model() :
     _textures_loaded(),
     _directory()
 {
-    ;
+    _uniforms = nullptr;
+    _program = nullptr;
 }
 
 Model::Model(Mesh *mesh) :
     Model::Model()
 {
-    _meshes.push_back(mesh);
+    _meshes[mesh->getId()] = mesh;
 }
 
 Model::Model(std::string path) :
@@ -22,8 +23,9 @@ Model::Model(std::string path) :
 
 Model::~Model()
 {
-    for (unsigned i = 0; i < _meshes.size(); ++i) {
-        delete _meshes[i];
+    std::map<std::string, Mesh*>::iterator it = _meshes.begin();
+    while (it != _meshes.end()) {
+        it = _meshes.erase(it);
     }
     _meshes.clear();
 }
@@ -46,7 +48,7 @@ void Model::processNode(aiNode *node, const aiScene *scene)
     // Process all the node's meshes (if any)
     for (unsigned i = 0; i < node->mNumMeshes; ++i) {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        this->addMesh(processMesh(mesh, scene));
+        this->addMesh(processMesh(std::to_string(i), mesh, scene));
     }
     // Then do the same for each of its children
     for (unsigned i = 0; i < node->mNumChildren; ++i) {
@@ -55,14 +57,14 @@ void Model::processNode(aiNode *node, const aiScene *scene)
 }
 
 void Model::addMesh(Mesh *mesh) {
-    _meshes.push_back(mesh);
+    _meshes[mesh->getId()] = mesh;
 }
 
-Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene)
+Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned> indices;
-    std::vector<__Texture__> textures;
+    std::vector<__Texture__*> textures;
 
     for (unsigned i = 0; i < mesh->mNumVertices; ++i) {
         Vertex vertex;
@@ -103,34 +105,40 @@ Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene)
     if (mesh->mMaterialIndex >= 0) {
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 
-        std::vector<__Texture__> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        std::vector<__Texture__*> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
-        std::vector<__Texture__> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        std::vector<__Texture__*> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
-    return new Mesh(vertices, indices, textures);
+
+    // Add primitive textures for complex models...
+    Mesh *mesh_engine = new Mesh(id_mesh, vertices, indices);
+    for (uint32_t i = 0; i < textures.size(); ++i) {
+        mesh_engine->setTexture(textures[i]);
+    }
+    return mesh_engine;
 }
 
-std::vector<__Texture__> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
+std::vector<__Texture__*> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
 {
-    std::vector<__Texture__> textures;
+    std::vector<__Texture__*> textures;
 
-    for (unsigned i = 0; i < mat->GetTextureCount(type); i++) {
+    for (uint32_t i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str;
         mat->GetTexture(type, i, &str);
         bool skip = false;
-        for (unsigned j = 0; j < _textures_loaded.size() && !skip; j++) {
-            if (std::strcmp(_textures_loaded[j].path.data(), str.C_Str()) == 0) {
+        for (uint32_t j = 0; j < _textures_loaded.size() && !skip; j++) {
+            if (std::strcmp(_textures_loaded[j]->path.data(), str.C_Str()) == 0) {
                 textures.push_back(_textures_loaded[j]);
                 skip = true;
             }
         }
         if (!skip) {   // if texture hasn't been loaded already, load it
-            __Texture__ texture;
-            texture.path = _directory + "/";
-            texture.type = typeName;
-            texture.filename = str.C_Str();
+            __Texture__ *texture = new __Texture__();
+            texture->path = _directory + "/";
+            texture->type = typeName;
+            texture->filename = str.C_Str();
             textures.push_back(texture);
             _textures_loaded.push_back(texture); // add to loaded textures
         }
@@ -138,22 +146,74 @@ std::vector<__Texture__> Model::loadMaterialTextures(aiMaterial *mat, aiTextureT
     return textures;
 }
 
+void Model::setProgram(Program *program)
+{
+    this->_program = program;
+}
+
+void Model::setUniforms(Uniforms *uniforms)
+{
+    this->_uniforms = uniforms;
+}
+
+void Model::setTextures(std::map<std::string, std::vector<__Texture__*>> textures)
+{
+    this->_textures = textures;
+    std::cout << *this << '\n';
+}
+
 void Model::active() {
-    for (unsigned i = 0; i < _meshes.size(); ++i) {
-        _meshes[i]->active();
-        _meshes[i]->loadTextures();
+    if (!_program) {
+        std::cerr << "active: No program load on model!" << '\n';
+        return;
+    }
+
+    std::map<std::string, Mesh*>::iterator it;
+    for (it = _meshes.begin(); it != _meshes.end(); ++it) {
+        Mesh *mesh = it->second;
+
+        mesh->setProgram(_program);
+        mesh->active();
+        // Load all material textures to the proper mesh..
+        std::vector<__Texture__*> textures = _textures[it->first];
+        for (uint32_t i = 0; i < textures.size(); ++i) {
+            mesh->setTexture(textures[i]);
+        }
+        mesh->loadTextures();
     }
 }
 
-void Model::render(Program *program) {
-    for (unsigned i = 0; i < _meshes.size(); ++i) {
-        _meshes[i]->draw(program);
+void Model::draw() {
+    if (!_uniforms) {
+        std::cout << "draw: No data uniforms loaded!" << '\n';
+        return;
+    }
+    std::map<std::string, Mesh*>::iterator it;
+
+    for (it = _meshes.begin(); it != _meshes.end(); ++it) {
+        Mesh *mesh = it->second;
+
+        mesh->setUniforms(_uniforms);
+        mesh->draw();
     }
 }
 
 std::ostream& operator<<(std::ostream& os, const Model& model) {
-    for (unsigned i = 0; i < model._meshes.size(); ++i) {
-        os << *model._meshes[i];
+    std::map<std::string, Mesh*>::const_iterator it_mesh;
+
+    for (it_mesh = model._meshes.begin(); it_mesh != model._meshes.end(); ++it_mesh) {
+        Mesh *mesh = it_mesh->second;
+        os << *mesh << '\n';
+    }
+
+    std::map<std::string, std::vector<__Texture__*>>::const_iterator it_textures;
+
+    for (it_textures = model._textures.begin(); it_textures != model._textures.end(); ++it_textures) {
+        std::vector<__Texture__*> textures = it_textures->second;
+        os << "Mesh : " << it_textures->first << "textures : " <<  '\n';
+        for (uint32_t i = 0; i < textures.size(); ++i) {
+            os << textures[i]->filename << '\n';
+        }
     }
     return os;
 }

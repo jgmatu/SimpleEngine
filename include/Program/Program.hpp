@@ -31,13 +31,14 @@ struct ProgramException : public std::exception {
     }
 
     const char* what() const throw () {
+        const int MAX_STR = 255;
         char *data = (char*) malloc(1024 * sizeof(char));
 
         if (!data) {
             fprintf(stderr, "%s\n", strerror(errno));
             return NULL;
         }
-        strcpy(data, std::string("Program error: " + msg).c_str());
+        strncpy(data, std::string("Program error: " + msg).c_str(), MAX_STR);
         sprintf(data, "%s", data);
         return data;
     }
@@ -51,12 +52,10 @@ public:
     ~Program();
 
     void active();
-    void render();
+    void use();
     void cleanup();
 
     void setUniforms(Uniforms *uniforms);
-    void clearUniforms(Uniforms *uniforms);
-
     void createUniform(std::string uniformName);
 
     void setUniform(std::string name, glm::mat4 value);

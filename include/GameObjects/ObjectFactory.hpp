@@ -38,16 +38,18 @@ public:
 
 private:
 
+    Mesh* getMeshFromVerticesPosTex(std::string id_mesh, std::vector<float> verPosTex);
+
     void addSkyBox(std::string directory);
     void addSceneLigths(Material *material);
 
-    std::vector<Mesh*> getVerticesRenderBufferTexture();
+    // Basic Geometries...
+    Mesh* getPlantMesh(std::string id_mesh);
+    Mesh* getPlaneMesh(std::string id_mesh);
+    Mesh* getCubeMesh(std::string id_mesh);
+    Mesh* getSphereMesh(std::string id_mesh);
 
-    Mesh* getMeshFromVerticesPosTex(std::vector<float> vertices, __Texture__ texture);
-    Mesh* getPlantMesh(std::string texture_diffuse);
-    Mesh* getPlaneMesh();
-    Mesh* getCubeMesh();
-    Mesh* getSphereMesh(std::string filename);
+    // Basic skybox
     Mesh* getSkyBox();
 
     void solarSystem();

@@ -71,35 +71,7 @@ void Program::setUniforms(Uniforms *uniforms) {
     }
 }
 
-void Program::clearUniforms(Uniforms *uniforms)
-{
-    std::vector<std::string> names;
-    names = uniforms->getUniformsNamesInt();
-    for (unsigned i = 0; i < names.size(); ++i) {
-//        std::cout << "Clear : " << names[i] << '\n';
-        this->setUniform(names[i], 0);
-    }
-
-    names = uniforms->getUniformsNamesFloat();
-    for (unsigned i = 0; i < names.size(); ++i) {
-//        std::cout << "Clear : " << names[i] << '\n';
-        this->setUniform(names[i], 0.0f);
-    }
-
-    names = uniforms->getUniformsNamesVec3();
-    for (unsigned i = 0; i < names.size(); ++i) {
-//        std::cout << "Clear : " << names[i] << '\n';
-        this->setUniform(names[i], glm::vec3(0.0, 0.0, 0.0));
-    }
-
-    names = uniforms->getUniformsNamesMat4();
-    for (unsigned i = 0; i < names.size(); ++i) {
-//        std::cout << "Clear : " << names[i] << '\n';
-        this->setUniform(names[i], glm::mat4(1.0));
-    }
-}
-
-void Program::render() {
+void Program::use() {
     this->bind();
 }
 
@@ -145,18 +117,30 @@ void Program::createUniform(std::string uniformName) {
 }
 
 void Program::setUniform(std::string name, int value) {
+    if (_uniforms.find(name) == _uniforms.end()) {
+        createUniform(name);
+    }
     glUniform1i(_uniforms[name], value);
 }
 
 void Program::setUniform(std::string name, float value) {
+    if (_uniforms.find(name) == _uniforms.end()) {
+        createUniform(name);
+    }
     glUniform1f(_uniforms[name], value);
 }
 
 void Program::setUniform(std::string name, glm::vec3 value) {
+    if (_uniforms.find(name) == _uniforms.end()) {
+        createUniform(name);
+    }
     glUniform3f(_uniforms[name], value.x, value.y, value.z);
 }
 
 void Program::setUniform(std::string name, glm::mat4 value) {
+    if (_uniforms.find(name) == _uniforms.end()) {
+        createUniform(name);
+    }
     glUniformMatrix4fv(_uniforms[name], 1, GL_FALSE,  glm::value_ptr(value));
 }
 

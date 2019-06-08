@@ -1,10 +1,12 @@
 #include "Program/Uniforms.hpp"
 
-Uniforms::Uniforms() {
+Uniforms::Uniforms()
+{
     ;
 }
 
-Uniforms::~Uniforms() {
+Uniforms::~Uniforms()
+{
     ;
 }
 
@@ -59,7 +61,6 @@ std::vector<std::string> Uniforms::getUniformsNamesVec3() {
     }
     return names;
 }
-
 
 int Uniforms::getUniformValueInt(std::string name) {
     return _uniformsInt[name];

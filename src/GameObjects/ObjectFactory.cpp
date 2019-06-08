@@ -34,25 +34,31 @@ std::vector<GameObject*> ObjectFactory::getGameObjects()
 void ObjectFactory::generateDemoObjects()
 {
     this->simulation1();
-    // this->solarSystem();
+//    this->solarSystem();
     // this->wallNormalMapping();
 }
 
 void ObjectFactory::wallNormalMapping()
 {
-//    Mesh* plane_mesh = getPlantMesh("brickwall.jpg");
-    Mesh* plane_mesh = getPlaneMesh();
-
-    __Texture__ plane_normal;
-    plane_normal.type = "texture_normal";
-    plane_normal.path = "../resources/";
-    plane_normal.filename = "brickwall_normal.jpg";
-
-    plane_mesh->setTexture(plane_normal);
+    Mesh* plane_mesh = getPlaneMesh("plane_mesh");
 
     GameObject *plane = new GameObject(0, " *** WALL *** ");
+    Material *material = new Material(new Model(plane_mesh));
+    material->setProgram(new Program("../glsl/wall_vs.glsl", "../glsl/wall_fs.glsl"));
 
-    plane->addComponent(new Material(new Model(plane_mesh), new Program("../glsl/wall_vs.glsl", "../glsl/wall_fs.glsl")));
+    __Texture__ *plane_diffuse = new __Texture__();
+    plane_diffuse->type = "texture_normal";
+    plane_diffuse->path = "../resources/";
+    plane_diffuse->filename = "brickwall.jpg";
+    material->setTexture("plane_mesh", plane_diffuse);
+
+    __Texture__ *plane_normal = new __Texture__();
+    plane_normal->type = "texture_normal";
+    plane_normal->path = "../resources/";
+    plane_normal->filename = "brickwall_normal.jpg";
+    material->setTexture("plane_mesh", plane_normal);
+
+    plane->addComponent(material);
     plane->setMove(new Rotate(0.8, glm::vec3(1.0, 0.0, 0.0)));
 //    plane->setPosition(new Position(glm::vec3(1.0, 0.0, 0.0), M_PI / 2.0f));
 //    plane->setPosition(new Position(glm::vec3(0.0, 0.0, -1.0), M_PI / 12.0f));
@@ -60,11 +66,25 @@ void ObjectFactory::wallNormalMapping()
 }
 
 void ObjectFactory::solarSystem() {
+//{
+    // SUN
     GameObject *sun = new GameObject(0, "*** SUN ***");
 
-    sun->setMove(new Translate(glm::vec3(0.0, 0.0, 0.0)));
+    Material *material_sun = new Material(new Model(getSphereMesh("mesh_sphere")));
+    material_sun->setProgram(new Program("../glsl/sun_vs.glsl", "../glsl/sun_fs.glsl"));
 
-    sun->addComponent(new Material(new Model(getSphereMesh("sun.png")), new Program("../glsl/sun_vs.glsl", "../glsl/sun_fs.glsl")));
+    __Texture__ *sun_diffuse = new __Texture__();
+    sun_diffuse->type = "texture_diffuse";
+    sun_diffuse->path = "../resources/";
+    sun_diffuse->filename = "sun.png";
+    material_sun->setTexture("mesh_sphere", sun_diffuse);
+
+    sun->setMove(new Translate(glm::vec3(0.0, 0.0, 0.0)));
+    sun->addComponent(material_sun);
+//}
+
+//{
+    // EARTH
     GameObject *earth = new GameObject(0, "*** EARTH ***");
 
     earth->setMove(new Rotate(0.3, glm::vec3(0.0, 1.0, 0.0)));
@@ -72,23 +92,34 @@ void ObjectFactory::solarSystem() {
     earth->setMove(new Rotate(0.8, glm::vec3(0.0, 1.0, -0.5)));
     earth->setMove(new Scale(glm::vec3(0.25, 0.25, 0.25)));
 
-    Mesh *earth_mesh = getSphereMesh("2k_earth_daymap.jpg");
+    Material *material_earth = new Material(new Model(getSphereMesh("mesh_sphere")));
+    material_earth->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
-    __Texture__ earth_specular;
-    earth_specular.type = "texture_specular";
-    earth_specular.path = "../resources/";
-    earth_specular.filename = "2k_earth_specular_map.tif";
-    earth_mesh->setTexture(earth_specular);
+    __Texture__ *earth_diffuse = new __Texture__();
+    earth_diffuse->type = "texture_diffuse";
+    earth_diffuse->path = "../resources/";
+    earth_diffuse->filename = "2k_earth_daymap.jpg";
+    material_earth->setTexture("mesh_sphere", earth_diffuse);
 
-    __Texture__ earth_normal;
-    earth_normal.type = "texture_normal";
-    earth_normal.path = "../resources/";
-    earth_normal.filename = "2k_earth_normal_map.tif";
-    earth_mesh->setTexture(earth_normal);
+    __Texture__ *earth_specular = new __Texture__();
+    earth_specular->type = "texture_specular";
+    earth_specular->path = "../resources/";
+    earth_specular->filename = "2k_earth_specular_map.tif";
+//    material_earth->setTexture("mesh_sphere", earth_specular);
 
-    earth->addComponent(new Material(new Model(earth_mesh), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
+    __Texture__ *earth_normal = new __Texture__();
+    earth_normal->type = "texture_normal";
+    earth_normal->path = "../resources/";
+    earth_normal->filename = "2k_earth_normal_map.tif";
+//    material_earth->setTexture("mesh_sphere", earth_normal);
+
+    earth->addComponent(material_earth);
     earth->addComponent(new Camera());
 
+//}
+
+//{
+    // MARS
     GameObject *mars = new GameObject(0, "*** MARS ***");
 
     mars->setMove(new Rotate(0.3, glm::vec3(0.0, -1.0, 0.0)));
@@ -96,25 +127,39 @@ void ObjectFactory::solarSystem() {
     mars->setMove(new Rotate(0.8, glm::vec3(0.0, -1.0, -0.1)));
     mars->setMove(new Scale(glm::vec3(0.25, 0.25, 0.25)));
 
-    mars->addComponent(new Material(new Model(getSphereMesh("mars.png")), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
-    mars->addComponent(new Camera());
+    Material *material_mars = new Material(new Model(getSphereMesh("mesh_sphere")));
+    material_mars->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
+    __Texture__ *mars_diffuse = new __Texture__();
+    mars_diffuse->type = "texture_diffuse";
+    mars_diffuse->path = "../resources/";
+    mars_diffuse->filename = "mars.png";
+    material_mars->setTexture("mesh_sphere", mars_diffuse);
+
+    mars->addComponent(material_mars);
+    mars->addComponent(new Camera());
+//}
+
+//{
+    // *** MOON ***
     GameObject *moon = new GameObject(0, "*** MOON ***");
     moon->setMove(new Rotate(2.3, glm::vec3(0.0, -1.0, 0.0)));
     moon->setMove(new Translate(glm::vec3(2.0, 0.0, 0.0)));
     moon->setMove(new Rotate(1.8, glm::vec3(0.0, -1.0, 0.0)));
     moon->setMove(new Scale(glm::vec3(0.15, 0.15, 0.15)));
 
-    Mesh *moon_mesh = getSphereMesh("moon.png");
+    Material *material_moon = new Material(new Model(getSphereMesh("mesh_sphere")));
+    material_moon->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
-    __Texture__ moon_normal;
-    moon_normal.type = "texture_normal";
-    moon_normal.path = "../resources/";
-    moon_normal.filename = "moon_normal.jpg";
-    moon_mesh->setTexture(moon_normal);
+    __Texture__ *moon_diffuse = new __Texture__();
+    moon_diffuse->type = "texture_diffuse";
+    moon_diffuse->path = "../resources/";
+    moon_diffuse->filename = "moon.png";
+    material_moon->setTexture("mesh_sphere", moon_diffuse);
 
-    moon->addComponent(new Material(new Model(moon_mesh), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
+    moon->addComponent(material_moon);
     earth->addGameObject(moon);
+//}
 
     // Skybox :)
     GameObject *skybox = new GameObject(0, "*** SKYBOX ***");
@@ -123,15 +168,12 @@ void ObjectFactory::solarSystem() {
         "../skybox/ame_nebula/top.tga", "../skybox/ame_nebula/bottom.tga",
         "../skybox/ame_nebula/front.tga", "../skybox/ame_nebula/back.tga"
     }, new Program("../glsl/skybox_vs.glsl", "../glsl/skybox_fs.glsl")));
+    skybox->setMove(new Scale(glm::vec3(10.0, 10.0, 10.0)));
 
     _GameObjects.push_back(sun);
-
+    _GameObjects.push_back(skybox);
     sun->addGameObject(earth);
     sun->addGameObject(mars);
-
-//    _GameObjects.push_back(mars);
-//    _GameObjects.push_back(earth);
-    _GameObjects.push_back(skybox);
 }
 
 void ObjectFactory::simulation1() {
@@ -147,12 +189,32 @@ void ObjectFactory::simulation1() {
         _moves.push_back(new Translate(cube_positions[i]));
     }
 
-    for (unsigned i = 0; i < _moves.size(); ++i) {
+    for (unsigned i = 0; i < cube_positions.size(); ++i) {
         GameObject *cube = new GameObject(i + 1, "*** CUBE ***");
-        cube->addComponent(new Material(new Model(getCubeMesh()), new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl")));
-        cube->setMove(_moves[i]);
+
+        std::string id_mesh = "cube_mesh";
+        Material *material = new Material(new Model(getCubeMesh(id_mesh)));
+        material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
+
+        __Texture__ *diffuse = new __Texture__();
+        diffuse->type = "texture_diffuse";
+        diffuse->path = "../resources";
+        diffuse->filename = "container2.png";
+        material->setTexture(id_mesh, diffuse);
+
+        __Texture__ *specular = new __Texture__();
+        specular->type = "texture_specular";
+        specular->path = "../resources";
+        specular->filename = "container2_specular.png";
+        material->setTexture(id_mesh, specular);
+
+        cube->addComponent(material);
         cube->addComponent(new Camera());
+
+        cube->setMove(_moves[i]);
         _GameObjects.push_back(cube);
+
+        std::cout << "/* message ********************/" << '\n';
     }
 
 //    for (unsigned i = 0; i < _moves.size(); ++i) {
@@ -178,7 +240,7 @@ void ObjectFactory::simulation1() {
 
 }
 
-Mesh* ObjectFactory::getMeshFromVerticesPosTex(std::vector<float> verPosTex, __Texture__ texture)
+Mesh* ObjectFactory::getMeshFromVerticesPosTex(std::string id_mesh, std::vector<float> verPosTex)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned> indices;
@@ -195,94 +257,10 @@ Mesh* ObjectFactory::getMeshFromVerticesPosTex(std::vector<float> verPosTex, __T
     for (unsigned i = 0; i < vertices.size(); ++i) {
         indices.push_back(i);
     }
-    std::vector<__Texture__> textures;
-    textures.push_back(texture);
-    return new Mesh(vertices, indices, textures);
+    return new Mesh(id_mesh, vertices, indices);
 }
 
-
-std::vector<Mesh*> ObjectFactory::getVerticesRenderBufferTexture()
-{
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
-    std::vector<float> cubeVertices = {
-        // positions          // texture Coords
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-    };
-    std::vector<float> planeVertices = {
-        // positions   // texture Coords
-         5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-        -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
-        -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-
-         5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-        -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-         5.0f, -0.5f, -5.0f,  2.0f, 2.0f
-    };
-    std::vector<float> quadVertices = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-        // positions   // texCoords
-        -1.0f,  1.0f,  0.0f, 1.0f,
-        -1.0f, -1.0f,  0.0f, 0.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-
-        -1.0f,  1.0f,  0.0f, 1.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-         1.0f,  1.0f,  1.0f, 1.0f
-    };
-    std::vector<Mesh*> meshes;
-    __Texture__ texture;
-    texture.path = "../resources/";
-    texture.filename = "marble.png";
-    meshes.push_back(getMeshFromVerticesPosTex(cubeVertices, texture));
-
-    texture.path = "../resources/";
-    texture.filename = "floor.jpg";
-    meshes.push_back(getMeshFromVerticesPosTex(planeVertices, texture));
-    meshes.push_back(getMeshFromVerticesPosTex(quadVertices, texture));
-    return meshes;
-}
-
-Mesh* ObjectFactory::getPlantMesh(std::string texture_diffuse) {
+Mesh* ObjectFactory::getPlantMesh(std::string id_mesh) {
     std::vector<GLfloat> positions = {
         0.0f,  0.5f,  0.0f,
         0.0f, -0.5f,  0.0f,
@@ -317,42 +295,10 @@ Mesh* ObjectFactory::getPlantMesh(std::string texture_diffuse) {
         vertex.TexCoords = glm::vec2(textCoords[j], textCoords[j + 1]);
         vertices.push_back(vertex);
     }
-
-    std::vector<__Texture__> textures;
-    __Texture__ texture;
-    texture.path = "../resources/";
-    texture.filename = texture_diffuse;
-    textures.push_back(texture);
-
-    return new Mesh(vertices, inidices, textures);
+    return new Mesh(id_mesh, vertices, inidices);
 }
 
-Mesh* ObjectFactory::getPlaneMesh() {
-/*    std::vector<GLfloat> position = {
-         1.0f, -0.5f,  1.0f, // 0
-        -1.0f, -0.5f,  1.0f, // 1
-        -1.0f, -0.5f, -1.0f, // 2
-
-         1.0f, -0.5f,  1.0f, // 3
-        -1.0f, -0.5f, -1.0f, // 4
-         1.0f, -0.5f, -1.0f  // 5
-    };
-    std::vector<GLuint> indices = {
-        1, 2, 0,
-        4, 2, 3,
-        5, 4, 3,
-        2, 5, 1
-    };
-    std::vector<GLfloat> textCoord = {
-        1.0f, 0.0f,
-        0.0f, 0.0f,
-        0.0f, 1.0f,
-
-        1.0f, 0.0f,
-        0.0f, 1.0f,
-        1.0f, 1.0f
-    };
-*/
+Mesh* ObjectFactory::getPlaneMesh(std::string id_mesh) {
     std::vector<GLfloat> position = {
         -1.0f,  1.0f,  0.0f, // 0
         -1.0f, -1.0f,  0.0f, // 1
@@ -395,15 +341,7 @@ Mesh* ObjectFactory::getPlaneMesh() {
         vertices[i].Tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
         vertices[i].Tangent = glm::normalize(vertices[i].Tangent);
     }
-
-    std::vector<__Texture__> textures;
-
-    __Texture__ texture;
-    texture.path = "../resources/";
-    texture.filename = "brickwall.jpg";
-    textures.push_back(texture);
-
-    return new Mesh(vertices, indices, textures);
+    return new Mesh(id_mesh, vertices, indices);
 }
 
 void ObjectFactory::getTBNMatrix() {
@@ -414,8 +352,8 @@ void ObjectFactory::getTBNMatrix() {
     ;
 }
 
-Mesh* ObjectFactory::getCubeMesh() {
-    std::vector<__Texture__> textures;
+Mesh* ObjectFactory::getCubeMesh(std::string id_mesh) {
+    std::vector<__Texture__> textures(2);
     std::vector<Vertex> vertices;
     std::vector<unsigned> indices = cubeTriangleIndex;
 
@@ -441,22 +379,10 @@ Mesh* ObjectFactory::getCubeMesh() {
         vertex.TexCoords = text;
         vertices.push_back(vertex);
     }
-    __Texture__ texture;
-
-    texture.type = "texture_specular";
-    texture.path = "../resources/";
-    texture.filename = "container2_specular.png";
-    textures.push_back(texture);
-
-    texture.type = "texture_diffuse";
-    texture.path = "../resources/";
-    texture.filename = "container2.png";
-    textures.push_back(texture);
-
-    return new Mesh(vertices, indices, textures);
+    return new Mesh(id_mesh, vertices, indices);
 }
 
-Mesh* ObjectFactory::getSphereMesh(std::string filename)
+Mesh* ObjectFactory::getSphereMesh(std::string id_mesh)
 {
     std::vector<GLfloat> posVertex;
     std::vector<GLfloat> normals;
@@ -552,22 +478,7 @@ Mesh* ObjectFactory::getSphereMesh(std::string filename)
             }
         }
     }
-
-    std::vector<__Texture__> textures;
-
-    __Texture__ texture;
-
-    texture.type = "texture_diffuse";
-    texture.path = "../resources/";
-    texture.filename = filename;
-    textures.push_back(texture);
-
-    texture.type = "texture_specular";
-    texture.path = "../resources/";
-    texture.filename = "container2_specular.png";
-    textures.push_back(texture);
-
-    return new Mesh(vertices, indices, textures);
+    return new Mesh(id_mesh, vertices, indices);
 }
 
 unsigned ObjectFactory::size() {

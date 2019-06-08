@@ -75,12 +75,10 @@ void SkyBox::start()
 // Método que se llama cada vez que el Componente se activa.
 void SkyBox::awakeStart()
 {
-//    std::cout << " *** SkyBox *** " << '\n';
     glDepthMask(GL_FALSE);
     _program->setUniforms(_uniforms);
-    _program->render();
-    this->draw();
-    _program->clearUniforms(_uniforms);
+    _program->use();
+    draw();
     glDepthMask(GL_TRUE);
 }
 

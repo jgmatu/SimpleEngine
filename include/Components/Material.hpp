@@ -2,6 +2,7 @@
 #define MATERIAL_H
 
 #include <memory>
+#include <map>
 
 #include "Constants/TypeComp.hpp"
 
@@ -19,13 +20,16 @@ class Material : public Component {
 public:
 
     Material();
-    Material(Model *model, Program *program);
+    Material(Model *model);
     ~Material();
 
     void start();
     void awakeStart();
     void update();
+
     void addLigths(std::vector<Light*> ligths);
+    void setProgram(Program *program);
+    void setTexture(std::string id_mesh, __Texture__ *texture);
 
     void setView(Camera *camera);
 
@@ -46,8 +50,9 @@ private:
     Program *_program;
     Model *_model;
 
-    bool _tranparent;
+    std::map<std::string, std::vector<__Texture__*>> _textures;
 
+    bool _tranparent;
 };
 
 #endif

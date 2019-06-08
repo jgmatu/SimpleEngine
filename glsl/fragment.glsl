@@ -93,6 +93,11 @@ void main()
 //    result += calcSpotLight(spot, norm, fragPos, viewDir);
 
     fragColor = vec4(result, 1.0);
+
+    vec4 diffuse  = vec4(texture(material.texture_diffuse0, texCoord));
+    vec4 specular = vec4(texture(material.texture_specular0 , texCoord));
+
+    fragColor = mix(diffuse, specular, 0.5);
 }
 
 
@@ -134,12 +139,12 @@ vec3 calcPointLight(Point point, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     // combine results
     vec3 diffuse  = point.diffuse * diff * vec3(texture(material.texture_diffuse0, texCoord));
-    vec3 specular = point.specular * spec * vec3(texture(material.texture_specular0, texCoord));
+    vec3 specular = point.specular * spec * vec3(texture(material.texture_specular0 , texCoord));
 
     diffuse = diffuse * attenuation;
     specular = specular * attenuation;
 
-    return diffuse + specular;
+    return (diffuse + specular);
 }
 
 vec3 calcSpotLight(Spot spot, vec3 norm, vec3 fragPos, vec3 viewDir)

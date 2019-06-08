@@ -93,7 +93,7 @@ void Engine::initWindow() {
     glEnable(GL_DEPTH_TEST);
 
     // Stencil buffer... 8 bits...
-    glEnable(GL_STENCIL_TEST);
+     glEnable(GL_STENCIL_TEST);
 
     // Enabling transparency...
     glEnable(GL_BLEND);

@@ -4,24 +4,25 @@
 #include "stb_image.h"
 
 Mesh::Mesh() :
+    _id_mesh(""),
     _vertices(),
     _indices(),
     _textures(),
-    _VAO(0),
-    _VBO(0),
-    _VBO2(0),
-    _VBO3(0),
-    _EBO(0)
+    _VAO(-1),
+    _VBO(-1),
+    _VBO2(-1),
+    _VBO3(-1),
+    _EBO(-1)
 {
     ;
 }
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, std::vector<__Texture__> textures) :
+Mesh::Mesh(std::string id_mesh, std::vector<Vertex> vertices, std::vector<unsigned> indices) :
     Mesh::Mesh()
 {
+    this->_id_mesh = id_mesh;
     this->_vertices = vertices;
     this->_indices = indices;
-    this->_textures = textures;
 }
 
 Mesh::~Mesh()
@@ -31,21 +32,31 @@ Mesh::~Mesh()
     _textures.clear();
 }
 
-void Mesh::setTexture(__Texture__ texture)
+std::string Mesh::getId()
 {
+    return this->_id_mesh;
+}
+
+void Mesh::setTexture(__Texture__ *texture)
+{
+    std::cout << "Texture : " << texture->filename << '\n';
     _textures.push_back(texture);
 }
 
 void Mesh::loadTextures()
 {
-    for (unsigned i = 0; i < _textures.size(); ++i) {
-        std::cout << "Load texture : " <<  _textures[i].filename << '\n';
-        _textures[i].id = TextureFromFile(_textures[i].path, _textures[i].filename.c_str());
+    std::cout << "Load Textures..." << '\n';
+    for (uint32_t i = 0; i < _textures.size(); ++i) {
+        std::cout << "Active texture : " << _textures[i]->filename << '\n';
+        _textures[i]->id = TextureFromFile(_textures[i]->path, _textures[i]->filename.c_str());
     }
 }
 
 void Mesh::active()
 {
+    // Active program to visualize this mesh...
+    _program->active();
+
     glGenVertexArrays(1, &_VAO);
     glGenBuffers(1, &_VBO);
     glGenBuffers(1, &_EBO);
@@ -77,16 +88,29 @@ void Mesh::active()
     glBindVertexArray(0);
 }
 
-void Mesh::draw(Program *program) {
+void Mesh::setProgram(Program *program)
+{
+    this->_program = program;
+}
+
+void Mesh::setUniforms(Uniforms *uniforms)
+{
+    this->_uniforms = uniforms;
+}
+
+void Mesh::draw() {
     unsigned diffuseNr = 0;
     unsigned specularNr = 0;
     unsigned normalNr = 0;
 
-    for(unsigned i = 0; i < _textures.size(); i++) {
+    _program->use();
+    _program->setUniforms(_uniforms);
+
+    for(uint32_t i = 0; i < _textures.size(); ++i) {
         glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
 
         std::string number;
-        std::string name = _textures[i].type;
+        std::string name = _textures[i]->type;
         if(name == "texture_diffuse") {
             number = std::to_string(diffuseNr++);
         } else if(name == "texture_specular") {
@@ -95,11 +119,9 @@ void Mesh::draw(Program *program) {
             number = std::to_string(normalNr++);
         }
         int value = i;
-        program->setUniform("material." + name + number, value);
-        glBindTexture(GL_TEXTURE_2D, _textures[i].id);
+        _program->setUniform(std::string("material.") + name + number, value);
+        glBindTexture(GL_TEXTURE_2D, _textures[i]->id);
     }
-
-    // Draw mesh
     glBindVertexArray(_VAO);
     glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
@@ -107,22 +129,22 @@ void Mesh::draw(Program *program) {
 
 
 unsigned Mesh::TextureFromFile(std::string directory, const char *filename) {
-    unsigned textureID = 0;
-    std::string path = directory + std::string(filename);
+    uint32_t textureID = 0;
+    std::string path = directory + "/" + std::string(filename);
 
     std::ifstream file(path);
     if (file.fail()) {
-        std::cerr << "Texture file not exists : " << directory << "/" << filename  << '\n';
+        std::cerr << "Texture file not exists : " << path << '\n';
         throw;
     }
-    int width, heigth, channels;
-    unsigned char* pixels = stbi_load(path.c_str(), &width, &heigth, &channels, 0);
+    int32_t width, heigth, channels;
+    std::cout << "path : " << path << '\n';
+    uint8_t* pixels = stbi_load(path.c_str(), &width, &heigth, &channels, 0);
     if (!pixels) {
         std::cerr << "Error Loading texture on memory..." << '\n';
         stbi_image_free(pixels);
         throw;
     }
-
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID); // all upcoming GL_TEXTURE_2D.
 
@@ -134,7 +156,6 @@ unsigned Mesh::TextureFromFile(std::string directory, const char *filename) {
     } else if (channels == 3) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, heigth, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
     }
-
     glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -166,6 +187,6 @@ unsigned Mesh::TextureCubeMap(std::vector<std::string> _faces) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Mesh& mesh) {
-    os << "*** DEBUG << MESH!";
+    os << "*** DEBUG << MESH!" << mesh._id_mesh;
     return os;
 }

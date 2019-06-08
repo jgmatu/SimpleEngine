@@ -62,20 +62,20 @@ class Mesh {
 
 public:
 
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, std::vector<__Texture__> textures);
+    Mesh(std::string id_mesh, std::vector<Vertex> vertices, std::vector<unsigned> indices);
 
     Mesh();
     ~Mesh();
 
-    void setTexture(__Texture__ texture);
+    std::string getId();
+
     void active();
-    void draw(Program *program);
+    void draw();
     void loadTextures();
 
-    std::vector<Vertex> _vertices;
-    std::vector<unsigned> _indices;
-    std::vector<__Texture__> _textures;
-
+    void setTexture(__Texture__ *texture);
+    void setProgram(Program *program);
+    void setUniforms(Uniforms *uniforms);
 
     friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
 
@@ -90,12 +90,24 @@ private:
     void genVertexBufferTextCoord();
     void genVertexBufferIndex();
 
+    std::string _id_mesh;
+
+    // Vertex data...
+    std::vector<Vertex> _vertices;
+    std::vector<unsigned> _indices;
+
+    //Textures mesh...
+    std::vector<__Texture__*> _textures;
+
     // Active Buffer.
     GLuint _VAO;
 
     // Vertices Buffers... // Se puede splitear para meter varias cosas de los vertices
     // en el mismo buffer.
     GLuint _VBO, _VBO2, _VBO3, _EBO;
+
+    Program *_program;
+    Uniforms *_uniforms;
 
 };
 

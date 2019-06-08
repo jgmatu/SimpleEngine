@@ -10,11 +10,10 @@ Material::Material() :
     this->_program = nullptr;
 }
 
-Material::Material(Model *model, Program *program) :
+Material::Material(Model *model) :
     Material::Material()
 {
     this->_model = model;
-    this->_program = program;
 }
 
 Material::~Material()
@@ -22,10 +21,36 @@ Material::~Material()
     std::cout << "Delete component material" << '\n';
 }
 
+void Material::setProgram(Program *program)
+{
+    this->_program = program;
+}
+
+void Material::setTexture(std::string id_mesh, __Texture__ *texture)
+{
+    std::vector<__Texture__*> textures = this->_textures[id_mesh];
+    bool isfound = false;
+    for (uint32_t i = 0; i < textures.size() && !isfound; ++i) {
+        if (textures[i]->filename.compare(texture->filename) == 0) {
+            isfound = true;
+        }
+    }
+    std::cout << "Texture: " << texture->filename << '\n';
+    if (!isfound) {
+        this->_textures[id_mesh].push_back(texture);
+    }
+}
+
 void Material::start() {
-    if (_model && _program) {
+    if (_model) {
+        if (_program) {
+            _model->setProgram(_program);
+        }
+        if (_textures.size() == 0) {
+            std::cout << "Material: Not textures atached" << '\n';
+        }
+        _model->setTextures(_textures);
         _model->active();
-        _program->active();
     }
 }
 
@@ -37,12 +62,9 @@ void Material::addLigths(std::vector<Light*> ligths)
 }
 
 void Material::awakeStart() {
-    if (_model && _program && _uniforms) {
-        _program->render();
-        _program->setUniforms(_uniforms);
-        _model->render(_program);
-    } else {
-        throw;
+    if (_model) {
+        _model->setUniforms(_uniforms);
+        _model->draw();
     }
 }
 
