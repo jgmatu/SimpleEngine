@@ -65,8 +65,9 @@ void Transform::rotate(glm::vec3 vec3, float angle) {
 }
 
 glm::vec3 Transform::position() const {
-    glm::vec4 row = this->_gModel[3];
-
+    glm::mat4 mat4 = -this->_gModel;
+    glm::vec3 row = mat4[3];
+    std::cout << "Position : " << row.x << " " << row.y << " " << row.z << '\n';
     return glm::vec3(row.x, row.y, row.z);
 }
 

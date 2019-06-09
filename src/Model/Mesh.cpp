@@ -39,15 +39,12 @@ std::string Mesh::getId()
 
 void Mesh::setTexture(__Texture__ *texture)
 {
-    std::cout << "Texture : " << texture->filename << '\n';
     _textures.push_back(texture);
 }
 
 void Mesh::loadTextures()
 {
-    std::cout << "Load Textures..." << '\n';
     for (uint32_t i = 0; i < _textures.size(); ++i) {
-        std::cout << "Active texture : " << _textures[i]->filename << '\n';
         _textures[i]->id = TextureFromFile(_textures[i]->path, _textures[i]->filename.c_str());
     }
 }
@@ -129,7 +126,7 @@ void Mesh::draw() {
 
 
 unsigned Mesh::TextureFromFile(std::string directory, const char *filename) {
-    uint32_t textureID = 0;
+    uint32_t textureID = -1;
     std::string path = directory + "/" + std::string(filename);
 
     std::ifstream file(path);
@@ -138,8 +135,7 @@ unsigned Mesh::TextureFromFile(std::string directory, const char *filename) {
         throw;
     }
     int32_t width, heigth, channels;
-    std::cout << "path : " << path << '\n';
-    uint8_t* pixels = stbi_load(path.c_str(), &width, &heigth, &channels, 0);
+    uint8_t *pixels = stbi_load(path.c_str(), &width, &heigth, &channels, 0);
     if (!pixels) {
         std::cerr << "Error Loading texture on memory..." << '\n';
         stbi_image_free(pixels);
@@ -172,7 +168,7 @@ unsigned Mesh::TextureCubeMap(std::vector<std::string> _faces) {
     for (unsigned int i = 0; i < _faces.size(); ++i) {
         unsigned char *data = stbi_load(_faces[i].c_str(), &width, &height, &nrChannels, 0);
         if (!data) {
-            std::cout << "Cubemap texture failed to load at path: " << _faces[i] << std::endl;
+            std::cerr << "Cubemap texture failed to load at path: " << _faces[i] << std::endl;
             continue;
         }
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,  0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);

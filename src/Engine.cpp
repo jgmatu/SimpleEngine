@@ -18,7 +18,6 @@ Engine::Engine(ObjectFactory *objectFactory) :
     this->_scene->initCameras();
     _sceneEvent = this->_scene;
     _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
-//    std::cout << "Camera Event : " << _sceneEvent->_camera << '\n';
 }
 
 Engine::~Engine() {

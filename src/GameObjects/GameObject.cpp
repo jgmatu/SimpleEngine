@@ -29,7 +29,7 @@ void GameObject::getCameras(std::vector<Camera*>& cameras) {
     if (Camera *camera = dynamic_cast<Camera*>(component)) {
         cameras.push_back(camera);
     }
-    for (unsigned i = 0; i < _gameObjects.size(); ++i) {
+    for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
         _gameObjects[i]->getCameras(cameras);
     }
 };

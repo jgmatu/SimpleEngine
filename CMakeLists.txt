@@ -27,6 +27,7 @@ file(GLOB PROJECT_CONFIGS CMakeLists.txt
 
 file(GLOB PROJECT_SOURCES
     src/Operations/*cpp
+    src/Geometries/*cpp
     src/Components/*cpp
     src/GameObjects/*cpp
     src/Model/*cpp

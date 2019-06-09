@@ -159,7 +159,6 @@ void Model::setUniforms(Uniforms *uniforms)
 void Model::setTextures(std::map<std::string, std::vector<__Texture__*>> textures)
 {
     this->_textures = textures;
-    std::cout << *this << '\n';
 }
 
 void Model::active() {

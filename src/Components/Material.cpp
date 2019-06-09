@@ -35,7 +35,6 @@ void Material::setTexture(std::string id_mesh, __Texture__ *texture)
             isfound = true;
         }
     }
-    std::cout << "Texture: " << texture->filename << '\n';
     if (!isfound) {
         this->_textures[id_mesh].push_back(texture);
     }

@@ -145,8 +145,8 @@ void Point::setParameters(Uniforms *uniforms)
     glm::vec3 distance = _distances[3250];
 
     uniforms->setUniformVec3("points[" + index + "].ambient", glm::vec3(0.0f));
-    uniforms->setUniformVec3("points[" + index + "].diffuse", glm::vec3(1.0f));
-    uniforms->setUniformVec3("points[" + index + "].specular", glm::vec3(1.0f));
+    uniforms->setUniformVec3("points[" + index + "].diffuse", glm::vec3(0.5f));
+    uniforms->setUniformVec3("points[" + index + "].specular", glm::vec3(0.8f));
     uniforms->setUniformVec3("points[" + index + "].position", this->_position);
 
     uniforms->setUniformFloat("points[" + index + "].constant", distance[0]);

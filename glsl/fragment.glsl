@@ -94,10 +94,10 @@ void main()
 
     fragColor = vec4(result, 1.0);
 
-    vec4 diffuse  = vec4(texture(material.texture_diffuse0, texCoord));
-    vec4 specular = vec4(texture(material.texture_specular0 , texCoord));
+//    vec4 diffuse  = vec4(texture(material.texture_diffuse0, texCoord));
+//    vec4 specular = vec4(texture(material.texture_specular0 , texCoord));
 
-    fragColor = mix(diffuse, specular, 0.5);
+//    fragColor = mix(diffuse, specular, 0.5);
 }
 
 
@@ -127,11 +127,11 @@ vec3 calcPointLight(Point point, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 lightDir = normalize(point.position - fragPos);
 
     // diffuse shading...
-    float diff = max(dot(normal, lightDir), 0.0);
+    float diff = max(dot(normal, lightDir), 0.1);
 
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1024.0);
+    float spec = pow(max(dot(viewDir, reflectDir), 0), 2.0);
 
     // attenuation
     float distance = length(point.position - fragPos);
@@ -144,7 +144,7 @@ vec3 calcPointLight(Point point, vec3 normal, vec3 fragPos, vec3 viewDir)
     diffuse = diffuse * attenuation;
     specular = specular * attenuation;
 
-    return (diffuse + specular);
+    return diffuse + specular;
 }
 
 vec3 calcSpotLight(Spot spot, vec3 norm, vec3 fragPos, vec3 viewDir)

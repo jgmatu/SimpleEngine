@@ -13,14 +13,16 @@
 #include "GameObjects/GameObject.hpp"
 #include "Components/Camera.hpp"
 #include "Components/Material.hpp"
-#include "Components/Light.hpp"
 #include "Components/SkyBox.hpp"
 #include "Operations/Movement.hpp"
 
-#include "Model/Model.hpp"
-#include "Model/Mesh.hpp"
+#include "Geometries/Cube.hpp"
+#include "Geometries/Sphere.hpp"
+#include "Geometries/Plane.hpp"
 
 #include <math.h>
+
+class Mesh;
 
 class ObjectFactory {
 
@@ -38,25 +40,15 @@ public:
 
 private:
 
-    Mesh* getMeshFromVerticesPosTex(std::string id_mesh, std::vector<float> verPosTex);
-
     void addSkyBox(std::string directory);
-    void addSceneLigths(Material *material);
-
-    // Basic Geometries...
-    Mesh* getPlantMesh(std::string id_mesh);
-    Mesh* getPlaneMesh(std::string id_mesh);
-    Mesh* getCubeMesh(std::string id_mesh);
-    Mesh* getSphereMesh(std::string id_mesh);
 
     // Basic skybox
     Mesh* getSkyBox();
 
+    // Simulations... (Use of API Engine)
     void solarSystem();
     void simulation1();
     void wallNormalMapping();
-
-    void getTBNMatrix();
 
     std::vector<GameObject*> _GameObjects;
 };

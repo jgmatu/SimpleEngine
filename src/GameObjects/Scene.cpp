@@ -10,27 +10,32 @@ Scene::Scene() :
     this->addDefaultLigths();
 }
 
-Scene::Scene(unsigned id, std::string name) :
+Scene::Scene(uint32_t id, std::string name) :
     Scene()
 {
 //    std::cout << "Create GameObject Scene" << '\n';
 }
 
 Scene::~Scene() {
-    for (unsigned i = 0; i < 3; ++i) {
+    size_t size = this->_cameras.size();
+
+    for (uint32_t i = 0; i < size; ++i) {
         delete this->_cameras[i];
     }
+    delete this->_root;
 }
 
 void Scene::initCameras()
 {
     this->_root->getCameras(this->_cameras);
+    // Bug: Erase first camera, main camera is repeated...
+    this->_cameras.pop_back();
 }
 
 std::vector<Light*> Scene::getLigthPoints()
 {
     std::vector<glm::vec3> point_positions = {
-        glm::vec3(-1.0, 0.0, 1.0)
+        glm::vec3(3.0, 0.0, 3.0)
 //        glm::vec3(-2.0,  1.0,  1.0),
 //        glm::vec3(-1.0,  2.0,  3.0),
 //        glm::vec3( 0.0, -2.0,  0.0)
