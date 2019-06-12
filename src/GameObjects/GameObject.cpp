@@ -1,68 +1,47 @@
 #include "GameObjects/GameObject.hpp"
 
 GameObject::GameObject() :
-    _id(-1),
-    _name("?"),
     _components(),
     _gameObjects()
 {
-    _components.push_back(new Transform());
-}
-
-GameObject::GameObject(int id, std::string name) :
-    GameObject()
-{
-    this->_id = id;
-    this->_name = name;
+    _tf = new Transform();
+    _components.push_back(_tf);
 }
 
 GameObject::~GameObject() {
-    for (unsigned i = 0; i < _gameObjects.size(); ++i) {
+    size_t size = _gameObjects.size();
+
+    for (uint32_t i = 0; i < size; ++i) {
         delete _gameObjects[i];
+    }
+
+    size = _components.size();
+    for (uint32_t i = 0; i < size; ++i) {
+        delete _components[i];
     }
 }
 
+void GameObject::getCameras(std::vector<Camera*>& cameras)
+{
+    size_t components_size = _components.size();
 
-void GameObject::getCameras(std::vector<Camera*>& cameras) {
-    Component *component = this->getComponent(TypeComp::CAMERA);
-
-    if (Camera *camera = dynamic_cast<Camera*>(component)) {
-        cameras.push_back(camera);
+    for (uint32_t i = 0; i < components_size; ++i) {
+        if (Camera *camera = dynamic_cast<Camera*>(_components[i])) {
+            cameras.push_back(camera);
+        }
     }
-    for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
+
+    size_t gameObjects_size = _gameObjects.size();
+
+    for (uint32_t i = 0; i < gameObjects_size; ++i) {
         _gameObjects[i]->getCameras(cameras);
     }
 };
 
-void GameObject::setMoves(std::vector<Movement*> moves)
-{
-    Component *component = this->getComponent(TypeComp::TRANSFORM);
-
-    if (Transform *tf = dynamic_cast<Transform*>(component)) {
-        tf->_moves = moves;
-    }
-}
-
-void GameObject::setMove(Movement *move) {
-    Component *component = this->getComponent(TypeComp::TRANSFORM);
-
-    if (Transform *tf = dynamic_cast<Transform*>(component)) {
-        tf->_moves.push_back(move);
-    }
-}
-
-void GameObject::setPosition(Position *position) {
-    Component *component = this->getComponent(TypeComp::TRANSFORM);
-
-    if (Transform *tf = dynamic_cast<Transform*>(component)) {
-        tf->_position.push_back(position);
-    }
-}
-
 Component* GameObject::getComponent(TypeComp type) const {
     Component* search = nullptr;
 
-    for (unsigned i = 0; !search && i < _components.size(); ++i) {
+    for (uint32_t i = 0; !search && i < _components.size(); ++i) {
         if (_components[i]->_type == type) {
             search = _components[i];
         }
@@ -71,51 +50,23 @@ Component* GameObject::getComponent(TypeComp type) const {
 }
 
 void GameObject::addComponent(Component *component) {
+    if (Camera *camera = dynamic_cast<Camera*>(component)) {
+        camera->_tfObj = this->_tf;
+    }
     _components.push_back(component);
 }
 
-bool GameObject::hasComponent(TypeComp type) {
-    for (unsigned i = 0; i < _components.size(); ++i) {
-        if (_components[i]->_type == type) {
-            return true;
-        }
-    }
-    return false;
-}
-
-GameObject* GameObject::getGameObject(int id) {
-    GameObject *search = nullptr;
-
-    for (unsigned i = 0; !search && i < _gameObjects.size(); ++i) {
-        if (_gameObjects[i]->_id == id) {
-            search = _gameObjects[i];
-        } else {
-            search = _gameObjects[i]->getGameObject(id);
-        }
-    }
-    return search;
-}
-
-void GameObject::addGameObject(GameObject *gameObject) {
+void GameObject::addChild(GameObject *gameObject) {
+    _tf->addChild(gameObject->_tf);
     _gameObjects.push_back(gameObject);
-}
-
-bool GameObject::hasGameObject(int id) {
-    for (unsigned i = 0; i < _gameObjects.size(); ++i) {
-        if (id == _gameObjects[i]->_id) {
-            return true;
-        }
-        _gameObjects[i]->hasGameObject(id);
-    }
-    return false;
 }
 
 void GameObject::init() {
     Component *component = this->getComponent(TypeComp::MATERIAL);
+
     if (Material *material = dynamic_cast<Material*>(component)) {
         material->start();
     }
-
     component = this->getComponent(TypeComp::SKYBOX);
     if (SkyBox *skybox = dynamic_cast<SkyBox*>(component)) {
         skybox->start();
@@ -182,31 +133,15 @@ void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObj
 
 void GameObject::update()
 {
-    Component *component = this->getComponent(TypeComp::TRANSFORM);
+    size_t size = _components.size();
 
-    if (Transform *tfRoot = dynamic_cast<Transform*>(component)) {
-        for (unsigned i = 0; i < _gameObjects.size(); ++i) {
-            component = _gameObjects[i]->getComponent(TypeComp::TRANSFORM);
-            if (Transform *tfChild = dynamic_cast<Transform*>(component)) {
-                tfChild->_gModel = tfRoot->_gModel * tfChild->_model;
-                tfChild->update();
-            }
-            _gameObjects[i]->update();
-        }
+    for (uint32_t i = 0; i < size; ++i) {
+        _components[i]->update();
     }
-    this->updateCamera();
-}
 
-void GameObject::updateCamera()
-{
-    Component *component = this->getComponent(TypeComp::CAMERA);
-
-    if (Camera *camera = dynamic_cast<Camera*>(component)) {
-        component = this->getComponent(TypeComp::TRANSFORM);
-        if (Transform *tf = dynamic_cast<Transform*>(component)) {
-            camera->_view->_gModel = tf->_gModel * camera->_view->_model;
-            camera->_view->_gModel = glm::inverse(camera->_view->_gModel);
-        }
+    size = _gameObjects.size();
+    for (uint32_t i = 0; i < size; ++i) {
+        _gameObjects[i]->update();
     }
 }
 

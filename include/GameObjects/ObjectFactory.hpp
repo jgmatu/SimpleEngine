@@ -14,7 +14,6 @@
 #include "Components/Camera.hpp"
 #include "Components/Material.hpp"
 #include "Components/SkyBox.hpp"
-#include "Operations/Movement.hpp"
 
 #include "Geometries/Cube.hpp"
 #include "Geometries/Sphere.hpp"

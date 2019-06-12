@@ -1,7 +1,7 @@
 
 #include "Components/SkyBox.hpp"
 
-float skyboxVertices[] = {
+const float skyboxVertices[] = {
     // positions
     -1.0f,  1.0f, -1.0f,
     -1.0f, -1.0f, -1.0f,
@@ -67,17 +67,15 @@ SkyBox::~SkyBox()
 // Este método SOLO se llama una vez la primera vez que se crea el componente.
 void SkyBox::start()
 {
-    _textureID = Mesh::TextureCubeMap(_faces);
-    this->active();
     _program->active();
+    this->active();
+    _textureID = Mesh::TextureCubeMap(_faces);
 }
 
 // Método que se llama cada vez que el Componente se activa.
 void SkyBox::awakeStart()
 {
     glDepthMask(GL_FALSE);
-    _program->setUniforms(_uniforms);
-    _program->use();
     draw();
     glDepthMask(GL_TRUE);
 }
@@ -95,6 +93,9 @@ void SkyBox::active()
 
 void SkyBox::draw()
 {
+    _program->use();
+    _program->setUniforms(_uniforms);
+
     glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
     glBindVertexArray(_VAO);
     glActiveTexture(GL_TEXTURE0);
@@ -107,7 +108,7 @@ void SkyBox::draw()
 // Método que realiza transformaciones, cálculos de cosas.
 void SkyBox::update()
 {
-    ;
+    std::cout << "update skybox.." << '\n';
 }
 
 void SkyBox::setView(Camera *camera)

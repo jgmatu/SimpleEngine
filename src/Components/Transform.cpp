@@ -7,8 +7,9 @@ Transform::Transform() :
     this->_type = TypeComp::TRANSFORM;
 }
 
-Transform::~Transform() {
-    ;
+Transform::~Transform()
+{
+    std::cout << "Delete component transform" << '\n';
 }
 
 void Transform::start()
@@ -16,59 +17,26 @@ void Transform::start()
     ;
 }
 
-void Transform::awakeStart() {
+void Transform::awakeStart()
+{
     ;
 }
 
-void Transform::update() {
-    this->_model = getInitialPosition();
+void Transform::addChild(Transform *tf)
+{
+    tfChilds.push_back(tf);
+}
 
-    for (unsigned i = 0; i < this->_moves.size(); ++i) {
-        this->_model = this->_model * this->_moves[i]->apply();
+void Transform::update()
+{
+    for (uint32_t i = 0; i < tfChilds.size(); ++i) {
+        tfChilds[i]->_gModel = _gModel * tfChilds[i]->_model;
     }
-}
-
-glm::mat4 Transform::getInitialPosition()
-{
-    glm::mat4 _initialModel(1.0);
-
-    for (unsigned i = 0; i < _position.size(); ++i) {
-        _initialModel = _initialModel * _position[i]->apply();
-    }
-    return _initialModel;
-}
-
-void Transform::init(glm::vec3 axis, float angle)
-{
-    this->_position.push_back(new Position(axis, angle));
-}
-
-void Transform::init(glm::vec3 position)
-{
-    this->_position.push_back(new Position(position));
-}
-
-void Transform::scale(glm::vec3 vec3) {
-    this->_moves.push_back(new Scale(vec3));
-};
-
-void Transform::translate(glm::vec3 vec3) {
-    this->_moves.push_back(new Translate(vec3));
-}
-
-void Transform::rotate(glm::vec3 vec3, glm::quat quat) {
-    this->_moves.push_back(new Rotate(vec3, quat));
-}
-
-void Transform::rotate(glm::vec3 vec3, float angle) {
-    this->_moves.push_back(new Rotate(angle, vec3));
+    std::cout << "update transform" << '\n';
 }
 
 glm::vec3 Transform::position() const {
-    glm::mat4 mat4 = -this->_gModel;
-    glm::vec3 row = mat4[3];
-    std::cout << "Position : " << row.x << " " << row.y << " " << row.z << '\n';
-    return glm::vec3(row.x, row.y, row.z);
+    return this->_gModel[3];
 }
 
 std::ostream& operator<<(std::ostream& os, const Transform& tf) {

@@ -29,26 +29,20 @@ public:
     void setLigth(Light *ligth);
     void eraseLigth(CompLigth type);
 
-    void addGameObjects(std::vector<GameObject*> objects) {
-        for (unsigned i = 0; i < objects.size(); ++i) {
-            Component *component = objects[i]->getComponent(TypeComp::CAMERA);
-            if (Camera *camera = dynamic_cast<Camera*>(component)) {
-                this->_cameras.push_back(camera);
-            }
-        }
-        this->_root->addGameObjects(objects);
+    void addChild(GameObject *gameObject) {
+        this->_root->addChild(gameObject);
     }
 
     std::vector<Light*> _ligths;
     std::vector<Camera*> _cameras;
-    unsigned _camera = 0;
-    unsigned _size = 0;
+
+    uint32_t _camera = 0;
+    uint32_t _size = 0;
 
 private:
 
     GameObject *_root;
 
-    Camera* updateCameras();
     std::vector<Light*> getLigthPoints();
     void addDefaultLigths();
 

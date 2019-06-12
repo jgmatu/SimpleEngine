@@ -19,8 +19,6 @@
 
 #include "Constants/TypeComp.hpp"
 
-#include "Operations/Movement.hpp"
-
 class Camera;
 
 class GameObject {
@@ -31,26 +29,21 @@ class GameObject {
 public:
 
     GameObject();
-    GameObject(int id, std::string _name);
     virtual ~GameObject();
 
-    Component* getComponent(TypeComp type) const;
     void addComponent(Component *component);
-    bool hasComponent(TypeComp type);
-
-    GameObject* getGameObject(int id);
-    bool hasGameObject(int id);
-    void addGameObject(GameObject *gameObject);
+    Component* getComponent(TypeComp type) const;
+    void addChild(GameObject *gameObject);
 
     void init();
     void draw(Camera *camera);
     void draw(Camera *active_camera, std::map<float, std::vector<GameObject*>>& sorted);
     void update();
 
-    void setMoves(std::vector<Movement*> moves);
-
-    void setMove(Movement *move);
-    void setPosition(Position *position);
+    void scale(glm::vec3 vec3);
+    void translate(glm::vec3 vec3);
+    void rotate(glm::vec3 vec3, glm::quat quad);
+    void rotate(glm::vec3 vec3, float angle);
 
     void addLigths(std::vector<Light*> ligths);
     void addGameObjects(std::vector<GameObject*> objects) {
@@ -69,10 +62,12 @@ protected:
     std::vector<Component*> _components;
     std::vector<GameObject*> _gameObjects;
 
+    Transform *_tf;
+
 private:
 
     void addTransparentQueue(std::map<float, std::vector<GameObject*>>& sorted, float distance);
-    void updateCamera();
+    void updateChildsTransform();
 
 };
 

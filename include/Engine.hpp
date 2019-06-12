@@ -16,7 +16,6 @@
 #include <math.h>
 
 #include "Systems/System.hpp"
-#include "GameObjects/ObjectFactory.hpp"
 #include "GameObjects/Scene.hpp"
 
 class Engine {
@@ -24,7 +23,7 @@ class Engine {
 public:
 
     Engine();
-    Engine(ObjectFactory *objectFactory);
+    Engine(Scene *scene);
     ~Engine();
 
     void init();

@@ -69,14 +69,14 @@ void Material::awakeStart() {
 
 void Material::update()
 {
-    ;
+//    std::cout << "update material.." << '\n';
 }
 
 void Material::setView(Camera *camera)
 {
     this->setParameter("projection", camera->_projection);      // Vertex...
     this->setParameter("view", camera->_view->_gModel);         // Vertex...
-    this->setParameter("viewPos", camera->_view->position());   // Fragments...
+    this->setParameter("viewPos", camera->position());   // Fragments...
 }
 
 void Material::setParameter(std::string name, glm::vec3 val) {

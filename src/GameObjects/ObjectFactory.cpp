@@ -35,7 +35,7 @@ void ObjectFactory::generateDemoObjects()
 //    this->solarSystem();
     // this->wallNormalMapping();
 }
-
+/*
 void ObjectFactory::wallNormalMapping()
 {
     std::string mesh_plane = "mesh_plane";
@@ -63,7 +63,9 @@ void ObjectFactory::wallNormalMapping()
 //    plane->setPosition(new Position(glm::vec3(0.0, 0.0, -1.0), M_PI / 12.0f));
     _GameObjects.push_back(wall_plane);
 }
+*/
 
+/*
 void ObjectFactory::solarSystem() {
 //{
     // SUN
@@ -183,33 +185,10 @@ void ObjectFactory::solarSystem() {
     sun->addGameObject(earth);
     sun->addGameObject(mars);
 }
+*/
 
 void ObjectFactory::simulation1()
 {
-    GameObject *cube = new GameObject(0, "*** CUBE ***");
-
-    std::string id_mesh = "cube_mesh";
-    Cube *geometry_cube = new Cube(id_mesh);
-    Material *material = new Material(new Model(geometry_cube->getMesh()));
-    material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
-
-    __Texture__ *diffuse = new __Texture__();
-    diffuse->type = "texture_diffuse";
-    diffuse->path = "../resources";
-    diffuse->filename = "container2.png";
-    material->setTexture(id_mesh, diffuse);
-
-    __Texture__ *specular = new __Texture__();
-    specular->type = "texture_specular";
-    specular->path = "../resources";
-    specular->filename = "container2_specular.png";
-    material->setTexture(id_mesh, specular);
-
-    cube->addComponent(material);
-    cube->addComponent(new Camera());
-
-    cube->setMove(new Translate(glm::vec3(-1.0,  0.0,  0.0)));
-    _GameObjects.push_back(cube);
 
 //    for (unsigned i = 0; i < _moves.size(); ++i) {
 //        Material *grass = new Material(new Model(getPlantMesh("grass.png")), new Program("../glsl/grass_vs.glsl", "../glsl/grass_fs.glsl"));

@@ -28,12 +28,20 @@ public:
     // Método que realiza transformaciones, cálculos de cosas.
     void update();
 
+    // position vector is inverted since we eventually want to translate
+    // the world in the opposite direction of where we want to move.
+    glm::vec3 position();
+
     friend std::ostream& operator<<(std::ostream& os, const Camera& camera);
 
     Transform *_view;
     glm::mat4 _projection;
 
 private:
+    friend class GameObject;
+
+    // Trackers cameras...
+    Transform *_tfObj;
 
     float near, far;
     const float aspectRatio = 4.0f / 3.0f;

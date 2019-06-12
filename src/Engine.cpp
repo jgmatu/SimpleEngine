@@ -6,18 +6,14 @@ Scene *_sceneEvent;
 Engine::Engine() :
     _systems()
 {
-    _scene = new Scene(0, "********************* SCENE *********************** ");
+    _scene = new Scene();
 }
 
-Engine::Engine(ObjectFactory *objectFactory) :
-    Engine::Engine()
+Engine::Engine(Scene *scene) :
+    _systems()
 {
-    for (unsigned i = 0; i < objectFactory->size(); ++i) {
-        this->_scene->addGameObjects(objectFactory->getGameObjects());
-    }
-    this->_scene->initCameras();
-    _sceneEvent = this->_scene;
-    _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
+    _scene = scene;
+    _sceneEvent = _scene;
 }
 
 Engine::~Engine() {
@@ -29,14 +25,17 @@ Engine::~Engine() {
 
 static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-//    std::cout << "**** Key Callback ****" << '\n';
+    std::cout << "**** Key Callback ****" << '\n';
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
+
     if (key == GLFW_KEY_UP) {
+        std::cout << "Translate : " << _cameraEvent << '\n';
         _cameraEvent->_view->_model = glm::translate(_cameraEvent->_view->_model, glm::vec3(0.0, 0.0, 0.1));
     }
     if (key == GLFW_KEY_DOWN) {
+        std::cout << "Translate : " << _cameraEvent << '\n';
         _cameraEvent->_view->_model = glm::translate(_cameraEvent->_view->_model, glm::vec3(0.0, 0.0, -0.1));
     }
     if (key == GLFW_KEY_LEFT) {
@@ -52,9 +51,11 @@ static void keyCallback(GLFWwindow *window, int key, int scancode, int action, i
         _cameraEvent->_view->_model = glm::rotate(_cameraEvent->_view->_model, 0.01f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+        std::cout << "Change Camera : " << _sceneEvent->_camera << " Size : " << _sceneEvent->_cameras.size() << '\n';
         _sceneEvent->_camera = (_sceneEvent->_camera + 1) % _sceneEvent->_cameras.size();
         _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
-        std::cout << "Change Camera : " << _sceneEvent->_camera << " Size : " << _sceneEvent->_cameras.size() << '\n';
+        std::cout << "TF camera : " << *_cameraEvent->_view << '\n';
+        std::cout << "position : " << glm::to_string(_cameraEvent->_view->position()) << '\n';
     }
 }
 
@@ -105,12 +106,14 @@ void Engine::initWindow() {
 }
 
 void Engine::init() {
-//    std::cout << "Iniciar Engine!!" << '\n';
+    std::cout << "Iniciar Engine!!" << '\n';
     try {
         this->initWindow();
+        _scene->initCameras();
         for (unsigned i = 0; i < _systems.size(); ++i) {
             _systems[i]->init(_scene);
         }
+        _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
     } catch (std::exception &ex) {
         std::cerr << "Error init Engine... " << ex.what() << '\n';
         throw ex;

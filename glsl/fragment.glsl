@@ -131,7 +131,7 @@ vec3 calcPointLight(Point point, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0), 2.0);
+    float spec = pow(max(dot(viewDir, reflectDir), 0), 64.0);
 
     // attenuation
     float distance = length(point.position - fragPos);

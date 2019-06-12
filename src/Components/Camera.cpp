@@ -10,7 +10,7 @@ Camera::Camera() :
 
 Camera::~Camera()
 {
-    std::cout << "Delete gameObject camera" << '\n';
+    std::cout << "Delete component camera" << '\n';
 }
 
 // Este método SOLO se llama una vez la primera vez que se crea el componente.
@@ -24,8 +24,19 @@ void Camera::awakeStart() {
 }
 
 // Método que realiza transformaciones, cálculos de cosas.
-void Camera::update() {
-    ;
+void Camera::update()
+{
+    if (!_tfObj) {
+        std::cerr << "The camera is not attached to a GameObject" << '\n';
+        throw;
+    }
+    std::cout << "update camera..." << '\n';
+    _view->_gModel = _tfObj->_gModel * _view->_model;
+}
+
+glm::vec3 Camera::position()
+{
+    return this->_view->position() * (-1);
 }
 
 std::ostream& operator<<(std::ostream& os, const Camera& camera) {

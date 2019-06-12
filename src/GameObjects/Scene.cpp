@@ -3,7 +3,7 @@
 Scene::Scene() :
     _cameras()
 {
-    this->_root = new GameObject(0, " SCENE ");
+    this->_root = new GameObject();
 
     Camera *main_camera = new Camera();
     this->_root->addComponent(main_camera);
@@ -17,17 +17,13 @@ Scene::Scene(uint32_t id, std::string name) :
 }
 
 Scene::~Scene() {
-    size_t size = this->_cameras.size();
-
-    for (uint32_t i = 0; i < size; ++i) {
-        delete this->_cameras[i];
-    }
     delete this->_root;
 }
 
 void Scene::initCameras()
 {
     this->_root->getCameras(this->_cameras);
+
     // Bug: Erase first camera, main camera is repeated...
     this->_cameras.pop_back();
 }
@@ -35,11 +31,11 @@ void Scene::initCameras()
 std::vector<Light*> Scene::getLigthPoints()
 {
     std::vector<glm::vec3> point_positions = {
-        glm::vec3(3.0, 0.0, 3.0)
+        glm::vec3(3.0, 1.0, 3.0)
 //        glm::vec3(-2.0,  1.0,  1.0),
-//        glm::vec3(-1.0,  2.0,  3.0),
 //        glm::vec3( 0.0, -2.0,  0.0)
     };
+    //        glm::vec3(-1.0,  2.0,  3.0),
 
     std::vector<Light*> points;
     for (unsigned i = 0; i < point_positions.size(); ++i) {
@@ -69,7 +65,7 @@ void Scene::eraseLigth(CompLigth component)
 {
     bool erase = false;
 
-    for (unsigned i = 0 ; i < _ligths.size() && !erase; ++i) {
+    for (uint32_t i = 0 ; i < _ligths.size() && !erase; ++i) {
         if (_ligths[i]->_type == component) {
             delete _ligths[i];
             _ligths.erase (_ligths.begin() + i);
@@ -78,23 +74,14 @@ void Scene::eraseLigth(CompLigth component)
     }
 }
 void Scene::init() {
+    this->initCameras();
     _root->init();
 }
 
-Camera* Scene::updateCameras()
-{
-    for (unsigned i = 0; i < this->_cameras.size(); ++i) {
-        this->_cameras[i]->update();
-    }
-    return this->_cameras[this->_camera];
-}
 
 void Scene::draw() {
-    Camera *active_camera = this->updateCameras();
+    Camera *active_camera = this->_cameras[this->_camera];
     std::map<float, std::vector<GameObject*>> sorted;
-
-//    std::cout << "Active Camera : " << active_camera << '\n';
-//    std::cout << "Num Camera : " << this->_camera << '\n';
 
     _root->addLigths(_ligths);
     _root->draw(active_camera, sorted);
