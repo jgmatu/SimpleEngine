@@ -18,7 +18,7 @@
 
 #include "Systems/Draw.hpp"
 #include "Systems/Update.hpp"
-#include "Systems/IO.hpp"
+#include "Systems/Keyboard.hpp"
 
 #include "Engine.hpp"
 
@@ -60,7 +60,6 @@ int main(int argc, char* const argv[]) {
         engine = new Engine(simulation());
         engine->add(new Update());
         engine->add(new Draw());
-        engine->add(new IO());
         engine->init();
         engine->mainLoop();
     } catch (std::exception &ex) {

@@ -16,6 +16,7 @@
 #include <math.h>
 
 #include "Systems/System.hpp"
+#include "Systems/Keyboard.hpp"
 #include "GameObjects/Scene.hpp"
 
 class Engine {

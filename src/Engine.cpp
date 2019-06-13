@@ -2,6 +2,7 @@
 
 Camera *_cameraEvent;
 Scene *_sceneEvent;
+Keyboard *_keyboard;
 
 Engine::Engine() :
     _systems()
@@ -14,6 +15,7 @@ Engine::Engine(Scene *scene) :
 {
     _scene = scene;
     _sceneEvent = _scene;
+    _keyboard = new Keyboard();
 }
 
 Engine::~Engine() {
@@ -23,40 +25,11 @@ Engine::~Engine() {
     delete _scene;
 }
 
-static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+static void KeyboardCallBackCharacters(GLFWwindow *window, unsigned int codepoint)
 {
-    std::cout << "**** Key Callback ****" << '\n';
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-    }
-
-    if (key == GLFW_KEY_UP) {
-        std::cout << "Translate : " << _cameraEvent << '\n';
-        _cameraEvent->_view->_model = glm::translate(_cameraEvent->_view->_model, glm::vec3(0.0, 0.0, 0.1));
-    }
-    if (key == GLFW_KEY_DOWN) {
-        std::cout << "Translate : " << _cameraEvent << '\n';
-        _cameraEvent->_view->_model = glm::translate(_cameraEvent->_view->_model, glm::vec3(0.0, 0.0, -0.1));
-    }
-    if (key == GLFW_KEY_LEFT) {
-        _cameraEvent->_view->_model = glm::translate(_cameraEvent->_view->_model, glm::vec3(0.1, 0.0, 0.0));
-    }
-    if (key == GLFW_KEY_RIGHT) {
-        _cameraEvent->_view->_model = glm::translate(_cameraEvent->_view->_model, glm::vec3(-0.1, 0.0, 0.0));
-    }
-    if (key == GLFW_KEY_Q) {
-        _cameraEvent->_view->_model = glm::rotate(_cameraEvent->_view->_model, 0.01f, glm::vec3(-1.0f, 0.0f, 0.0f));
-    }
-    if (key == GLFW_KEY_E) {
-        _cameraEvent->_view->_model = glm::rotate(_cameraEvent->_view->_model, 0.01f, glm::vec3(1.0f, 0.0f, 0.0f));
-    }
-    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-        std::cout << "Change Camera : " << _sceneEvent->_camera << " Size : " << _sceneEvent->_cameras.size() << '\n';
-        _sceneEvent->_camera = (_sceneEvent->_camera + 1) % _sceneEvent->_cameras.size();
-        _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
-        std::cout << "TF camera : " << *_cameraEvent->_view << '\n';
-        std::cout << "position : " << glm::to_string(_cameraEvent->_view->position()) << '\n';
-    }
+    char c = codepoint;
+    std::cout << "**** Key Callback **** : [" << c << "]" << '\n';
+    _keyboard->pressKey(std::string(&c));
 }
 
 void Engine::initWindow() {
@@ -77,7 +50,7 @@ void Engine::initWindow() {
     }
 
     // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-    glfwSetKeyCallback(_window, keyCallback);
+    glfwSetCharCallback(_window, KeyboardCallBackCharacters);
 
     // Make the OpenGL context current.
     glfwMakeContextCurrent(_window);
@@ -136,6 +109,7 @@ void Engine::update(float dt) {
 void Engine::mainLoop() {
     do {
         glfwPollEvents();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         this->update(0); // ... Draw Scene ...
         glfwSwapBuffers(_window); // Swap the color buffers.
         std::this_thread::sleep_for(std::chrono::milliseconds(LOOP_INTERVAL_TIME_MS));

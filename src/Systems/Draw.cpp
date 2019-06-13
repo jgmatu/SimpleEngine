@@ -13,7 +13,6 @@ void Draw::init(Scene *scene) {
 }
 
 void Draw::update(float dt, Scene *scene) {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     scene->draw();
 }
 
