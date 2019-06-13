@@ -23,9 +23,6 @@ Scene::~Scene() {
 void Scene::initCameras()
 {
     this->_root->getCameras(this->_cameras);
-
-    // Bug: Erase first camera, main camera is repeated...
-    this->_cameras.pop_back();
 }
 
 std::vector<Light*> Scene::getLigthPoints()
@@ -38,7 +35,7 @@ std::vector<Light*> Scene::getLigthPoints()
     //        glm::vec3(-1.0,  2.0,  3.0),
 
     std::vector<Light*> points;
-    for (unsigned i = 0; i < point_positions.size(); ++i) {
+    for (uint32_t i = 0; i < point_positions.size(); ++i) {
         points.push_back(new Point(i, point_positions[i]));
     }
     return points;
@@ -48,7 +45,7 @@ void Scene::addDefaultLigths()
 {
     std::vector<Light*> points = getLigthPoints();
 
-    for (unsigned i = 0; i < points.size(); ++i) {
+    for (uint32_t i = 0; i < points.size(); ++i) {
         this->setLigth(points[i]);
     }
 //    this->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
@@ -73,13 +70,14 @@ void Scene::eraseLigth(CompLigth component)
         }
     }
 }
-void Scene::init() {
-    this->initCameras();
+void Scene::init()
+{
     _root->init();
 }
 
 
-void Scene::draw() {
+void Scene::draw()
+{
     Camera *active_camera = this->_cameras[this->_camera];
     std::map<float, std::vector<GameObject*>> sorted;
 
@@ -87,16 +85,17 @@ void Scene::draw() {
     _root->draw(active_camera, sorted);
 
     // Pintar los objetos ordenados, por transparencia...
-    for(std::map<float, std::vector<GameObject*>>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) {
+    std::map<float, std::vector<GameObject*>>::reverse_iterator it;
+    for(it = sorted.rbegin(); it != sorted.rend(); ++it) {
         std::vector<GameObject*> vObjs = it->second;
 
-        for (unsigned i = 0; i < vObjs.size(); ++i) {
+        for (uint32_t i = 0; i < vObjs.size(); ++i) {
             vObjs[i]->draw(active_camera);
         }
     }
-//    std::cout << "Active Camera : " << *active_camera << '\n';
 }
 
-void Scene::update() {
+void Scene::update()
+{
     _root->update();
 }
