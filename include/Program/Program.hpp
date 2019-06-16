@@ -24,21 +24,21 @@
 #include "Uniforms.hpp"
 
 struct ProgramException : public std::exception {
-    std::string msg;
+    std::string _msg;
 
     ProgramException(const std::string& msg) {
-        this->msg = msg;
+        this->_msg = msg;
     }
 
     const char* what() const throw () {
         const int MAX_STR = 255;
-        char *data = (char*) malloc(1024 * sizeof(char));
+        char *data = (char*) malloc(MAX_STR * sizeof(char));
 
         if (!data) {
             fprintf(stderr, "%s\n", strerror(errno));
             return NULL;
         }
-        strncpy(data, std::string("Program error: " + msg).c_str(), MAX_STR);
+        strncpy(data, std::string("Program error: " + _msg).c_str(), MAX_STR);
         sprintf(data, "%s", data);
         return data;
     }

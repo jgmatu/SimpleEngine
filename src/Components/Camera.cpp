@@ -14,17 +14,19 @@ Camera::~Camera()
 }
 
 // Este método SOLO se llama una vez la primera vez que se crea el componente.
-void Camera::start() {
-    ;
+void Camera::start()
+{
+    this->_view->_gModel = glm::translate(this->_view->_gModel, glm::vec3(0, 0, 5.0));
 }
 
 // Método que se llama cada vez que el Componente se activa.
-void Camera::awakeStart() {
+void Camera::awakeStart()
+{
     ;
 }
 
 // Método que realiza transformaciones, cálculos de cosas.
-void Camera::update()
+void Camera::update(Keyboard *keyboard, Clock *clock)
 {
     if (!_tfObj) {
         std::cerr << "The camera is not attached to a GameObject" << '\n';

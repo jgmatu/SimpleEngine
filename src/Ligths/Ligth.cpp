@@ -1,4 +1,4 @@
-#include "Components/Light.hpp"
+#include "Ligths/Light.hpp"
 
 Light::Light()
 {

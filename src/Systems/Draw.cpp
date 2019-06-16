@@ -12,7 +12,8 @@ void Draw::init(Scene *scene) {
     scene->init();
 }
 
-void Draw::update(float dt, Scene *scene) {
+void Draw::update(float dt, Scene *scene)
+{
     scene->draw();
 }
 

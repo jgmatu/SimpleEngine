@@ -17,6 +17,8 @@
 
 #include "Systems/System.hpp"
 #include "Systems/Keyboard.hpp"
+#include "Systems/Clock.hpp"
+
 #include "GameObjects/Scene.hpp"
 
 class Engine {
@@ -41,6 +43,8 @@ private:
     GLFWwindow *_window;
     std::vector<System*> _systems;
     Scene *_scene;
+
+    Clock *_clock;
 };
 
 #endif // ENGINE_H

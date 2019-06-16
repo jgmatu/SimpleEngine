@@ -22,7 +22,7 @@ public:
 
     void start();
     void awakeStart();
-    void update();
+    void update(Keyboard *keyboard, Clock *clock);
 
 
     void addChild(Transform *tf);

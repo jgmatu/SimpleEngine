@@ -26,7 +26,7 @@ public:
     void awakeStart();
 
     // Método que realiza transformaciones, cálculos de cosas.
-    void update();
+    void update(Keyboard *keyboard, Clock *clock);
 
     void draw();
     void active();

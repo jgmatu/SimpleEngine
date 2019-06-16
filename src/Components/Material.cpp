@@ -67,7 +67,7 @@ void Material::awakeStart() {
     }
 }
 
-void Material::update()
+void Material::update(Keyboard *keyboard, Clock *clock)
 {
 //    std::cout << "update material.." << '\n';
 }

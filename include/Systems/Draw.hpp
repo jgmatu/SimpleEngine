@@ -5,11 +5,7 @@
 #include <memory>
 
 #include "Systems/System.hpp"
-#include "GameObjects/GameObject.hpp"
-
-#include "Components/Material.hpp"
-#include "Components/Light.hpp"
-
+#include "GameObjects/Scene.hpp"
 #include "Messages/Message.hpp"
 
 class Draw : public System {

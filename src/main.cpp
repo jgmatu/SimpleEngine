@@ -22,8 +22,45 @@
 
 #include "Engine.hpp"
 
+class Example : public Component {
 
-Scene* simulation()
+private:
+
+    GameObject *_gameObject;
+
+public:
+
+    Example(GameObject *gameObject)
+    {
+        this->_gameObject = gameObject;
+    }
+
+    ~Example()
+    {
+
+    }
+
+    void start()
+    {
+        _gameObject->translate(glm::vec3(0.0, 0.0, -5.0));
+    }
+
+    void update(Keyboard *keyboard, Clock *_clock)
+    {
+        if (keyboard->isKeyPressed("a")) {
+            _gameObject->rotate(glm::vec3(1.0, 0.0, 0.0), 0.01);
+            _gameObject->rotate(glm::vec3(0.0, 1.0, 0.0), 0.01);
+        }
+    }
+
+    void awakeStart()
+    {
+        ;
+    }
+
+};
+
+Scene* sceneSimulation()
 {
     GameObject *cube = new GameObject();
 
@@ -46,6 +83,7 @@ Scene* simulation()
 
     cube->addComponent(material);
     cube->addComponent(new Camera());
+    cube->addComponent(new Example(cube));
 
     Scene *scene = new Scene();
     scene->addChild(cube);
@@ -53,11 +91,11 @@ Scene* simulation()
     return scene;
 }
 
-int main(int argc, char* const argv[]) {
+int main(int argc, char* argv[]) {
     Engine *engine = nullptr;
 
     try {
-        engine = new Engine(simulation());
+        engine = new Engine(sceneSimulation());
         engine->add(new Update());
         engine->add(new Draw());
         engine->init();
@@ -67,5 +105,7 @@ int main(int argc, char* const argv[]) {
     } catch (...) {
         std::cerr << "Engine fatal!" << '\n';
     }
-    delete engine;
+    if (engine) {
+        delete engine;
+    }
 }

@@ -13,16 +13,11 @@ Scene::Scene() :
 Scene::Scene(uint32_t id, std::string name) :
     Scene()
 {
-//    std::cout << "Create GameObject Scene" << '\n';
+    ;
 }
 
 Scene::~Scene() {
     delete this->_root;
-}
-
-void Scene::initCameras()
-{
-    this->_root->getCameras(this->_cameras);
 }
 
 std::vector<Light*> Scene::getLigthPoints()
@@ -73,20 +68,22 @@ void Scene::eraseLigth(CompLigth component)
 void Scene::init()
 {
     _root->init();
+    _root->getCameras(this->_cameras);
 }
 
 
 void Scene::draw()
 {
     Camera *active_camera = this->_cameras[this->_camera];
-    std::map<float, std::vector<GameObject*>> sorted;
+    std::map<float, std::vector<GameObject*>> transparents;
+
 
     _root->addLigths(_ligths);
-    _root->draw(active_camera, sorted);
+    _root->draw(active_camera, transparents);
 
     // Pintar los objetos ordenados, por transparencia...
     std::map<float, std::vector<GameObject*>>::reverse_iterator it;
-    for(it = sorted.rbegin(); it != sorted.rend(); ++it) {
+    for(it = transparents.rbegin(); it != transparents.rend(); ++it) {
         std::vector<GameObject*> vObjs = it->second;
 
         for (uint32_t i = 0; i < vObjs.size(); ++i) {
@@ -95,7 +92,7 @@ void Scene::draw()
     }
 }
 
-void Scene::update()
+void Scene::update(Keyboard *keyboard, Clock *clock_)
 {
-    _root->update();
+    _root->update(keyboard, clock_);
 }

@@ -1,21 +1,22 @@
 #include "Engine.hpp"
 
-Camera *_cameraEvent;
-Scene *_sceneEvent;
 Keyboard *_keyboard;
 
 Engine::Engine() :
     _systems()
 {
     _scene = new Scene();
+    _clock = new Clock();
+    _keyboard = new Keyboard();
 }
 
 Engine::Engine(Scene *scene) :
-    _systems()
+    Engine::Engine()
 {
+    if (scene) {
+        delete _scene;
+    }
     _scene = scene;
-    _sceneEvent = _scene;
-    _keyboard = new Keyboard();
 }
 
 Engine::~Engine() {
@@ -25,11 +26,20 @@ Engine::~Engine() {
     delete _scene;
 }
 
-static void KeyboardCallBackCharacters(GLFWwindow *window, unsigned int codepoint)
+static void KeyboardCallBackSpecialsCharacters(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-    char c = codepoint;
-    std::cout << "**** Key Callback **** : [" << c << "]" << '\n';
-    _keyboard->pressKey(std::string(&c));
+    const char* name = glfwGetKeyName(key, 0);
+    if (name) {
+        std::cout << "Name : " << name << '\n';
+        _keyboard->pressKey(std::string(name), action == GLFW_PRESS);
+    } else {
+        _keyboard->pressKey(key, action == GLFW_PRESS);
+    }
+
+    // Exit engine...
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
 }
 
 void Engine::initWindow() {
@@ -43,20 +53,19 @@ void Engine::initWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 
     // Create the window
-    _window = glfwCreateWindow(800, 600, "Graphic Engine", nullptr, nullptr);
+    _window = glfwCreateWindow(1024, 768, "Graphic Engine", nullptr, nullptr);
     if (_window == nullptr) {
         std::cerr << "Failed to create the GLFW System window" << std::endl;
         throw;
     }
 
     // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-    glfwSetCharCallback(_window, KeyboardCallBackCharacters);
-
+    glfwSetKeyCallback(_window, KeyboardCallBackSpecialsCharacters);
     // Make the OpenGL context current.
     glfwMakeContextCurrent(_window);
 
     // Enable v-sync.
-    glfwSwapInterval(1);
+//    glfwSwapInterval(1);
 
     // Make the window visible.
     glfwShowWindow(_window);
@@ -81,12 +90,10 @@ void Engine::initWindow() {
 void Engine::init() {
     std::cout << "Iniciar Engine!!" << '\n';
     try {
-        this->initWindow();
-        _scene->initCameras();
+        initWindow();
         for (unsigned i = 0; i < _systems.size(); ++i) {
             _systems[i]->init(_scene);
         }
-        _cameraEvent = _sceneEvent->_cameras[_sceneEvent->_camera];
     } catch (std::exception &ex) {
         std::cerr << "Error init Engine... " << ex.what() << '\n';
         throw ex;
@@ -100,17 +107,20 @@ void Engine::add(System *sys) {
     _systems.push_back(sys);
 }
 
-void Engine::update(float dt) {
-    for (unsigned i = 0; i < _systems.size(); ++i) {
-        _systems[i]->update(dt, _scene);
-    }
+void Engine::update(float dt)
+{
+    _clock->update();
+    _scene->update(_keyboard, _clock);
+    _scene->draw();
 }
 
 void Engine::mainLoop() {
     do {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        this->update(0); // ... Draw Scene ...
+
+        update(0); // ... Update Scene ...
+
         glfwSwapBuffers(_window); // Swap the color buffers.
         std::this_thread::sleep_for(std::chrono::milliseconds(LOOP_INTERVAL_TIME_MS));
     } while(!glfwWindowShouldClose(_window));

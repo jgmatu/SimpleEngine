@@ -7,7 +7,7 @@
 #include "GameObjects/GameObject.hpp"
 
 #include "Components/Camera.hpp"
-#include "Components/Light.hpp"
+#include "Ligths/Light.hpp"
 
 class Scene {
 
@@ -19,17 +19,13 @@ public:
 
     void init();
     void draw();
-    void update();
-
-    void initCameras();
-
-    void setCamera(Camera *camera);
-    void eraseCamera(int idx);
+    void update(Keyboard *keyboard, Clock *clock);
 
     void setLigth(Light *ligth);
     void eraseLigth(CompLigth type);
 
-    void addChild(GameObject *gameObject) {
+    void addChild(GameObject *gameObject)
+    {
         this->_root->addChild(gameObject);
     }
 

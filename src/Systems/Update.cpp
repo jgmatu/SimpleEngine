@@ -12,8 +12,9 @@ void Update::init(Scene *scene) {
     ;
 }
 
-void Update::update(float dt, Scene *scene) {
-    scene->update();
+void Update::update(float dt, Scene *scene)
+{
+//    scene->update();
 }
 
 void Update::models(float dt, GameObject *scene) {

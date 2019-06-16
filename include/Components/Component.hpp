@@ -3,6 +3,9 @@
 
 #include "Constants/TypeComp.hpp"
 
+class Keyboard;
+class Clock;
+
 class Component {
 
 public:
@@ -16,7 +19,7 @@ public:
     virtual void awakeStart() = 0;
 
     // Método que realiza transformaciones, cálculos de cosas.
-    virtual void update() = 0;
+    virtual void update(Keyboard *keyboard, Clock *clock) = 0;
 
 protected:
 

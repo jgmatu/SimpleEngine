@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project (SimpleEngine)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -L /usr/local/lib -std=c++11") # -Wpedantic -Wextra
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wshadow -L /usr/local/lib -std=c++11") # -Wpedantic -Wextra
 set(GLAD_LIBRARIES dl)
 
 option(GLFW_BUILD_DOCS OFF)
@@ -16,7 +16,7 @@ include_directories(include/
                     src/extras/glfw/include/
                     src/extras/glm/
                     src/extras/stb/
-		    /usr/local/include/
+                    /usr/local/include/
 )
 
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
@@ -28,6 +28,7 @@ file(GLOB PROJECT_CONFIGS CMakeLists.txt
 file(GLOB PROJECT_SOURCES
     src/Operations/*cpp
     src/Geometries/*cpp
+    src/Ligths/*cpp
     src/Components/*cpp
     src/GameObjects/*cpp
     src/Model/*cpp

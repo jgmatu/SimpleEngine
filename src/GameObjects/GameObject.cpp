@@ -61,17 +61,13 @@ void GameObject::addChild(GameObject *gameObject) {
     _gameObjects.push_back(gameObject);
 }
 
-void GameObject::init() {
-    Component *component = this->getComponent(TypeComp::MATERIAL);
+void GameObject::init()
+{
+    for (uint32_t i = 0; i < _components.size(); ++i) {
+        _components[i]->start();
+    }
 
-    if (Material *material = dynamic_cast<Material*>(component)) {
-        material->start();
-    }
-    component = this->getComponent(TypeComp::SKYBOX);
-    if (SkyBox *skybox = dynamic_cast<SkyBox*>(component)) {
-        skybox->start();
-    }
-    for (unsigned i = 0; i < _gameObjects.size(); ++i) {
+    for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
         _gameObjects[i]->init();
     }
 }
@@ -96,10 +92,7 @@ void GameObject::draw(Camera *camera) {
     Component *component = this->getComponent(TypeComp::MATERIAL);
 
     if (Material *material = dynamic_cast<Material*>(component)) {
-        Component *component = this->getComponent(TypeComp::TRANSFORM);
-        if (Transform *tf = dynamic_cast<Transform*>(component)) {
-            material->setParameter("model", tf->_gModel);
-        }
+        material->setParameter("model", _tf->_gModel);
         material->setView(camera);
         material->awakeStart();
     }
@@ -110,11 +103,8 @@ void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObj
 
     if (Material *material = dynamic_cast<Material*>(component)) {
         if (material->isTransparent()) {
-            Component *component = getComponent(TypeComp::TRANSFORM);
-            if (Transform *tf = dynamic_cast<Transform*>(component)) {
-                float distance = glm::length(active_camera->_view->position() - tf->position());
-                this->addTransparentQueue(sorted, distance);
-            }
+            float distance = glm::length(active_camera->_view->position() - this->_tf->position());
+            this->addTransparentQueue(sorted, distance);
         } else {
             this->draw(active_camera);
         }
@@ -131,18 +121,19 @@ void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObj
     }
 }
 
-void GameObject::update()
+void GameObject::update(Keyboard *keyboard, Clock *clock_)
 {
     size_t size = _components.size();
 
     for (uint32_t i = 0; i < size; ++i) {
-        _components[i]->update();
+        _components[i]->update(keyboard, clock_);
     }
 
     size = _gameObjects.size();
     for (uint32_t i = 0; i < size; ++i) {
-        _gameObjects[i]->update();
+        _gameObjects[i]->update(keyboard, clock_);
     }
+    std::cout << *this << '\n';
 }
 
 void GameObject::addLigths(std::vector<Light*> ligths) {
@@ -155,6 +146,28 @@ void GameObject::addLigths(std::vector<Light*> ligths) {
         _gameObjects[i]->addLigths(ligths);
     }
 }
+
+
+void GameObject::scale(glm::vec3 vec3)
+{
+    this->_tf->_model = glm::scale(this->_tf->_model, vec3);
+}
+
+void GameObject::translate(glm::vec3 vec3)
+{
+    this->_tf->_model = glm::translate(this->_tf->_model, vec3);
+}
+
+void GameObject::rotate(glm::vec3 vec3, glm::quat quad)
+{
+    ;
+}
+
+void GameObject::rotate(glm::vec3 vec3, float angle)
+{
+    this->_tf->_model = glm::rotate(this->_tf->_model, angle, vec3);
+}
+
 
 std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
     os << gameObject._name << std::endl;

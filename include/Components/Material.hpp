@@ -9,11 +9,12 @@
 #include "Model/Model.hpp"
 
 #include "Components/Component.hpp"
-#include "Components/Light.hpp"
 #include "Components/Camera.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+
+#include "Ligths/Light.hpp"
 
 class Material : public Component {
 
@@ -25,7 +26,7 @@ public:
 
     void start();
     void awakeStart();
-    void update();
+    void update(Keyboard *keyboard, Clock *clock);
 
     void addLigths(std::vector<Light*> ligths);
     void setProgram(Program *program);
