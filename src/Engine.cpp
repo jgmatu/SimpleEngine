@@ -30,10 +30,9 @@ static void KeyboardCallBackSpecialsCharacters(GLFWwindow *window, int key, int 
 {
     const char* name = glfwGetKeyName(key, 0);
     if (name) {
-        std::cout << "Name : " << name << '\n';
-        _keyboard->pressKey(std::string(name), action == GLFW_PRESS);
+        _keyboard->pressKey(std::string(name), action == GLFW_PRESS || action == GLFW_REPEAT);
     } else {
-        _keyboard->pressKey(key, action == GLFW_PRESS);
+        _keyboard->pressKey(key, action == GLFW_PRESS || action == GLFW_REPEAT);
     }
 
     // Exit engine...
