@@ -53,6 +53,7 @@ void GameObject::addComponent(Component *component) {
     if (Camera *camera = dynamic_cast<Camera*>(component)) {
         camera->_tfObj = this->_tf;
     }
+    component->_gObject = this;
     _components.push_back(component);
 }
 

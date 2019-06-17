@@ -3,6 +3,7 @@
 
 #include "Constants/TypeComp.hpp"
 
+class GameObject;
 class Keyboard;
 class Clock;
 
@@ -27,6 +28,7 @@ protected:
 
     TypeComp _type;
 
+    GameObject *_gObject;
 
 };
 

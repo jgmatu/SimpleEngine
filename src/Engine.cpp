@@ -19,8 +19,9 @@ Engine::Engine(Scene *scene) :
     _scene = scene;
 }
 
-Engine::~Engine() {
-    for (unsigned i = 0; i < _systems.size(); ++i) {
+Engine::~Engine()
+{
+    for (uint32_t i = 0; i < _systems.size(); ++i) {
         delete _systems[i];
     }
     delete _scene;

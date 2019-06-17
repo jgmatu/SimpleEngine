@@ -26,12 +26,12 @@ void Material::setProgram(Program *program)
     this->_program = program;
 }
 
-void Material::setTexture(std::string id_mesh, __Texture__ *texture)
+void Material::setTexture(std::string id_mesh, Texture *texture)
 {
-    std::vector<__Texture__*> textures = this->_textures[id_mesh];
+    std::vector<Texture*> textures = this->_textures[id_mesh];
     bool isfound = false;
     for (uint32_t i = 0; i < textures.size() && !isfound; ++i) {
-        if (textures[i]->filename.compare(texture->filename) == 0) {
+        if (textures[i]->_filename.compare(texture->_filename) == 0) {
             isfound = true;
         }
     }

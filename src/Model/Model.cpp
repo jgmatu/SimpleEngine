@@ -64,7 +64,7 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned> indices;
-    std::vector<__Texture__*> textures;
+    std::vector<Texture*> textures;
 
     for (unsigned i = 0; i < mesh->mNumVertices; ++i) {
         Vertex vertex;
@@ -105,10 +105,10 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
     if (mesh->mMaterialIndex >= 0) {
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 
-        std::vector<__Texture__*> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        std::vector<Texture*> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
-        std::vector<__Texture__*> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        std::vector<Texture*> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 
@@ -120,25 +120,23 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
     return mesh_engine;
 }
 
-std::vector<__Texture__*> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
+std::vector<Texture*> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
 {
-    std::vector<__Texture__*> textures;
+    std::vector<Texture*> textures;
 
     for (uint32_t i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str;
         mat->GetTexture(type, i, &str);
         bool skip = false;
         for (uint32_t j = 0; j < _textures_loaded.size() && !skip; j++) {
-            if (std::strcmp(_textures_loaded[j]->path.data(), str.C_Str()) == 0) {
+            if (std::strcmp(_textures_loaded[j]->_path.data(), str.C_Str()) == 0) {
                 textures.push_back(_textures_loaded[j]);
                 skip = true;
             }
         }
         if (!skip) {   // if texture hasn't been loaded already, load it
-            __Texture__ *texture = new __Texture__();
-            texture->path = _directory + "/";
-            texture->type = typeName;
-            texture->filename = str.C_Str();
+            Texture *texture = new Texture(str.C_Str(), typeName);
+            texture->_path = _directory + "/";
             textures.push_back(texture);
             _textures_loaded.push_back(texture); // add to loaded textures
         }
@@ -156,7 +154,7 @@ void Model::setUniforms(Uniforms *uniforms)
     this->_uniforms = uniforms;
 }
 
-void Model::setTextures(std::map<std::string, std::vector<__Texture__*>> textures)
+void Model::setTextures(std::map<std::string, std::vector<Texture*>> textures)
 {
     this->_textures = textures;
 }
@@ -174,11 +172,11 @@ void Model::active() {
         mesh->setProgram(_program);
         mesh->active();
         // Load all material textures to the proper mesh..
-        std::vector<__Texture__*> textures = _textures[it->first];
+        std::vector<Texture*> textures = _textures[it->first];
         for (uint32_t i = 0; i < textures.size(); ++i) {
             mesh->setTexture(textures[i]);
         }
-        mesh->loadTextures();
+        mesh->activeTextures();
     }
 }
 
@@ -205,13 +203,13 @@ std::ostream& operator<<(std::ostream& os, const Model& model) {
         os << *mesh << '\n';
     }
 
-    std::map<std::string, std::vector<__Texture__*>>::const_iterator it_textures;
+    std::map<std::string, std::vector<Texture*>>::const_iterator it_textures;
 
     for (it_textures = model._textures.begin(); it_textures != model._textures.end(); ++it_textures) {
-        std::vector<__Texture__*> textures = it_textures->second;
+        std::vector<Texture*> textures = it_textures->second;
         os << "Mesh : " << it_textures->first << "textures : " <<  '\n';
         for (uint32_t i = 0; i < textures.size(); ++i) {
-            os << textures[i]->filename << '\n';
+            os << *textures[i] << '\n';
         }
     }
     return os;

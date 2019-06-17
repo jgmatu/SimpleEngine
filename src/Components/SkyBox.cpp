@@ -69,7 +69,7 @@ void SkyBox::start()
 {
     _program->active();
     this->active();
-    _textureID = Mesh::TextureCubeMap(_faces);
+    _textureID = Texture::TextureCubeMap(_faces);
 }
 
 // Método que se llama cada vez que el Componente se activa.

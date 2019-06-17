@@ -26,13 +26,11 @@ class Example : public Component {
 
 private:
 
-    GameObject *_gameObject;
-
 public:
 
-    Example(GameObject *gameObject)
+    Example()
     {
-        this->_gameObject = gameObject;
+        ;
     }
 
     ~Example()
@@ -42,14 +40,14 @@ public:
 
     void start()
     {
-        _gameObject->translate(glm::vec3(0.0, 0.0, -5.0));
+        _gObject->translate(glm::vec3(0.0, 0.0, -5.0));
     }
 
     void update(Keyboard *keyboard, Clock *_clock)
     {
         if (keyboard->isKeyPressed("a")) {
-            _gameObject->rotate(glm::vec3(1.0, 0.0, 0.0), 0.01);
-            _gameObject->rotate(glm::vec3(0.0, 1.0, 0.0), 0.01);
+            _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), 0.01);
+            _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), 0.01);
         }
     }
 
@@ -69,21 +67,15 @@ Scene* sceneSimulation()
     Material *material = new Material(new Model(geometry_cube->getMesh()));
     material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
-    __Texture__ *diffuse = new __Texture__();
-    diffuse->type = "texture_diffuse";
-    diffuse->path = "../resources";
-    diffuse->filename = "container2.png";
+    Texture *diffuse = new Texture("container2.png", "texture_diffuse");
     material->setTexture(id_mesh, diffuse);
 
-    __Texture__ *specular = new __Texture__();
-    specular->type = "texture_specular";
-    specular->path = "../resources";
-    specular->filename = "container2_specular.png";
+    Texture *specular = new Texture("container2_specular.png", "texture_specular");
     material->setTexture(id_mesh, specular);
 
     cube->addComponent(material);
     cube->addComponent(new Camera());
-    cube->addComponent(new Example(cube));
+    cube->addComponent(new Example());
 
     Scene *scene = new Scene();
     scene->addChild(cube);

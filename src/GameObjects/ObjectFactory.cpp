@@ -45,13 +45,13 @@ void ObjectFactory::wallNormalMapping()
     Material *material = new Material(new Model(plane->getMesh()));
     material->setProgram(new Program("../glsl/wall_vs.glsl", "../glsl/wall_fs.glsl"));
 
-    __Texture__ *plane_diffuse = new __Texture__();
+    Texture *plane_diffuse = new Texture();
     plane_diffuse->type = "texture_normal";
     plane_diffuse->path = "../resources/";
     plane_diffuse->filename = "brickwall.jpg";
     material->setTexture(mesh_plane, plane_diffuse);
 
-    __Texture__ *plane_normal = new __Texture__();
+    Texture *plane_normal = new Texture();
     plane_normal->type = "texture_normal";
     plane_normal->path = "../resources/";
     plane_normal->filename = "brickwall_normal.jpg";
@@ -76,7 +76,7 @@ void ObjectFactory::solarSystem() {
     Material *material_sun = new Material(new Model(sun_sphere->getMesh()));
     material_sun->setProgram(new Program("../glsl/sun_vs.glsl", "../glsl/sun_fs.glsl"));
 
-    __Texture__ *sun_diffuse = new __Texture__();
+    Texture *sun_diffuse = new Texture();
     sun_diffuse->type = "texture_diffuse";
     sun_diffuse->path = "../resources/";
     sun_diffuse->filename = "sun.png";
@@ -100,19 +100,19 @@ void ObjectFactory::solarSystem() {
     Material *material_earth = new Material(new Model(earth_sphere->getMesh()));
     material_earth->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
-    __Texture__ *earth_diffuse = new __Texture__();
+    Texture *earth_diffuse = new Texture();
     earth_diffuse->type = "texture_diffuse";
     earth_diffuse->path = "../resources/";
     earth_diffuse->filename = "2k_earth_daymap.jpg";
     material_earth->setTexture(earth_mesh, earth_diffuse);
 
-    __Texture__ *earth_specular = new __Texture__();
+    Texture *earth_specular = new Texture();
     earth_specular->type = "texture_specular";
     earth_specular->path = "../resources/";
     earth_specular->filename = "2k_earth_specular_map.tif";
 //    material_earth->setTexture(earth_mesh, earth_specular);
 
-    __Texture__ *earth_normal = new __Texture__();
+    Texture *earth_normal = new Texture();
     earth_normal->type = "texture_normal";
     earth_normal->path = "../resources/";
     earth_normal->filename = "2k_earth_normal_map.tif";
@@ -138,7 +138,7 @@ void ObjectFactory::solarSystem() {
     Material *material_mars = new Material(new Model(mars_sphere->getMesh()));
     material_mars->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
-    __Texture__ *mars_diffuse = new __Texture__();
+    Texture *mars_diffuse = new Texture();
     mars_diffuse->type = "texture_diffuse";
     mars_diffuse->path = "../resources/";
     mars_diffuse->filename = "mars.png";
@@ -161,7 +161,7 @@ void ObjectFactory::solarSystem() {
     Material *material_moon = new Material(new Model(sphere_moon->getMesh()));
     material_moon->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
-    __Texture__ *moon_diffuse = new __Texture__();
+    Texture *moon_diffuse = new Texture();
     moon_diffuse->type = "texture_diffuse";
     moon_diffuse->path = "../resources/";
     moon_diffuse->filename = "moon.png";

@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include "Program/Program.hpp"
+#include "Texture.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
@@ -51,13 +52,6 @@ struct Vertex {
     glm::vec3 Tangent;
 };
 
-struct __Texture__ {
-    unsigned id;
-    std::string type;
-    std::string filename;
-    std::string path;
-};
-
 class Mesh {
 
 public:
@@ -71,16 +65,13 @@ public:
 
     void active();
     void draw();
-    void loadTextures();
+    void activeTextures();
 
-    void setTexture(__Texture__ *texture);
+    void setTexture(Texture *texture);
     void setProgram(Program *program);
     void setUniforms(Uniforms *uniforms);
 
     friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
-
-    static unsigned TextureFromFile(std::string directory, const char *filename);
-    static unsigned TextureCubeMap(std::vector<std::string> _faces);
 
 private:
 
@@ -97,7 +88,7 @@ private:
     std::vector<unsigned> _indices;
 
     //Textures mesh...
-    std::vector<__Texture__*> _textures;
+    std::vector<Texture*> _textures;
 
     // Active Buffer.
     GLuint _VAO;

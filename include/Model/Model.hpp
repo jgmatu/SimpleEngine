@@ -29,7 +29,7 @@ public:
 
     void setProgram(Program *program);
     void setUniforms(Uniforms *uniforms);
-    void setTextures(std::map<std::string, std::vector<__Texture__*>> textures);
+    void setTextures(std::map<std::string, std::vector<Texture*>> textures);
 
     friend std::ostream& operator<<(std::ostream& os, const Model& model);
 
@@ -39,14 +39,14 @@ private:
     void processNode(aiNode *node, const aiScene *scene);
     Mesh* processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene);
 
-    std::vector<__Texture__*> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
+    std::vector<Texture*> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
 
     std::map<std::string, Mesh*> _meshes;
     // Textures loaded from simple geometries...
     // this textures are mapped with id_texture...
-    std::map<std::string, std::vector<__Texture__*>> _textures;
+    std::map<std::string, std::vector<Texture*>> _textures;
 
-    std::vector<__Texture__*> _textures_loaded;
+    std::vector<Texture*> _textures_loaded;
 
     std::string _directory;
 

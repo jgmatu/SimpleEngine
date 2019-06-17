@@ -30,7 +30,7 @@ public:
 
     void addLigths(std::vector<Light*> ligths);
     void setProgram(Program *program);
-    void setTexture(std::string id_mesh, __Texture__ *texture);
+    void setTexture(std::string id_mesh, Texture *texture);
 
     void setView(Camera *camera);
 
@@ -51,7 +51,7 @@ private:
     Program *_program;
     Model *_model;
 
-    std::map<std::string, std::vector<__Texture__*>> _textures;
+    std::map<std::string, std::vector<Texture*>> _textures;
 
     bool _tranparent;
 };
