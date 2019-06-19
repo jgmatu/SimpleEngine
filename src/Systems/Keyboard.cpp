@@ -3,7 +3,7 @@
 
 Keyboard::Keyboard()
 {
-    std::string keys = "1234567890qwertyuioopasdfghjklzxcvbnm"\
+    std::string keys = "1234567890qwertyuiopasdfghjklzxcvbnm"\
         "QWERTYUIOPASDFGHJKLZXCVBNM!ª!\"·$&/()=?¿_:><,..-;:\ \\";
 
     for(std::string::size_type i = 0; i < keys.size(); ++i) {
@@ -13,22 +13,7 @@ Keyboard::Keyboard()
 
 Keyboard::~Keyboard()
 {
-
-}
-
-void Keyboard::init(Scene *scene)
-{
-
-}
-
-void Keyboard::update(float dt, Scene *scene)
-{
-
-}
-
-void Keyboard::sendMessage(Message *msg)
-{
-
+    std::cout << "Delete keyboard :)" << '\n';
 }
 
 bool Keyboard::isKeyPressed(std::string key)

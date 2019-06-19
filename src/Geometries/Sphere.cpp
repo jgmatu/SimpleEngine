@@ -30,8 +30,6 @@ void Sphere::generateSphereMesh(std::string id_mesh)
 
     float phy, theta;
 
-
-    glm::vec3 vertex(1.0f); // Row vec3...
     std::vector<Vertex> vertices;
 
     // Generate vertices, normals and texCoords
@@ -44,23 +42,23 @@ void Sphere::generateSphereMesh(std::string id_mesh)
                 theta =  j * sectorStep;
 
                 // Vertex. X.
-                vertex.x = radius * cosf( phy ) * cosf( theta );
+                float x = radius * cosf( phy ) * cosf( theta );
 
                 // Vertex. Y.
-                vertex.y = radius * cosf( phy ) * sinf( theta );
+                float y = radius * cosf( phy ) * sinf( theta );
 
                 // Vertex. Z.
-                vertex.z = radius * sinf( phy );
+                float z = radius * sinf( phy );
 
-                GLfloat aux[] = {vertex.x, vertex.y, vertex.z};
+                GLfloat aux[] = {x, y, z};
                 posVertex.insert(posVertex.end(), aux, aux + 3);
 
                 // Normal.
                 glm::vec3 normal;
 
-                normal.x = vertex.x * lengthInv;
-                normal.y = vertex.y * lengthInv;
-                normal.z = vertex.z * lengthInv;
+                normal.x = x * lengthInv;
+                normal.y = y * lengthInv;
+                normal.z = z * lengthInv;
                 normal = glm::normalize(normal);
 
                 GLfloat norm[] = {normal.x, normal.y, normal.z};

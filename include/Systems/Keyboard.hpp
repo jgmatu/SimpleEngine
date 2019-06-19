@@ -5,20 +5,31 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <map>
 
-#include "Systems/System.hpp"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+
 #include "Messages/Message.hpp"
 
-class Keyboard : public System {
+class Keyboard {
 
 public:
 
      Keyboard();
     ~Keyboard();
 
-    void init(Scene *scene);
-    void update(float dt, Scene *scene);
-    void sendMessage (Message *msg);
+    static Keyboard* getInstance()
+    {
+        // Guaranteed to be destroyed.
+        static Keyboard* instance;
+        if (!instance) {
+            // Instantiated on first use.
+            instance = new Keyboard();
+        }
+        return instance;
+    }
 
     bool isKeyPressed(std::string key);
     void pressKey(std::string key, bool pressed);
@@ -27,6 +38,10 @@ public:
 
 
 private:
+
+    Keyboard(Keyboard const&) = delete;
+    void operator=(Keyboard const&)  = delete;
+
     std::map<std::string, bool> _keys_reguarls;
     std::map<int32_t, bool> _keys_specials = {
         {GLFW_KEY_UNKNOWN, false},

@@ -26,7 +26,7 @@ public:
 
     void start();
     void awakeStart();
-    void update(Keyboard *keyboard, Clock *clock);
+    void update(Clock *clock);
 
     void addLigths(std::vector<Light*> ligths);
     void setProgram(Program *program);

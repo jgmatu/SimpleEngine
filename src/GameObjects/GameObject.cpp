@@ -9,15 +9,15 @@ GameObject::GameObject() :
 }
 
 GameObject::~GameObject() {
-    size_t size = _gameObjects.size();
+    size_t size = _components.size();
 
-    for (uint32_t i = 0; i < size; ++i) {
-        delete _gameObjects[i];
-    }
-
-    size = _components.size();
     for (uint32_t i = 0; i < size; ++i) {
         delete _components[i];
+    }
+
+    size = _gameObjects.size();
+    for (uint32_t i = 0; i < size; ++i) {
+        delete _gameObjects[i];
     }
 }
 
@@ -65,10 +65,11 @@ void GameObject::addChild(GameObject *gameObject) {
 void GameObject::init()
 {
     for (uint32_t i = 0; i < _components.size(); ++i) {
+        _components[i]->_keyboard = this->_keyboard;
         _components[i]->start();
     }
-
     for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
+        _gameObjects[i]->_keyboard = this->_keyboard;
         _gameObjects[i]->init();
     }
 }
@@ -122,17 +123,17 @@ void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObj
     }
 }
 
-void GameObject::update(Keyboard *keyboard, Clock *clock_)
+void GameObject::update(Clock *clock_)
 {
     size_t size = _components.size();
 
     for (uint32_t i = 0; i < size; ++i) {
-        _components[i]->update(keyboard, clock_);
+        _components[i]->update(clock_);
     }
 
     size = _gameObjects.size();
     for (uint32_t i = 0; i < size; ++i) {
-        _gameObjects[i]->update(keyboard, clock_);
+        _gameObjects[i]->update(clock_);
     }
     std::cout << *this << '\n';
 }

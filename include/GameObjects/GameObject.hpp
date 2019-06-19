@@ -40,7 +40,7 @@ public:
     void init();
     void draw(Camera *camera);
     void draw(Camera *active_camera, std::map<float, std::vector<GameObject*>>& sorted);
-    void update(Keyboard *keyboard, Clock *clock);
+    void update(Clock *clock);
 
     void scale(glm::vec3 vec3);
     void translate(glm::vec3 vec3);
@@ -56,6 +56,9 @@ public:
     void setSystems(Keyboard *keyboard, Clock *_clock);
 
     friend std::ostream& operator<<(std::ostream&, const GameObject& gameObject);
+
+    // The keyboard is the same for all the game objects! :)
+    Keyboard *_keyboard;
 
 protected:
 

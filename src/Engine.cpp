@@ -1,22 +1,21 @@
 #include "Engine.hpp"
 
-Keyboard *_keyboard;
+static Keyboard *_keyboard = Keyboard::getInstance();
 
 Engine::Engine() :
     _systems()
 {
     _scene = new Scene();
     _clock = new Clock();
-    _keyboard = new Keyboard();
+    _scene->_keyboard = _keyboard;
 }
 
 Engine::Engine(Scene *scene) :
     Engine::Engine()
 {
-    if (scene) {
-        delete _scene;
-    }
+    delete _scene;
     _scene = scene;
+    _scene->_keyboard = _keyboard;
 }
 
 Engine::~Engine()
@@ -25,6 +24,7 @@ Engine::~Engine()
         delete _systems[i];
     }
     delete _scene;
+    delete _keyboard;
 }
 
 static void KeyboardCallBackSpecialsCharacters(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -110,7 +110,7 @@ void Engine::add(System *sys) {
 void Engine::update(float dt)
 {
     _clock->update();
-    _scene->update(_keyboard, _clock);
+    _scene->update(_clock);
     _scene->draw();
 }
 

@@ -7,6 +7,7 @@ Scene::Scene() :
 
     Camera *main_camera = new Camera();
     this->_root->addComponent(main_camera);
+
     this->addDefaultLigths();
 }
 
@@ -16,7 +17,8 @@ Scene::Scene(uint32_t id, std::string name) :
     ;
 }
 
-Scene::~Scene() {
+Scene::~Scene()
+{
     delete this->_root;
 }
 
@@ -67,6 +69,8 @@ void Scene::eraseLigth(CompLigth component)
 }
 void Scene::init()
 {
+    this->_root->_keyboard = _keyboard;
+
     _root->init();
     _root->getCameras(this->_cameras);
 }
@@ -92,7 +96,7 @@ void Scene::draw()
     }
 }
 
-void Scene::update(Keyboard *keyboard, Clock *clock_)
+void Scene::update(Clock *clock_)
 {
-    _root->update(keyboard, clock_);
+    _root->update(clock_);
 }

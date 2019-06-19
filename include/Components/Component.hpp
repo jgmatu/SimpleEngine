@@ -20,7 +20,10 @@ public:
     virtual void awakeStart() = 0;
 
     // Método que realiza transformaciones, cálculos de cosas.
-    virtual void update(Keyboard *keyboard, Clock *clock) = 0;
+    virtual void update(Clock *clock) = 0;
+
+    // The keyboard is the same for all the components :).
+    Keyboard *_keyboard;
 
 protected:
 
@@ -29,7 +32,6 @@ protected:
     TypeComp _type;
 
     GameObject *_gObject;
-
 };
 
 #endif // COMPONENT_H

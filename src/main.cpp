@@ -24,8 +24,6 @@
 
 class Example : public Component {
 
-private:
-
 public:
 
     Example()
@@ -43,9 +41,9 @@ public:
         _gObject->translate(glm::vec3(0.0, 0.0, -5.0));
     }
 
-    void update(Keyboard *keyboard, Clock *_clock)
+    void update(Clock *_clock)
     {
-        if (keyboard->isKeyPressed("a")) {
+        if (_keyboard->isKeyPressed("a")) {
             _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), 0.01);
             _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), 0.01);
         }
@@ -64,6 +62,7 @@ Scene* sceneSimulation()
 
     std::string id_mesh = "cube_mesh";
     Cube *geometry_cube = new Cube(id_mesh);
+
     Material *material = new Material(new Model(geometry_cube->getMesh()));
     material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 

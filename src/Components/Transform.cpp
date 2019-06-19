@@ -27,7 +27,7 @@ void Transform::addChild(Transform *tf)
     tfChilds.push_back(tf);
 }
 
-void Transform::update(Keyboard *keyboard, Clock *clock)
+void Transform::update(Clock *clock)
 {
     for (uint32_t i = 0; i < tfChilds.size(); ++i) {
         tfChilds[i]->_gModel = _gModel * tfChilds[i]->_model;
