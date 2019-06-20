@@ -19,7 +19,7 @@ public:
 
     void init();
     void draw();
-    void update(Clock *clock);
+    void update();
 
     void setLigth(Light *ligth);
     void eraseLigth(CompLigth type);
@@ -34,9 +34,6 @@ public:
 
     uint32_t _camera = 0;
     uint32_t _size = 0;
-
-    // The keyboard is the same for all the scenes :)
-    Keyboard *_keyboard;
 
 private:
 

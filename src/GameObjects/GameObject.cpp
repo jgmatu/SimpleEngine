@@ -65,11 +65,9 @@ void GameObject::addChild(GameObject *gameObject) {
 void GameObject::init()
 {
     for (uint32_t i = 0; i < _components.size(); ++i) {
-        _components[i]->_keyboard = this->_keyboard;
         _components[i]->start();
     }
     for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
-        _gameObjects[i]->_keyboard = this->_keyboard;
         _gameObjects[i]->init();
     }
 }
@@ -123,19 +121,18 @@ void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObj
     }
 }
 
-void GameObject::update(Clock *clock_)
+void GameObject::update()
 {
     size_t size = _components.size();
 
     for (uint32_t i = 0; i < size; ++i) {
-        _components[i]->update(clock_);
+        _components[i]->update();
     }
 
     size = _gameObjects.size();
     for (uint32_t i = 0; i < size; ++i) {
-        _gameObjects[i]->update(clock_);
+        _gameObjects[i]->update();
     }
-    std::cout << *this << '\n';
 }
 
 void GameObject::addLigths(std::vector<Light*> ligths) {

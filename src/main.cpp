@@ -16,10 +16,6 @@
 #include "Geometries/Sphere.hpp"
 #include "Geometries/Plane.hpp"
 
-#include "Systems/Draw.hpp"
-#include "Systems/Update.hpp"
-#include "Systems/Keyboard.hpp"
-
 #include "Engine.hpp"
 
 class Example : public Component {
@@ -41,12 +37,13 @@ public:
         _gObject->translate(glm::vec3(0.0, 0.0, -5.0));
     }
 
-    void update(Clock *_clock)
+    void update()
     {
-        if (_keyboard->isKeyPressed("a")) {
+        if (_keyboard->isKeyPressed("a") || _keyboard->isKeyPressed("c")) {
             _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), 0.01);
             _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), 0.01);
         }
+        std::cout << "Now : " << _clock->now() << '\n';
     }
 
     void awakeStart()
@@ -87,8 +84,6 @@ int main(int argc, char* argv[]) {
 
     try {
         engine = new Engine(sceneSimulation());
-        engine->add(new Update());
-        engine->add(new Draw());
         engine->init();
         engine->mainLoop();
     } catch (std::exception &ex) {

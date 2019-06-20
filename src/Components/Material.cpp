@@ -67,7 +67,7 @@ void Material::awakeStart() {
     }
 }
 
-void Material::update(Clock *clock)
+void Material::update()
 {
 //    std::cout << "update material.." << '\n';
 }

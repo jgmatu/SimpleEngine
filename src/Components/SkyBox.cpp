@@ -106,7 +106,7 @@ void SkyBox::draw()
 }
 
 // Método que realiza transformaciones, cálculos de cosas.
-void SkyBox::update(Clock *clock)
+void SkyBox::update()
 {
     std::cout << "update skybox.." << '\n';
 }

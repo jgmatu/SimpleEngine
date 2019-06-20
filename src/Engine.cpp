@@ -1,41 +1,29 @@
 #include "Engine.hpp"
 
 static Keyboard *_keyboard = Keyboard::getInstance();
+ static Clock *_clock = Clock::getInstance();
 
-Engine::Engine() :
-    _systems()
+Engine::Engine(Scene *scene)
 {
-    _scene = new Scene();
-    _clock = new Clock();
-    _scene->_keyboard = _keyboard;
-}
-
-Engine::Engine(Scene *scene) :
-    Engine::Engine()
-{
-    delete _scene;
     _scene = scene;
-    _scene->_keyboard = _keyboard;
 }
 
 Engine::~Engine()
 {
-    for (uint32_t i = 0; i < _systems.size(); ++i) {
-        delete _systems[i];
-    }
     delete _scene;
     delete _keyboard;
+    delete _clock;
 }
 
 static void KeyboardCallBackSpecialsCharacters(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
     const char* name = glfwGetKeyName(key, 0);
+
     if (name) {
         _keyboard->pressKey(std::string(name), action == GLFW_PRESS || action == GLFW_REPEAT);
     } else {
         _keyboard->pressKey(key, action == GLFW_PRESS || action == GLFW_REPEAT);
     }
-
     // Exit engine...
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -91,9 +79,7 @@ void Engine::init() {
     std::cout << "Iniciar Engine!!" << '\n';
     try {
         initWindow();
-        for (unsigned i = 0; i < _systems.size(); ++i) {
-            _systems[i]->init(_scene);
-        }
+        _scene->init();
     } catch (std::exception &ex) {
         std::cerr << "Error init Engine... " << ex.what() << '\n';
         throw ex;
@@ -103,14 +89,9 @@ void Engine::init() {
     }
 }
 
-void Engine::add(System *sys) {
-    _systems.push_back(sys);
-}
-
-void Engine::update(float dt)
+void Engine::update()
 {
-    _clock->update();
-    _scene->update(_clock);
+    _scene->update();
     _scene->draw();
 }
 
@@ -119,7 +100,7 @@ void Engine::mainLoop() {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-        update(0); // ... Update Scene ...
+        update(); // ... Update Scene ...
 
         glfwSwapBuffers(_window); // Swap the color buffers.
         std::this_thread::sleep_for(std::chrono::milliseconds(LOOP_INTERVAL_TIME_MS));

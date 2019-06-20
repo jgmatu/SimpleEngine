@@ -26,7 +26,7 @@ public:
     void awakeStart();
 
     // Método que realiza transformaciones, cálculos de cosas.
-    void update(Clock *clock);
+    void update();
 
     // position vector is inverted since we eventually want to translate
     // the world in the opposite direction of where we want to move.

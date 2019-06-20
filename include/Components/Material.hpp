@@ -26,7 +26,7 @@ public:
 
     void start();
     void awakeStart();
-    void update(Clock *clock);
+    void update();
 
     void addLigths(std::vector<Light*> ligths);
     void setProgram(Program *program);

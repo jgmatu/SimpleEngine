@@ -6,20 +6,34 @@
 class Clock {
 
 public:
-    Clock()
+
+    static Clock* getInstance()
     {
-        ;
+        static Clock *instance;
+
+        if (!instance) {
+            instance = new Clock();
+        }
+        return instance;
     }
 
-    void update()
+    ~Clock()
     {
-        ts = glfwGetTime();
+        std::cout << "Delete clock :)" << '\n';
     }
 
+    double now()
+    {
+        return glfwGetTime();
+    }
 
 private:
 
-    double ts;
+    Clock()
+    {
+        std::cout << "Create clock! :)" << '\n';
+    };
+
 };
 
 #endif

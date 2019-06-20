@@ -4,7 +4,7 @@
 Keyboard::Keyboard()
 {
     std::string keys = "1234567890qwertyuiopasdfghjklzxcvbnm"\
-        "QWERTYUIOPASDFGHJKLZXCVBNM!ª!\"·$&/()=?¿_:><,..-;:\ \\";
+        "QWERTYUIOPASDFGHJKLZXCVBNM!ª!\"·$&/()=?¿_:><,..-;: \\";
 
     for(std::string::size_type i = 0; i < keys.size(); ++i) {
         _keys_reguarls[std::string(1, keys[i])] = false;

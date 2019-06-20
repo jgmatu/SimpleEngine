@@ -27,7 +27,7 @@ void Transform::addChild(Transform *tf)
     tfChilds.push_back(tf);
 }
 
-void Transform::update(Clock *clock)
+void Transform::update()
 {
     for (uint32_t i = 0; i < tfChilds.size(); ++i) {
         tfChilds[i]->_gModel = _gModel * tfChilds[i]->_model;

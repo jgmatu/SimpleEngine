@@ -69,8 +69,6 @@ void Scene::eraseLigth(CompLigth component)
 }
 void Scene::init()
 {
-    this->_root->_keyboard = _keyboard;
-
     _root->init();
     _root->getCameras(this->_cameras);
 }
@@ -80,7 +78,6 @@ void Scene::draw()
 {
     Camera *active_camera = this->_cameras[this->_camera];
     std::map<float, std::vector<GameObject*>> transparents;
-
 
     _root->addLigths(_ligths);
     _root->draw(active_camera, transparents);
@@ -96,7 +93,7 @@ void Scene::draw()
     }
 }
 
-void Scene::update(Clock *clock_)
+void Scene::update()
 {
-    _root->update(clock_);
+    _root->update();
 }

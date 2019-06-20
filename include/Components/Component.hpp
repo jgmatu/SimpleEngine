@@ -2,10 +2,10 @@
 #define COMPONENT_H
 
 #include "Constants/TypeComp.hpp"
+#include "Systems/Keyboard.hpp"
+#include "Systems/Clock.hpp"
 
 class GameObject;
-class Keyboard;
-class Clock;
 
 class Component {
 
@@ -20,10 +20,8 @@ public:
     virtual void awakeStart() = 0;
 
     // Método que realiza transformaciones, cálculos de cosas.
-    virtual void update(Clock *clock) = 0;
+    virtual void update() = 0;
 
-    // The keyboard is the same for all the components :).
-    Keyboard *_keyboard;
 
 protected:
 
@@ -32,6 +30,10 @@ protected:
     TypeComp _type;
 
     GameObject *_gObject;
+
+    // The keyboard is the same for all the components :).
+    Keyboard *_keyboard = Keyboard::getInstance();
+    Clock *_clock = Clock::getInstance();
 };
 
 #endif // COMPONENT_H

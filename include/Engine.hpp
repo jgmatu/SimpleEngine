@@ -15,7 +15,6 @@
 #include <string>
 #include <math.h>
 
-#include "Systems/System.hpp"
 #include "Systems/Keyboard.hpp"
 #include "Systems/Clock.hpp"
 
@@ -25,14 +24,12 @@ class Engine {
 
 public:
 
-    Engine();
     Engine(Scene *scene);
     ~Engine();
 
     void init();
-    void update(float dt);
+    void update();
     void mainLoop();
-    void add(System *sys);
 
 private:
 
@@ -41,10 +38,8 @@ private:
     void genRenderBuffer();
 
     GLFWwindow *_window;
-    std::vector<System*> _systems;
     Scene *_scene;
 
-    Clock *_clock;
 };
 
 #endif // ENGINE_H

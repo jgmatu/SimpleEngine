@@ -17,27 +17,24 @@ class Keyboard {
 
 public:
 
-     Keyboard();
-    ~Keyboard();
-
     static Keyboard* getInstance()
     {
-        // Guaranteed to be destroyed.
-        static Keyboard* instance;
+        static Keyboard *instance;
+
         if (!instance) {
-            // Instantiated on first use.
             instance = new Keyboard();
         }
         return instance;
     }
+    ~Keyboard();
 
     bool isKeyPressed(std::string key);
     void pressKey(std::string key, bool pressed);
-
     void pressKey(int key, bool pressed);
 
-
 private:
+
+    Keyboard();
 
     Keyboard(Keyboard const&) = delete;
     void operator=(Keyboard const&)  = delete;

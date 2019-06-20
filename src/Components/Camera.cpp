@@ -26,7 +26,7 @@ void Camera::awakeStart()
 }
 
 // Método que realiza transformaciones, cálculos de cosas.
-void Camera::update(Clock *clock)
+void Camera::update()
 {
     if (!_tfObj) {
         std::cerr << "The camera is not attached to a GameObject" << '\n';
