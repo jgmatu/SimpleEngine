@@ -13,6 +13,7 @@ Keyboard::Keyboard()
 
 Keyboard::~Keyboard()
 {
+    Keyboard::instance = nullptr;
     std::cout << "Delete keyboard :)" << '\n';
 }
 

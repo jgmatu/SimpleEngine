@@ -19,7 +19,7 @@ public:
 
     ~Clock()
     {
-        std::cout << "Delete clock :)" << '\n';
+        Clock::instance = nullptr;
     }
 
     static double now()

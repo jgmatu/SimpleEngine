@@ -3,7 +3,8 @@
 Scene::Scene() :
     _cameras()
 {
-    this->_root = new GameObject();
+    this->_root = new GameObject("root");
+    this->_root->_root = this->_root;
 
     Camera *main_camera = new Camera();
     this->_root->addComponent(main_camera);

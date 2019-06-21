@@ -27,7 +27,10 @@ public:
         }
         return Mouse::instance;
     }
-    ~Mouse() {};
+    ~Mouse()
+    {
+        Mouse::instance = nullptr;
+    };
 
     static void CursorPositionCallback(GLFWwindow *window, double xpos, double ypos);
     static void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods);

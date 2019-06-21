@@ -53,9 +53,50 @@ public:
 
 };
 
-Scene* sceneSimulation()
+class ExampleMove : public Component {
+
+public:
+
+    uint32_t counter;
+
+    ExampleMove()
+    {
+        counter = 0;
+    }
+
+    ~ExampleMove()
+    {
+
+    }
+
+    void start()
+    {
+        _gObject->translate(glm::vec3(5.0, 0.0, -1.0));
+    }
+
+    void update()
+    {
+        if (Keyboard::instance->isKeyPressed("a")) {
+            _gObject->translate(glm::vec3(-0.1, 0.0, 0.0));
+        }
+        if (Keyboard::instance->isKeyPressed("d")) {
+            _gObject->translate(glm::vec3(0.1, 0.0, 0.0));
+        }
+        if (_gObject->distance("cube1") < 2.0) {
+            std::cout << "Event near cubes: " << counter++ << '\n';
+        }
+    }
+
+    void awakeStart()
+    {
+        ;
+    }
+
+};
+
+GameObject *getCube(std::string name)
 {
-    GameObject *cube = new GameObject();
+    GameObject *cube = new GameObject(name);
 
     std::string id_mesh = "cube_mesh";
     Cube *geometry_cube = new Cube(id_mesh);
@@ -70,12 +111,22 @@ Scene* sceneSimulation()
     material->setTexture(id_mesh, specular);
 
     cube->addComponent(material);
-    cube->addComponent(new Camera());
-    cube->addComponent(new Example());
 
+    return cube;
+}
+
+Scene* sceneSimulation()
+{
     Scene *scene = new Scene();
-    scene->addChild(cube);
 
+    GameObject *cube1 = getCube("cube1");
+    cube1->addComponent(new Example());
+
+    GameObject *cube2 = getCube("cube2");
+    cube2->addComponent(new ExampleMove());
+
+    scene->addChild(cube1);
+    cube1->addChild(cube2);
     return scene;
 }
 
@@ -83,7 +134,8 @@ int main(int argc, char* argv[]) {
     Engine *engine = nullptr;
 
     try {
-        engine = new Engine(sceneSimulation());
+        Scene *scene = sceneSimulation();
+        engine = new Engine(scene);
         engine->init();
         engine->mainLoop();
     } catch (std::exception &ex) {

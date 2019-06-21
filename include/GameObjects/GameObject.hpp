@@ -30,12 +30,13 @@ class GameObject {
 
 public:
 
-    GameObject();
+    GameObject(std::string id);
     virtual ~GameObject();
+
+    void addChild(GameObject *gameObject);
 
     void addComponent(Component *component);
     Component* getComponent(TypeComp type) const;
-    void addChild(GameObject *gameObject);
 
     void init();
 
@@ -48,6 +49,7 @@ public:
     void translate(glm::vec3 vec3);
     void rotate(glm::vec3 vec3, glm::quat quad);
     void rotate(glm::vec3 vec3, float angle);
+    float distance(std::string id);
 
     void addLigths(std::vector<Light*> ligths);
     void addGameObjects(std::vector<GameObject*> objects) {
@@ -61,8 +63,8 @@ public:
 
 protected:
 
-    int _id;
-    std::string _name;
+    std::string _id;
+    GameObject *_root;
 
     std::vector<Component*> _components;
     std::vector<GameObject*> _gameObjects;
@@ -72,7 +74,9 @@ protected:
 private:
 
     void addTransparentQueue(std::map<float, std::vector<GameObject*>>& sorted, float distance);
-    void updateChildsTransform();
+
+    GameObject* search(std::string id);
+    GameObject* _search(std::string id);
 
 };
 

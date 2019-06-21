@@ -10,7 +10,6 @@ Engine::Engine()
 Engine::Engine(Scene *scene) :
     Engine::Engine()
 {
-
     _scene = scene;
 }
 

@@ -25,7 +25,6 @@ class Engine {
 
 public:
 
-    Engine();
     Engine(Scene *scene);
     ~Engine();
 
@@ -34,6 +33,8 @@ public:
     void mainLoop();
 
 private:
+
+    Engine();
 
     void initWindow();
     void genFrameBuffer();

@@ -1,9 +1,10 @@
 #include "GameObjects/GameObject.hpp"
 
-GameObject::GameObject() :
+GameObject::GameObject(std::string id) :
     _components(),
     _gameObjects()
 {
+    this->_id = id;
     _tf = new Transform();
     _components.push_back(_tf);
 }
@@ -49,6 +50,26 @@ Component* GameObject::getComponent(TypeComp type) const {
     return search;
 }
 
+GameObject *GameObject::search(std::string id)
+{
+    return this->_root->_search(id);
+}
+
+GameObject *GameObject::_search(std::string id)
+{
+    std::vector<GameObject*>::const_iterator it;
+
+    for (it = _gameObjects.begin(); it != _gameObjects.end(); ++it) {
+        if ((*it)->_id.compare(id) == 0) {
+            return *it;
+        }
+    }
+    for (it = _gameObjects.begin(); it != _gameObjects.end(); ++it) {
+        (*it)->_search(id);
+    }
+    return nullptr;
+}
+
 void GameObject::addComponent(Component *component) {
     if (Camera *camera = dynamic_cast<Camera*>(component)) {
         camera->_tfObj = this->_tf;
@@ -58,16 +79,27 @@ void GameObject::addComponent(Component *component) {
 }
 
 void GameObject::addChild(GameObject *gameObject) {
+    if (search(gameObject->_id)) {
+        std::cerr << "This gameObject already exist on the scene..." << '\n';
+        throw;
+    }
+    gameObject->_root = this->_root;
     _tf->addChild(gameObject->_tf);
     _gameObjects.push_back(gameObject);
+
 }
 
 void GameObject::init()
 {
-    for (uint32_t i = 0; i < _components.size(); ++i) {
+    size_t components_size  = _components.size();
+
+    for (uint32_t i = 0; i < components_size; ++i) {
         _components[i]->start();
     }
-    for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
+
+    size_t gameObjects_size = _gameObjects.size();
+
+    for (uint32_t i = 0; i < gameObjects_size; ++i) {
         _gameObjects[i]->init();
     }
 }
@@ -146,7 +178,6 @@ void GameObject::addLigths(std::vector<Light*> ligths) {
     }
 }
 
-
 void GameObject::scale(glm::vec3 vec3)
 {
     this->_tf->_model = glm::scale(this->_tf->_model, vec3);
@@ -167,9 +198,18 @@ void GameObject::rotate(glm::vec3 vec3, float angle)
     this->_tf->_model = glm::rotate(this->_tf->_model, angle, vec3);
 }
 
+float GameObject::distance(std::string id)
+{
+    GameObject *gameObject = search(id);
+    if (!gameObject) {
+        std::cerr << "The GameObject doesn't exist!" << '\n';
+        throw;
+    }
+    return glm::distance(this->_tf->_gModel[3], gameObject->_tf->_gModel[3]);
+}
 
 std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
-    os << gameObject._name << std::endl;
+    os << gameObject._id << std::endl;
     Component *component = gameObject.getComponent(TypeComp::TRANSFORM);
     if (Transform *tf = dynamic_cast<Transform*>(component)) {
         os << (*tf);
