@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project (SimpleEngine)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wshadow -L /usr/local/lib -std=c++11") # -Wpedantic -Wextra
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wshadow -L /usr/local/lib -std=c++1z") # -Wpedantic -Wextra
 set(GLAD_LIBRARIES dl)
 
 option(GLFW_BUILD_DOCS OFF)

@@ -39,11 +39,11 @@ public:
 
     void update()
     {
-        if (_keyboard->isKeyPressed("a") || _keyboard->isKeyPressed("c")) {
+        if (Keyboard::instance->isKeyPressed("c")) {
             _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), 0.01);
             _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), 0.01);
+            std::cout << "Now : " << Clock::now() << '\n';
         }
-        std::cout << "Now : " << _clock->now() << '\n';
     }
 
     void awakeStart()

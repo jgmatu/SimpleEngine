@@ -17,20 +17,24 @@ class Keyboard {
 
 public:
 
+    inline static Keyboard *instance;
+
     static Keyboard* getInstance()
     {
-        static Keyboard *instance;
-
-        if (!instance) {
-            instance = new Keyboard();
+        if (!Keyboard::instance) {
+            Keyboard::instance = new Keyboard();
         }
-        return instance;
+        return Keyboard::instance;
     }
     ~Keyboard();
 
     bool isKeyPressed(std::string key);
+    bool isKeyPressed(int32_t key);
+
     void pressKey(std::string key, bool pressed);
     void pressKey(int key, bool pressed);
+
+    static void CallBackCharacters(GLFWwindow *window, int key, int scancode, int action, int mods);
 
 private:
 

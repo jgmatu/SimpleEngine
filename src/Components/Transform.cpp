@@ -32,7 +32,6 @@ void Transform::update()
     for (uint32_t i = 0; i < tfChilds.size(); ++i) {
         tfChilds[i]->_gModel = _gModel * tfChilds[i]->_model;
     }
-    std::cout << "update transform" << '\n';
 }
 
 glm::vec3 Transform::position() const {

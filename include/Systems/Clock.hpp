@@ -7,14 +7,14 @@ class Clock {
 
 public:
 
+    inline static Clock *instance;
+
     static Clock* getInstance()
     {
-        static Clock *instance;
-
-        if (!instance) {
-            instance = new Clock();
+        if (!Clock::instance) {
+            Clock::instance = new Clock();
         }
-        return instance;
+        return Clock::instance;
     }
 
     ~Clock()
@@ -22,7 +22,7 @@ public:
         std::cout << "Delete clock :)" << '\n';
     }
 
-    double now()
+    static double now()
     {
         return glfwGetTime();
     }

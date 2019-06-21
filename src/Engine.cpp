@@ -1,10 +1,16 @@
 #include "Engine.hpp"
 
-static Keyboard *_keyboard = Keyboard::getInstance();
- static Clock *_clock = Clock::getInstance();
-
-Engine::Engine(Scene *scene)
+Engine::Engine()
 {
+    _clock = Clock::getInstance();
+    _keyboard = Keyboard::getInstance();
+    _mouse = Mouse::getInstance();
+}
+
+Engine::Engine(Scene *scene) :
+    Engine::Engine()
+{
+
     _scene = scene;
 }
 
@@ -13,21 +19,7 @@ Engine::~Engine()
     delete _scene;
     delete _keyboard;
     delete _clock;
-}
-
-static void KeyboardCallBackSpecialsCharacters(GLFWwindow *window, int key, int scancode, int action, int mods)
-{
-    const char* name = glfwGetKeyName(key, 0);
-
-    if (name) {
-        _keyboard->pressKey(std::string(name), action == GLFW_PRESS || action == GLFW_REPEAT);
-    } else {
-        _keyboard->pressKey(key, action == GLFW_PRESS || action == GLFW_REPEAT);
-    }
-    // Exit engine...
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-    }
+    delete _mouse;
 }
 
 void Engine::initWindow() {
@@ -48,7 +40,20 @@ void Engine::initWindow() {
     }
 
     // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-    glfwSetKeyCallback(_window, KeyboardCallBackSpecialsCharacters);
+    glfwSetKeyCallback(_window, Keyboard::CallBackCharacters);
+
+    // Cursor pos input...
+    glfwSetCursorPosCallback(_window, Mouse::CursorPositionCallback);
+    glfwSetMouseButtonCallback(_window, Mouse::MouseButtonCallback);
+
+    GLFWcursor *cursor = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
+    if (!cursor) {
+        std::cerr << "Error creating cursor ...." << '\n';
+        throw;
+    }
+    glfwSetCursor(_window, cursor);
+    glfwSetCursorEnterCallback(_window, Mouse::CursorEnterAreaCallback);
+
     // Make the OpenGL context current.
     glfwMakeContextCurrent(_window);
 

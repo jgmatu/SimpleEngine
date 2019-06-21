@@ -30,12 +30,6 @@ protected:
     TypeComp _type;
 
     GameObject *_gObject;
-
-    // The keyboard is the same for all the components :).
-    Keyboard *_keyboard = Keyboard::getInstance();
-
-    // The clock is the same for all the components :).
-    Clock *_clock = Clock::getInstance();
 };
 
 #endif // COMPONENT_H

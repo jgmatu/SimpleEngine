@@ -108,7 +108,7 @@ void SkyBox::draw()
 // Método que realiza transformaciones, cálculos de cosas.
 void SkyBox::update()
 {
-    std::cout << "update skybox.." << '\n';
+    ;
 }
 
 void SkyBox::setView(Camera *camera)

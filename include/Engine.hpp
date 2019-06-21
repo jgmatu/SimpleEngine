@@ -17,6 +17,7 @@
 
 #include "Systems/Keyboard.hpp"
 #include "Systems/Clock.hpp"
+#include "Systems/Mouse.hpp"
 
 #include "GameObjects/Scene.hpp"
 
@@ -24,6 +25,7 @@ class Engine {
 
 public:
 
+    Engine();
     Engine(Scene *scene);
     ~Engine();
 
@@ -38,6 +40,11 @@ private:
     void genRenderBuffer();
 
     GLFWwindow *_window;
+
+    Clock *_clock;
+    Keyboard *_keyboard;
+    Mouse *_mouse;
+
     Scene *_scene;
 
 };

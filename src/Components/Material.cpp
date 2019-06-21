@@ -28,8 +28,9 @@ void Material::setProgram(Program *program)
 
 void Material::setTexture(std::string id_mesh, Texture *texture)
 {
-    std::vector<Texture*> textures = this->_textures[id_mesh];
     bool isfound = false;
+    std::vector<Texture*> textures = this->_textures[id_mesh];
+
     for (uint32_t i = 0; i < textures.size() && !isfound; ++i) {
         if (textures[i]->_filename.compare(texture->_filename) == 0) {
             isfound = true;
@@ -69,29 +70,33 @@ void Material::awakeStart() {
 
 void Material::update()
 {
-//    std::cout << "update material.." << '\n';
+    ;
 }
 
 void Material::setView(Camera *camera)
 {
     this->setParameter("projection", camera->_projection);      // Vertex...
     this->setParameter("view", camera->_view->_gModel);         // Vertex...
-    this->setParameter("viewPos", camera->position());   // Fragments...
+    this->setParameter("viewPos", camera->viewPos());   // Fragments...
 }
 
-void Material::setParameter(std::string name, glm::vec3 val) {
+void Material::setParameter(std::string name, glm::vec3 val)
+{
     _uniforms->setUniformVec3(name, val);
 }
 
-void Material::setParameter(std::string name, glm::mat4 val) {
+void Material::setParameter(std::string name, glm::mat4 val)
+{
     _uniforms->setUniformMat4(name, val);
 }
 
-void Material::setParameter(std::string name, int val) {
+void Material::setParameter(std::string name, int val)
+{
     _uniforms->setUniformInt(name, val);
 }
 
-void Material::setParameter(std::string name, float val) {
+void Material::setParameter(std::string name, float val)
+{
     _uniforms->setUniformFloat(name, val);
 }
 
@@ -110,7 +115,8 @@ bool Material::isTransparent()
     return this->_tranparent;
 }
 
-std::ostream& operator<<(std::ostream& os, const Material& material) {
+std::ostream& operator<<(std::ostream& os, const Material& material)
+{
     os << *material._model;
     return os;
 }

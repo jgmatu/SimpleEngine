@@ -32,11 +32,22 @@ void Camera::update()
         std::cerr << "The camera is not attached to a GameObject" << '\n';
         throw;
     }
-    std::cout << "update camera..." << '\n';
+    if (Keyboard::instance->isKeyPressed("w")) {
+        _view->_model = glm::translate(_view->_model, glm::vec3(0, 0, 0.05));
+    }
+    if (Keyboard::instance->isKeyPressed("a")) {
+        _view->_model = glm::translate(_view->_model, glm::vec3(0.05, 0, 0));
+    }
+    if (Keyboard::instance->isKeyPressed("d")) {
+        _view->_model = glm::translate(_view->_model, glm::vec3(-0.05, 0, 0));
+    }
+    if (Keyboard::instance->isKeyPressed("s")) {
+        _view->_model = glm::translate(_view->_model, glm::vec3(0, 0, -0.05));
+    }
     _view->_gModel = _tfObj->_gModel * _view->_model;
 }
 
-glm::vec3 Camera::position()
+glm::vec3 Camera::viewPos()
 {
     return this->_view->position() * (-1);
 }

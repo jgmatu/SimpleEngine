@@ -30,7 +30,7 @@ public:
 
     // position vector is inverted since we eventually want to translate
     // the world in the opposite direction of where we want to move.
-    glm::vec3 position();
+    glm::vec3 viewPos();
 
     friend std::ostream& operator<<(std::ostream& os, const Camera& camera);
 
