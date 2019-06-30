@@ -1,7 +1,7 @@
 #version 330 core
 
 struct Material {
-    vec3 ambient;
+    vec3 rgb;
 
     sampler2D texture_diffuse0;
     sampler2D texture_diffuse1;
@@ -50,12 +50,15 @@ struct Spot {
     float quadratic;
 };
 
-#define NR_POINT_LIGHTS 1
+
+#define MAX_POINT_LIGHTS 255
 
 uniform Material material;
 
+uniform int npoints;
+uniform Point points[MAX_POINT_LIGHTS];
+
 uniform Directional directional;
-uniform Point points[NR_POINT_LIGHTS];
 uniform Spot spot;
 
 // Viewer position...
@@ -86,7 +89,7 @@ void main()
 
     // phase 2: Point lights
     vec3 result = vec3(0, 0, 0);
-    for(int i = 0; i < NR_POINT_LIGHTS; i++) {
+    for(int i = 0; i < npoints; ++i) {
         result += calcPointLight(points[i], norm, fragPos, viewDir);
     }
     // phase 3: Spot light

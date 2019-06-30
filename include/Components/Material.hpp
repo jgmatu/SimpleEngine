@@ -20,7 +20,6 @@ class Material : public Component {
 
 public:
 
-    Material();
     Material(Model *model);
     ~Material();
 
@@ -31,6 +30,7 @@ public:
     void addLigths(std::vector<Light*> ligths);
     void setProgram(Program *program);
     void setTexture(std::string id_mesh, Texture *texture);
+    void setColor(glm::vec3 rgb);
 
     void setView(Camera *camera);
 
@@ -46,6 +46,8 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Material& material);
 
 private:
+
+    Material();
 
     Uniforms *_uniforms;
     Program *_program;

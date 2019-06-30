@@ -29,7 +29,7 @@ void Camera::awakeStart()
 void Camera::update()
 {
     if (!_tfObj) {
-        std::cerr << "The camera is not attached to a GameObject" << '\n';
+        std::cerr << "The camera is not attached to a gameObject" << '\n';
         throw;
     }
     if (Keyboard::instance->isKeyPressed(GLFW_KEY_UP)) {
@@ -44,6 +44,9 @@ void Camera::update()
     if (Keyboard::instance->isKeyPressed(GLFW_KEY_DOWN)) {
         _view->_model = glm::translate(_view->_model, glm::vec3(0, 0, -0.05));
     }
+    // Rotate camera....
+    // *** ROTATE ***
+    // Tracker camera, gameObject...
     _view->_gModel = _tfObj->_gModel * _view->_model;
 }
 

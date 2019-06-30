@@ -4,13 +4,14 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include "Components/Transform.hpp"
-
 #include <iostream>
 #include <string>
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
+
+#include "Components/Component.hpp"
+#include "Components/Transform.hpp"
 
 class Camera : public Component {
 

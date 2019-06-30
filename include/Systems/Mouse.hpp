@@ -27,23 +27,26 @@ public:
         }
         return Mouse::instance;
     }
+
     ~Mouse()
     {
         Mouse::instance = nullptr;
     };
 
+    glm::mat4 rotate();
+
     static void CursorPositionCallback(GLFWwindow *window, double xpos, double ypos);
     static void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
     static void CursorEnterAreaCallback(GLFWwindow *window, int entered);
 
+    double _x, _y;
+    bool _rClick, _lClick;
+
 private:
 
-    Mouse() {};
+    Mouse();
     Mouse(Mouse const&) = delete;
     void operator=(Mouse const&)  = delete;
-
-    double xPos, yPos;
-    bool rigthClick, leftClick;
 };
 
 #endif

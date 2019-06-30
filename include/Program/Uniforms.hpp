@@ -3,6 +3,7 @@
 
 #include <map>
 #include <vector>
+#include <iostream>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -12,6 +13,8 @@ public:
 
     Uniforms();
     ~Uniforms();
+
+    void update(Uniforms *uniforms);
 
     void setUniformInt(std::string name, int value);
     void setUniformFloat(std::string name, float value);

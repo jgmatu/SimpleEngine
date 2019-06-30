@@ -16,6 +16,7 @@ Light::Light()
         {600, glm::vec3(1.0f, 0.007f, 0.0002f)},
         {3250, glm::vec3(1.0f, 0.0014f, 0.000007f)}
     };
+    this->_uniforms = new Uniforms();
 }
 
 Light::Light(CompLigth type) :
@@ -26,73 +27,17 @@ Light::Light(CompLigth type) :
 
 Light::~Light()
 {
-    ;
+    delete _uniforms;
 }
 
-Ambient::Ambient() :
-    Light::Light(CompLigth::AMBIENT)
+bool Light::isLigth(std::string id)
 {
-    ;
-}
-Ambient::Ambient(glm::vec3 value) :
-    Ambient::Ambient()
-{
-    this->_value = value;
+    return this->_id.compare(id) == 0;
 }
 
-Ambient::~Ambient()
+Uniforms* Light::getUniforms()
 {
-    ;
-}
-
-void Ambient::setParameters(Uniforms *uniforms)
-{
-    uniforms->setUniformVec3("material.ambient", _value);
-}
-
-Diffuse::Diffuse() :
-    Light::Light(CompLigth::DIFFUSE)
-{
-    ;
-}
-
-Diffuse::Diffuse(glm::vec3 value) :
-    Diffuse::Diffuse()
-{
-    this->_value = value;
-}
-
-Diffuse::~Diffuse()
-{
-    ;
-}
-
-void Diffuse::setParameters(Uniforms *uniforms)
-{
-//    uniforms->setUniformVec3("material.diffuse", _value);
-}
-
-Specular::Specular() :
-    Light::Light(CompLigth::SPECULAR)
-{
-    ;
-}
-
-Specular::Specular(glm::vec3 value, float shininess) :
-    Specular::Specular()
-{
-    this->_value = value;
-    this->_shininess = shininess;
-}
-
-Specular::~Specular()
-{
-    ;
-}
-
-void Specular::setParameters(Uniforms *uniforms)
-{
-    uniforms->setUniformFloat("material.shininess", _shininess);
+    return this->_uniforms;
 }
 
 
@@ -102,10 +47,10 @@ Directional::Directional() :
     ;
 }
 
-Directional::Directional(glm::vec3 direction) :
+Directional::Directional(std::string id) :
     Directional::Directional()
 {
-    this->_direction = direction;
+    this->_id = id;
 }
 
 Directional::~Directional()
@@ -113,12 +58,28 @@ Directional::~Directional()
     ;
 }
 
-void Directional::setParameters(Uniforms *uniforms)
+void Directional::setDirection(glm::vec3 direction)
 {
-    uniforms->setUniformVec3("directional.direction", this->_direction);
-    uniforms->setUniformVec3("directional.ambient", glm::vec3(0.01f));
-    uniforms->setUniformVec3("directional.diffuse", glm::vec3(0.01f));
-    uniforms->setUniformVec3("directional.specular", glm::vec3(0.01f));
+    _uniforms->setUniformVec3("directional.direction", direction);
+}
+
+void Directional::setPosition(glm::vec3 position)
+{
+    std::cerr << "Directional doesn't have a position" << '\n';
+    throw;
+}
+
+void Directional::setDistance()
+{
+    std::cerr << "Directional distance doesn't have a distance" << '\n';
+    throw;
+}
+
+void Directional::setIntense(float percentage)
+{
+    _uniforms->setUniformVec3("directional.ambient", percentage * glm::vec3(0.01f));
+    _uniforms->setUniformVec3("directional.diffuse", percentage * glm::vec3(0.01f));
+    _uniforms->setUniformVec3("directional.specular", percentage *  glm::vec3(0.01f));
 }
 
 Point::Point() :
@@ -127,11 +88,17 @@ Point::Point() :
     ;
 }
 
-Point::Point(int num, glm::vec3 position) :
+Point::Point(std::string id) :
     Point::Point()
 {
-    this->_num = num;
-    this->_position = position;
+    this->_id = id;
+    this->_index = Point::_num++;
+
+    if (Point::_num == MAX_POINT_LIGHTS) {
+        std::cerr << "Error limit points in engine!" << '\n';
+        throw;
+    }
+    this->_uniforms->setUniformInt("npoints", Point::_num);
 }
 
 Point::~Point()
@@ -139,19 +106,36 @@ Point::~Point()
     ;
 }
 
-void Point::setParameters(Uniforms *uniforms)
+void Point::setPosition(glm::vec3 position)
 {
-    std::string index = std::string(std::to_string(this->_num));
+    std::string index = std::string(std::to_string(this->_index));
+
+    this->_uniforms->setUniformVec3("points[" + index + "].position", position);
+}
+
+void Point::setDistance()
+{
     glm::vec3 distance = _distances[3250];
+    std::string index = std::string(std::to_string(this->_index));
 
-    uniforms->setUniformVec3("points[" + index + "].ambient", glm::vec3(0.0f));
-    uniforms->setUniformVec3("points[" + index + "].diffuse", glm::vec3(0.5f));
-    uniforms->setUniformVec3("points[" + index + "].specular", glm::vec3(0.8f));
-    uniforms->setUniformVec3("points[" + index + "].position", this->_position);
+    this->_uniforms->setUniformFloat("points[" + index + "].constant", distance[0]);
+    this->_uniforms->setUniformFloat("points[" + index + "].linear", distance[1]);
+    this->_uniforms->setUniformFloat("points[" + index + "].quadratic", distance[2]);
+}
 
-    uniforms->setUniformFloat("points[" + index + "].constant", distance[0]);
-    uniforms->setUniformFloat("points[" + index + "].linear", distance[1]);
-    uniforms->setUniformFloat("points[" + index + "].quadratic", distance[2]);
+void Point::setDirection(glm::vec3 direction)
+{
+    std::cerr << "Point doesn't have direction" << '\n';
+    throw;
+}
+
+void Point::setIntense(float percentage)
+{
+    std::string index = std::string(std::to_string(this->_index));
+
+    this->_uniforms->setUniformVec3("points[" + index + "].ambient", percentage * glm::vec3(0.0f));
+    this->_uniforms->setUniformVec3("points[" + index + "].diffuse", percentage * glm::vec3(0.5f));
+    this->_uniforms->setUniformVec3("points[" + index + "].specular", percentage * glm::vec3(0.8f));
 }
 
 Spot::Spot() :
@@ -160,13 +144,11 @@ Spot::Spot() :
     ;
 }
 
-Spot::Spot(glm::vec3 position, glm::vec3 direction, float cutOff, float outerCutOff) :
+Spot::Spot(float cutOff, float outerCutOff) :
     Spot::Spot()
 {
-    this->_position = position;
-    this->_direction  = direction;
-    this->_cutOff = cutOff;
-    this->_outerCutOff = outerCutOff;
+    _uniforms->setUniformFloat("spot.cutOff", glm::cos(glm::radians(cutOff)));
+    _uniforms->setUniformFloat("spot.outerCutOff", glm::cos(glm::radians(outerCutOff)));
 }
 
 Spot::~Spot()
@@ -174,18 +156,26 @@ Spot::~Spot()
     ;
 }
 
-void Spot::setParameters(Uniforms *uniforms)
+void Spot::setPosition(glm::vec3 position)
 {
-    uniforms->setUniformVec3("spot.ambient", glm::vec3(0.6f));
-    uniforms->setUniformVec3("spot.diffuse", glm::vec3(0.6f));
-    uniforms->setUniformVec3("spot.specular", glm::vec3(1.0f));
+    _uniforms->setUniformVec3("spot.position", position);
+}
 
-    uniforms->setUniformVec3("spot.position", this->_position);
-    uniforms->setUniformVec3("spot.direction", this->_direction);
-    uniforms->setUniformFloat("spot.cutOff", glm::cos(glm::radians(this->_cutOff)));
-    uniforms->setUniformFloat("spot.outerCutOff", glm::cos(glm::radians(this->_outerCutOff)));
+void Spot::setDirection(glm::vec3 direction)
+{
+    _uniforms->setUniformVec3("spot.direction", direction);
+}
 
-    uniforms->setUniformFloat("spot.constant", 1.0f);
-    uniforms->setUniformFloat("spot.linear", 0.07f);
-    uniforms->setUniformFloat("spot.quadratic", 0.017f);
+void Spot::setIntense(float percentage)
+{
+    _uniforms->setUniformVec3("spot.ambient", percentage * glm::vec3(0.6f));
+    _uniforms->setUniformVec3("spot.diffuse", percentage * glm::vec3(0.6f));
+    _uniforms->setUniformVec3("spot.specular", percentage * glm::vec3(1.0f));
+}
+
+void Spot::setDistance()
+{
+    _uniforms->setUniformFloat("spot.constant", 1.0f);
+    _uniforms->setUniformFloat("spot.linear", 0.07f);
+    _uniforms->setUniformFloat("spot.quadratic", 0.017f);
 }

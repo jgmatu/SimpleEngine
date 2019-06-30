@@ -42,7 +42,32 @@ public:
         if (Keyboard::instance->isKeyPressed("c")) {
             _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), 0.01);
             _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), 0.01);
-            std::cout << "Now : " << Clock::now() << '\n';
+        }
+        if (Keyboard::instance->isKeyPressed("k")) {
+            Light *ligth = _gObject->getLigth("p1");
+            ligth->setIntense(0.0);
+
+            ligth = _gObject->getLigth("p2");
+            ligth->setIntense(0.0);
+
+            ligth = _gObject->getLigth("p3");
+            ligth->setIntense(0.0);
+
+            ligth = _gObject->getLigth("p0");
+            ligth->setIntense(0.0);
+        }
+        if (Keyboard::instance->isKeyPressed("l")) {
+            Light *ligth = _gObject->getLigth("p1");
+            ligth->setIntense(1.0);
+
+            ligth = _gObject->getLigth("p2");
+            ligth->setIntense(1.0);
+
+            ligth = _gObject->getLigth("p3");
+            ligth->setIntense(1.0);
+
+            ligth = _gObject->getLigth("p0");
+            ligth->setIntense(1.0);
         }
     }
 

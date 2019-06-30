@@ -47,7 +47,7 @@ void Material::start() {
             _model->setProgram(_program);
         }
         if (_textures.size() == 0) {
-            std::cout << "Material: Not textures atached" << '\n';
+            std::cerr << "Material: Not textures atached" << '\n';
         }
         _model->setTextures(_textures);
         _model->active();
@@ -56,8 +56,8 @@ void Material::start() {
 
 void Material::addLigths(std::vector<Light*> ligths)
 {
-    for (unsigned i = 0; i < ligths.size(); ++i) {
-        ligths[i]->setParameters(_uniforms);
+    for (uint32_t i = 0; i < ligths.size(); ++i) {
+        this->_uniforms->update(ligths[i]->getUniforms());
     }
 }
 
@@ -78,6 +78,11 @@ void Material::setView(Camera *camera)
     this->setParameter("projection", camera->_projection);      // Vertex...
     this->setParameter("view", camera->_view->_gModel);         // Vertex...
     this->setParameter("viewPos", camera->viewPos());   // Fragments...
+}
+
+void Material::setColor(glm::vec3 rgb)
+{
+    ;
 }
 
 void Material::setParameter(std::string name, glm::vec3 val)

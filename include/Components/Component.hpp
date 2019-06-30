@@ -2,6 +2,8 @@
 #define COMPONENT_H
 
 #include "Constants/TypeComp.hpp"
+
+#include "Systems/Mouse.hpp"
 #include "Systems/Keyboard.hpp"
 #include "Systems/Clock.hpp"
 

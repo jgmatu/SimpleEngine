@@ -52,6 +52,8 @@ public:
     float distance(std::string id);
 
     void addLigths(std::vector<Light*> ligths);
+    Light* getLigth(std::string id);
+
     void addGameObjects(std::vector<GameObject*> objects) {
         this->_gameObjects = objects;
     }
@@ -68,6 +70,7 @@ protected:
 
     std::vector<Component*> _components;
     std::vector<GameObject*> _gameObjects;
+    std::vector<Light*> _ligths;
 
     Transform *_tf;
 

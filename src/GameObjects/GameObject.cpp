@@ -167,15 +167,30 @@ void GameObject::update()
     }
 }
 
-void GameObject::addLigths(std::vector<Light*> ligths) {
+void GameObject::addLigths(std::vector<Light*> ligths)
+{
     Component *component = this->getComponent(TypeComp::MATERIAL);
 
     if (Material *material = dynamic_cast<Material*>(component)) {
         material->addLigths(ligths);
     }
-    for (unsigned i = 0; i < _gameObjects.size(); ++i) {
+    this->_ligths = ligths;
+    for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
         _gameObjects[i]->addLigths(ligths);
     }
+}
+
+Light* GameObject::getLigth(std::string id)
+{
+    Light *ligth = nullptr;
+
+    for (uint32_t i = 0; i < _ligths.size(); ++i) {
+        if (_ligths[i]->isLigth(id)) {
+            ligth = _ligths[i];
+            break;
+        }
+    }
+    return ligth;
 }
 
 void GameObject::scale(glm::vec3 vec3)

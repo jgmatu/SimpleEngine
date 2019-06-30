@@ -23,6 +23,8 @@ public:
 
     void setLigth(Light *ligth);
     void eraseLigth(CompLigth type);
+    Light* getLigth(std::string id);
+
 
     void addChild(GameObject *gameObject)
     {
