@@ -27,7 +27,7 @@ Light::Light(CompLigth type) :
 
 Light::~Light()
 {
-    delete _uniforms;
+    delete this->_uniforms;
 }
 
 bool Light::isLigth(std::string id)
@@ -60,7 +60,7 @@ Directional::~Directional()
 
 void Directional::setDirection(glm::vec3 direction)
 {
-    _uniforms->setUniformVec3("directional.direction", direction);
+    this->_uniforms->setUniformVec3("directional.direction", direction);
 }
 
 void Directional::setPosition(glm::vec3 position)
@@ -77,9 +77,9 @@ void Directional::setDistance()
 
 void Directional::setIntense(float percentage)
 {
-    _uniforms->setUniformVec3("directional.ambient", percentage * glm::vec3(0.01f));
-    _uniforms->setUniformVec3("directional.diffuse", percentage * glm::vec3(0.01f));
-    _uniforms->setUniformVec3("directional.specular", percentage *  glm::vec3(0.01f));
+    this->_uniforms->setUniformVec3("directional.ambient", percentage * glm::vec3(0.01f));
+    this->_uniforms->setUniformVec3("directional.diffuse", percentage * glm::vec3(0.01f));
+    this->_uniforms->setUniformVec3("directional.specular", percentage *  glm::vec3(0.01f));
 }
 
 Point::Point() :
@@ -115,7 +115,7 @@ void Point::setPosition(glm::vec3 position)
 
 void Point::setDistance()
 {
-    glm::vec3 distance = _distances[3250];
+    glm::vec3 distance = _distances[50];
     std::string index = std::string(std::to_string(this->_index));
 
     this->_uniforms->setUniformFloat("points[" + index + "].constant", distance[0]);
@@ -147,8 +147,8 @@ Spot::Spot() :
 Spot::Spot(float cutOff, float outerCutOff) :
     Spot::Spot()
 {
-    _uniforms->setUniformFloat("spot.cutOff", glm::cos(glm::radians(cutOff)));
-    _uniforms->setUniformFloat("spot.outerCutOff", glm::cos(glm::radians(outerCutOff)));
+    this->_uniforms->setUniformFloat("spot.cutOff", glm::cos(glm::radians(cutOff)));
+    this->_uniforms->setUniformFloat("spot.outerCutOff", glm::cos(glm::radians(outerCutOff)));
 }
 
 Spot::~Spot()
@@ -158,24 +158,26 @@ Spot::~Spot()
 
 void Spot::setPosition(glm::vec3 position)
 {
-    _uniforms->setUniformVec3("spot.position", position);
+    this->_uniforms->setUniformVec3("spot.position", position);
 }
 
 void Spot::setDirection(glm::vec3 direction)
 {
-    _uniforms->setUniformVec3("spot.direction", direction);
+    this->_uniforms->setUniformVec3("spot.direction", direction);
 }
 
 void Spot::setIntense(float percentage)
 {
-    _uniforms->setUniformVec3("spot.ambient", percentage * glm::vec3(0.6f));
-    _uniforms->setUniformVec3("spot.diffuse", percentage * glm::vec3(0.6f));
-    _uniforms->setUniformVec3("spot.specular", percentage * glm::vec3(1.0f));
+    this->_uniforms->setUniformVec3("spot.ambient", percentage * glm::vec3(0.6f));
+    this->_uniforms->setUniformVec3("spot.diffuse", percentage * glm::vec3(0.6f));
+    this->_uniforms->setUniformVec3("spot.specular", percentage * glm::vec3(1.0f));
 }
 
 void Spot::setDistance()
 {
-    _uniforms->setUniformFloat("spot.constant", 1.0f);
-    _uniforms->setUniformFloat("spot.linear", 0.07f);
-    _uniforms->setUniformFloat("spot.quadratic", 0.017f);
+    glm::vec3 distance = _distances[65];
+
+    this->_uniforms->setUniformFloat("spot.constant", distance[0]);
+    this->_uniforms->setUniformFloat("spot.linear", distance[1]);
+    this->_uniforms->setUniformFloat("spot.quadratic", distance[2]);
 }

@@ -85,15 +85,17 @@ void main()
     vec3 viewDir = normalize(viewPos - fragPos);
 
     // phase 1: Directional lights
-//    vec3 result = calcDirLight(directional, norm, viewDir);
+//  vec3 result = calcDirLight(directional, norm, viewDir);
 
     // phase 2: Point lights
     vec3 result = vec3(0, 0, 0);
+
     for(int i = 0; i < npoints; ++i) {
         result += calcPointLight(points[i], norm, fragPos, viewDir);
     }
+
     // phase 3: Spot light
-//    result += calcSpotLight(spot, norm, fragPos, viewDir);
+//  result += calcSpotLight(spot, norm, fragPos, viewDir);
 
     fragColor = vec4(result, 1.0);
 
@@ -101,6 +103,7 @@ void main()
 //    vec4 specular = vec4(texture(material.texture_specular0 , texCoord));
 
 //    fragColor = mix(diffuse, specular, 0.5);
+
 }
 
 

@@ -43,30 +43,33 @@ public:
             _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), 0.01);
             _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), 0.01);
         }
+
         if (Keyboard::instance->isKeyPressed("k")) {
-            Light *ligth = _gObject->getLigth("p1");
+            Light *ligth = _gObject->getLigth("p0");
+            ligth->setIntense(0.0);
+            ligth->setPosition(glm::vec3(0.3f));
+
+            ligth = _gObject->getLigth("p1");
             ligth->setIntense(0.0);
 
             ligth = _gObject->getLigth("p2");
             ligth->setIntense(0.0);
 
             ligth = _gObject->getLigth("p3");
-            ligth->setIntense(0.0);
-
-            ligth = _gObject->getLigth("p0");
             ligth->setIntense(0.0);
         }
+
         if (Keyboard::instance->isKeyPressed("l")) {
-            Light *ligth = _gObject->getLigth("p1");
+            Light *ligth = _gObject->getLigth("p0");
+            ligth->setIntense(1.0);
+
+            ligth = _gObject->getLigth("p1");
             ligth->setIntense(1.0);
 
             ligth = _gObject->getLigth("p2");
             ligth->setIntense(1.0);
 
             ligth = _gObject->getLigth("p3");
-            ligth->setIntense(1.0);
-
-            ligth = _gObject->getLigth("p0");
             ligth->setIntense(1.0);
         }
     }
@@ -140,6 +143,38 @@ GameObject *getCube(std::string name)
     return cube;
 }
 
+std::vector<Light*> getLigthPoints()
+{
+    std::vector<glm::vec3> point_positions = {
+        glm::vec3(3.0, 1.0, 3.0),
+        glm::vec3(-2.0,  1.0,  1.0),
+        glm::vec3(-1.0,  2.0,  3.0),
+        glm::vec3( 0.0, -2.0,  0.0)
+    };
+
+    std::vector<Light*> points;
+    for (uint32_t i = 0; i < point_positions.size(); ++i) {
+        Point *p = new Point("p" + std::to_string(i));
+        p->setPosition(point_positions[i]);
+        p->setDistance();
+        p->setIntense(1.0f);
+        points.push_back(p);
+    }
+    return points;
+}
+
+void addLigths(Scene *scene)
+{
+    std::vector<Light*> points = getLigthPoints();
+
+    for (uint32_t i = 0; i < points.size(); ++i) {
+        scene->setLigth(points[i]);
+    }
+    //    this->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
+    //    this->setLigth(new Spot(glm::vec3(1.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 1.0), 2.5, 7.5));
+    //    this->setLigth(new Directional(glm::vec3(0.0, 0.0, 1.0)));
+}
+
 Scene* sceneSimulation()
 {
     Scene *scene = new Scene();
@@ -152,6 +187,8 @@ Scene* sceneSimulation()
 
     scene->addChild(cube1);
     cube1->addChild(cube2);
+
+    addLigths(scene);
     return scene;
 }
 

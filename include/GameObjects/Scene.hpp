@@ -14,7 +14,6 @@ class Scene {
 public:
 
     Scene();
-    Scene(unsigned id, std::string name);
     ~Scene();
 
     void init();
@@ -26,8 +25,7 @@ public:
     Light* getLigth(std::string id);
 
 
-    void addChild(GameObject *gameObject)
-    {
+    void addChild(GameObject *gameObject) {
         this->_root->addChild(gameObject);
     }
 
@@ -40,9 +38,6 @@ public:
 private:
 
     GameObject *_root;
-
-    std::vector<Light*> getLigthPoints();
-    void addDefaultLigths();
 
 };
 

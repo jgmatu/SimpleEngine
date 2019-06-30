@@ -71,6 +71,7 @@ private:
     inline static uint32_t _num;
 
     uint32_t _index;
+
 };
 
 class Spot : public Light {
