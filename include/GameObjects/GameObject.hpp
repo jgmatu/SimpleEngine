@@ -40,8 +40,11 @@ public:
 
     void init();
 
-    void draw(Camera *camera);
-    void draw(Camera *active_camera, std::map<float, std::vector<GameObject*>>& sorted);
+    void draw();
+    void getQueueDrawGameObjects(
+        std::map<float, std::vector<GameObject*>>& transparents,
+        std::vector<GameObject*>& opaques
+    );
 
     void update();
 
@@ -53,12 +56,16 @@ public:
 
     void addLigths(std::vector<Light*> ligths);
     Light* getLigth(std::string id);
+    std::vector<Light*> getLigths();
 
     void addGameObjects(std::vector<GameObject*> objects) {
         this->_gameObjects = objects;
     }
 
     void getCameras(std::vector<Camera*>& cameras);
+    void setCamera(Camera *camera) {
+        this->_camera = camera;
+    };
     void setSystems(Keyboard *keyboard, Clock *_clock);
 
     friend std::ostream& operator<<(std::ostream&, const GameObject& gameObject);
@@ -73,10 +80,11 @@ protected:
     std::vector<Light*> _ligths;
 
     Transform *_tf;
+    Camera *_camera;
 
 private:
 
-    void addTransparentQueue(std::map<float, std::vector<GameObject*>>& sorted, float distance);
+    void addTransparentQueue(std::map<float, std::vector<GameObject*>>& transparents);
 
     GameObject* search(std::string id);
     GameObject* _search(std::string id);

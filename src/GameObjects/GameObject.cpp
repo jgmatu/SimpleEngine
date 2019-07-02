@@ -58,16 +58,17 @@ GameObject *GameObject::search(std::string id)
 GameObject *GameObject::_search(std::string id)
 {
     std::vector<GameObject*>::const_iterator it;
+    GameObject *found = nullptr;
 
     for (it = _gameObjects.begin(); it != _gameObjects.end(); ++it) {
         if ((*it)->_id.compare(id) == 0) {
-            return *it;
+            return (*it);
         }
     }
     for (it = _gameObjects.begin(); it != _gameObjects.end(); ++it) {
-        (*it)->_search(id);
+        found = (*it)->_search(id);
     }
-    return nullptr;
+    return found;
 }
 
 void GameObject::addComponent(Component *component) {
@@ -104,52 +105,62 @@ void GameObject::init()
     }
 }
 
-void GameObject::addTransparentQueue(std::map<float, std::vector<GameObject*>>& sorted, float distance) {
-    std::map<float, std::vector<GameObject*>>::iterator it;
-    it = sorted.find(distance);
-
-    if (it == sorted.end()) {
-        std::vector<GameObject*> aux;
-        aux.push_back(this);
-        sorted[distance] = aux;
-    } else {
-        it->second.push_back(this);
-    }
-}
-
 // Obtener la componente camara activa... Camara activa de todos los gameObject
 // de la escena... (Escena...) dibujar todos los gameObject respecto a la camara activa
 // de la escena...
-void GameObject::draw(Camera *camera) {
+void GameObject::draw()
+{
     Component *component = this->getComponent(TypeComp::MATERIAL);
 
     if (Material *material = dynamic_cast<Material*>(component)) {
         material->setParameter("model", _tf->_gModel);
-        material->setView(camera);
+        material->setView(_camera);
         material->awakeStart();
     }
 }
 
-void GameObject::draw(Camera *active_camera, std::map<float, std::vector<GameObject*>>& sorted) {
+void GameObject::getQueueDrawGameObjects(
+    std::map<float, std::vector<GameObject*>>& transparents,
+    std::vector<GameObject*>& opaques)
+{
     Component *component = getComponent(TypeComp::MATERIAL);
 
     if (Material *material = dynamic_cast<Material*>(component)) {
         if (material->isTransparent()) {
-            float distance = glm::length(active_camera->_view->position() - this->_tf->position());
-            this->addTransparentQueue(sorted, distance);
+            addTransparentQueue(transparents);
         } else {
-            this->draw(active_camera);
+            opaques.push_back(this);
         }
     }
+
     component = getComponent(TypeComp::SKYBOX);
+
     // GameObject with a SkyBox...
     if (SkyBox *skybox = dynamic_cast<SkyBox*>(component)) {
-        skybox->setView(active_camera);
+        skybox->setView(_camera);
         skybox->awakeStart();
     }
 
-    for (unsigned i = 0; i < _gameObjects.size(); ++i) {
-        _gameObjects[i]->draw(active_camera, sorted);
+    for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
+        _gameObjects[i]->setCamera(_camera);
+        _gameObjects[i]->getQueueDrawGameObjects(transparents, opaques);
+    }
+}
+
+void GameObject::addTransparentQueue(std::map<float, std::vector<GameObject*>>& transparents)
+{
+    std::map<float, std::vector<GameObject*>>::iterator it;
+    std::vector<GameObject*> aux;
+    float distance;
+
+    distance = glm::distance(_camera->_view->position(), this->_tf->position());
+    it = transparents.find(distance);
+
+    if (it == transparents.end()) {
+        aux.push_back(this);
+        transparents[distance] = aux;
+    } else {
+        it->second.push_back(this);
     }
 }
 
@@ -171,10 +182,10 @@ void GameObject::addLigths(std::vector<Light*> ligths)
 {
     Component *component = this->getComponent(TypeComp::MATERIAL);
 
+    this->_ligths = ligths;
     if (Material *material = dynamic_cast<Material*>(component)) {
         material->addLigths(ligths);
     }
-    this->_ligths = ligths;
     for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
         _gameObjects[i]->addLigths(ligths);
     }
@@ -191,6 +202,11 @@ Light* GameObject::getLigth(std::string id)
         }
     }
     return ligth;
+}
+
+std::vector<Light*> GameObject::getLigths()
+{
+    return this->_ligths;
 }
 
 void GameObject::scale(glm::vec3 vec3)

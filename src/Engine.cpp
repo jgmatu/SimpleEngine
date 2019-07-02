@@ -95,8 +95,8 @@ void Engine::init() {
 
 void Engine::update()
 {
-    _scene->update();
     _scene->draw();
+    _scene->update();
 }
 
 void Engine::mainLoop() {

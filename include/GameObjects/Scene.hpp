@@ -20,7 +20,7 @@ public:
     void draw();
     void update();
 
-    void setLigth(Light *ligth);
+    void addLigth(Light *ligth);
     void eraseLigth(CompLigth type);
     Light* getLigth(std::string id);
 

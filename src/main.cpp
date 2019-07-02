@@ -37,40 +37,36 @@ public:
         _gObject->translate(glm::vec3(0.0, 0.0, -5.0));
     }
 
+    void powerOff()
+    {
+        std::vector<Light*> ligths = _gObject->getLigths();
+
+        for (uint32_t i = 0; i < ligths.size(); ++i) {
+            ligths[i]->setIntense(0.0);
+        }
+    }
+
+    void powerOn()
+    {
+        std::vector<Light*> ligths = _gObject->getLigths();
+
+        for (uint32_t i = 0; i < ligths.size(); ++i) {
+            ligths[i]->setIntense(1.0);
+        }
+    }
+
     void update()
     {
         if (Keyboard::instance->isKeyPressed("c")) {
             _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), 0.01);
             _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), 0.01);
         }
+        float distance = _gObject->distance("cube2");
 
-        if (Keyboard::instance->isKeyPressed("k")) {
-            Light *ligth = _gObject->getLigth("p0");
-            ligth->setIntense(0.0);
-            ligth->setPosition(glm::vec3(0.3f));
-
-            ligth = _gObject->getLigth("p1");
-            ligth->setIntense(0.0);
-
-            ligth = _gObject->getLigth("p2");
-            ligth->setIntense(0.0);
-
-            ligth = _gObject->getLigth("p3");
-            ligth->setIntense(0.0);
-        }
-
-        if (Keyboard::instance->isKeyPressed("l")) {
-            Light *ligth = _gObject->getLigth("p0");
-            ligth->setIntense(1.0);
-
-            ligth = _gObject->getLigth("p1");
-            ligth->setIntense(1.0);
-
-            ligth = _gObject->getLigth("p2");
-            ligth->setIntense(1.0);
-
-            ligth = _gObject->getLigth("p3");
-            ligth->setIntense(1.0);
+        if (distance > 2.0f) {
+            powerOn();
+        } else {
+            powerOff();
         }
     }
 
@@ -122,25 +118,66 @@ public:
 
 };
 
+class ChangeColor : public Component {
+
+public:
+
+    ChangeColor()
+    {
+        ;
+    }
+
+    ~ChangeColor()
+    {
+
+    }
+
+    void start()
+    {
+        ;
+    }
+
+    void update()
+    {
+        ;
+    }
+
+    void awakeStart()
+    {
+        ;
+    }
+
+};
+
 GameObject *getCube(std::string name)
 {
     GameObject *cube = new GameObject(name);
-
-    std::string id_mesh = "cube_mesh";
-    Cube *geometry_cube = new Cube(id_mesh);
+    Cube *geometry_cube = new Cube(name);
 
     Material *material = new Material(new Model(geometry_cube->getMesh()));
     material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
     Texture *diffuse = new Texture("container2.png", "texture_diffuse");
-    material->setTexture(id_mesh, diffuse);
+    material->setTexture(name, diffuse);
 
     Texture *specular = new Texture("container2_specular.png", "texture_specular");
-    material->setTexture(id_mesh, specular);
+    material->setTexture(name, specular);
 
     cube->addComponent(material);
 
     return cube;
+}
+
+GameObject *getBasicSphere(std::string name)
+{
+    GameObject *sphere = new GameObject(name);
+    Sphere *basic = new Sphere("basic");
+
+    Material *material = new Material(new Model(basic->getMesh()));
+    material->setProgram(new Program("../glsl/basic_vertex.glsl", "../glsl/basic_fragments.glsl"));
+
+    sphere->addComponent(material);
+    return sphere;
 }
 
 std::vector<Light*> getLigthPoints()
@@ -168,7 +205,7 @@ void addLigths(Scene *scene)
     std::vector<Light*> points = getLigthPoints();
 
     for (uint32_t i = 0; i < points.size(); ++i) {
-        scene->setLigth(points[i]);
+        scene->addLigth(points[i]);
     }
     //    this->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
     //    this->setLigth(new Spot(glm::vec3(1.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 1.0), 2.5, 7.5));

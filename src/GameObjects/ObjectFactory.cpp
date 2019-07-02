@@ -9,7 +9,7 @@ ObjectFactory::ObjectFactory() :
 ObjectFactory::~ObjectFactory()
 {
 //    std::cout << "Delete All Game Objects!" << '\n'
-    for (unsigned i = 0; i < _GameObjects.size(); ++i) {
+    for (uint32_t i = 0; i < _GameObjects.size(); ++i) {
         delete _GameObjects[i];
     }
 }
