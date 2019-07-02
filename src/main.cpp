@@ -42,7 +42,9 @@ public:
         std::vector<Light*> ligths = _gObject->getLigths();
 
         for (uint32_t i = 0; i < ligths.size(); ++i) {
-            ligths[i]->setIntense(0.0);
+            if (!ligths[i]->isLigth("s")) {
+                ligths[i]->setIntense(0.0);
+            }
         }
     }
 
@@ -211,8 +213,15 @@ void addLigths(Scene *scene)
     for (uint32_t i = 0; i < points.size(); ++i) {
         scene->addLigth(points[i]);
     }
-    //    this->setLigth(new Specular(glm::vec3(0.7, 0.7, 0.7), 0.078125));
-    //    this->setLigth(new Spot(glm::vec3(1.0f, 1.0f, -2.0f), glm::vec3(0.0f, 0.0f, 1.0), 2.5, 7.5));
+    Spot *s = new Spot("s", 2.5, 7.5);
+
+    s->setDistance();
+    s->setIntense(1.0f);
+    s->setPosition(glm::vec3(0, 0, 2.0f));
+    s->setDirection(glm::vec3(0.0f, 0.0f, -1.0));
+
+    scene->addLigth(s);
+
     //    this->setLigth(new Directional(glm::vec3(0.0, 0.0, 1.0)));
 }
 

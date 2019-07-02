@@ -144,9 +144,10 @@ Spot::Spot() :
     ;
 }
 
-Spot::Spot(float cutOff, float outerCutOff) :
+Spot::Spot(std::string id, float cutOff, float outerCutOff) :
     Spot::Spot()
 {
+    this->_id = id;
     this->_uniforms->setUniformFloat("spot.cutOff", glm::cos(glm::radians(cutOff)));
     this->_uniforms->setUniformFloat("spot.outerCutOff", glm::cos(glm::radians(outerCutOff)));
 }

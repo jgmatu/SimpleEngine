@@ -95,18 +95,13 @@ void main()
         result += calcPointLight(points[i], norm, fragPos, viewDir);
     }
 
-    // phase 3: Spot light
-//  result += calcSpotLight(spot, norm, fragPos, viewDir);
+    // phase 3: Spot light ...
+    result += calcSpotLight(spot, norm, fragPos, viewDir);
+
     if (material.isrgb == 1) {
         result += material.rgb;
     }
     fragColor = vec4(result, 1.0);
-
-//    vec4 diffuse  = vec4(texture(material.texture_diffuse0, texCoord));
-//    vec4 specular = vec4(texture(material.texture_specular0 , texCoord));
-
-//    fragColor = mix(diffuse, specular, 0.5);
-
 }
 
 
@@ -174,6 +169,7 @@ vec3 calcSpotLight(Spot spot, vec3 norm, vec3 fragPos, vec3 viewDir)
 
     // Combine results...
     vec3 ambient  = spot.ambient * vec3(texture(material.texture_diffuse0, texCoord));
+
     vec3 diffuse  = spot.diffuse  * diff * vec3(texture(material.texture_diffuse0, texCoord));
     vec3 specular = spot.specular * spec * vec3(texture(material.texture_specular0, texCoord));
 
@@ -186,10 +182,10 @@ vec3 calcSpotLight(Spot spot, vec3 norm, vec3 fragPos, vec3 viewDir)
     float attenuation = 1.0 / (spot.constant + spot.linear * distance + spot.quadratic * (distance * distance));
 
     ambient = ambient * attenuation;
-    diffuse = ambient * attenuation;
-    specular = ambient * attenuation;
+    diffuse = diffuse * attenuation;
+    specular = specular * attenuation;
 
-    return ambient + diffuse + specular;
+    return diffuse + specular;
 }
 
 float linearizeDepth(float depth)

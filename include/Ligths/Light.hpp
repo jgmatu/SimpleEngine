@@ -78,7 +78,7 @@ class Spot : public Light {
 
 public:
 
-    Spot(float cutOff, float outerCutOff);
+    Spot(std::string id, float cutOff, float outerCutOff);
     ~Spot();
 
     void setIntense(float percentage);
