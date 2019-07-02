@@ -66,7 +66,8 @@ public:
     void setCamera(Camera *camera) {
         this->_camera = camera;
     };
-    void setSystems(Keyboard *keyboard, Clock *_clock);
+
+    void setColor(glm::vec3 rgb);
 
     friend std::ostream& operator<<(std::ostream&, const GameObject& gameObject);
 
@@ -83,6 +84,8 @@ protected:
     Camera *_camera;
 
 private:
+
+    GameObject();
 
     void addTransparentQueue(std::map<float, std::vector<GameObject*>>& transparents);
 

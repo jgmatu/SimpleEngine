@@ -134,22 +134,26 @@ public:
 
     void start()
     {
-        ;
+        _gObject->translate(glm::vec3(5.0, 0.0, -5.0));
+        _gObject->setColor(glm::vec3(0.0, 0.0, 1.0));
     }
 
     void update()
     {
-        ;
+        if (Keyboard::instance->isKeyPressed("f")) {
+            _gObject->setColor(glm::vec3(1.0, 1.0, 0.0));
+        } else {
+            _gObject->setColor(glm::vec3(0.0, 0.0, 1.0));
+        }
     }
 
     void awakeStart()
     {
         ;
     }
-
 };
 
-GameObject *getCube(std::string name)
+GameObject* getCube(std::string name)
 {
     GameObject *cube = new GameObject(name);
     Cube *geometry_cube = new Cube(name);
@@ -168,13 +172,13 @@ GameObject *getCube(std::string name)
     return cube;
 }
 
-GameObject *getBasicSphere(std::string name)
+GameObject* getBasicSphere(std::string name)
 {
     GameObject *sphere = new GameObject(name);
-    Sphere *basic = new Sphere("basic");
+    Sphere *basic = new Sphere(name);
 
     Material *material = new Material(new Model(basic->getMesh()));
-    material->setProgram(new Program("../glsl/basic_vertex.glsl", "../glsl/basic_fragments.glsl"));
+    material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
     sphere->addComponent(material);
     return sphere;
@@ -224,6 +228,11 @@ Scene* sceneSimulation()
 
     scene->addChild(cube1);
     cube1->addChild(cube2);
+
+    GameObject *sphere = getBasicSphere("basic");
+    sphere->addComponent(new ChangeColor());
+
+    scene->addChild(sphere);
 
     addLigths(scene);
     return scene;

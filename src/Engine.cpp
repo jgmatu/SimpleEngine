@@ -80,8 +80,8 @@ void Engine::initWindow() {
 }
 
 void Engine::init() {
-    std::cout << "Iniciar Engine!!" << '\n';
     try {
+        std::cout << "Iniciar Engine!!" << '\n';
         initWindow();
         _scene->init();
     } catch (std::exception &ex) {

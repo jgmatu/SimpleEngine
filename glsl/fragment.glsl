@@ -1,6 +1,7 @@
 #version 330 core
 
 struct Material {
+    int isrgb;
     vec3 rgb;
 
     sampler2D texture_diffuse0;
@@ -72,9 +73,9 @@ in vec2 texCoord;
 // Final fragment...
 out vec4 fragColor;
 
-vec3 calcPointLight(Point light, vec3 normal, vec3 fragPos, vec3 viewDir);
-vec3 calcDirLight(Directional light, vec3 normal, vec3 viewDir);
-vec3 calcSpotLight(Spot spot, vec3 norm, vec3 fragPos, vec3 viewDir);
+vec3  calcPointLight(Point light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec3  calcDirLight(Directional light, vec3 normal, vec3 viewDir);
+vec3  calcSpotLight(Spot spot, vec3 norm, vec3 fragPos, vec3 viewDir);
 float linearizeDepth(float depth);
 
 uniform sampler2D screenTexture;
@@ -96,7 +97,9 @@ void main()
 
     // phase 3: Spot light
 //  result += calcSpotLight(spot, norm, fragPos, viewDir);
-
+    if (material.isrgb == 1) {
+        result += material.rgb;
+    }
     fragColor = vec4(result, 1.0);
 
 //    vec4 diffuse  = vec4(texture(material.texture_diffuse0, texCoord));

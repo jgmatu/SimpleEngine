@@ -1,12 +1,17 @@
 #include "GameObjects/GameObject.hpp"
 
-GameObject::GameObject(std::string id) :
+GameObject::GameObject() :
     _components(),
     _gameObjects()
 {
-    this->_id = id;
     _tf = new Transform();
     _components.push_back(_tf);
+}
+
+GameObject::GameObject(std::string id) :
+    GameObject::GameObject()
+{
+    this->_id = id;
 }
 
 GameObject::~GameObject() {
@@ -65,7 +70,7 @@ GameObject *GameObject::_search(std::string id)
             return (*it);
         }
     }
-    for (it = _gameObjects.begin(); it != _gameObjects.end(); ++it) {
+    for (it = _gameObjects.begin(); it != _gameObjects.end() && !found; ++it) {
         found = (*it)->_search(id);
     }
     return found;
@@ -239,14 +244,20 @@ float GameObject::distance(std::string id)
     return glm::distance(this->_tf->_gModel[3], gameObject->_tf->_gModel[3]);
 }
 
+void GameObject::setColor(glm::vec3 rgb)
+{
+    Component *component = getComponent(TypeComp::MATERIAL);
+
+    if (Material *material = dynamic_cast<Material*>(component)) {
+        material->setParameter("material.isrgb", 1);
+        material->setParameter("material.rgb", rgb);
+    }
+}
 std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
     os << gameObject._id << std::endl;
-    Component *component = gameObject.getComponent(TypeComp::TRANSFORM);
-    if (Transform *tf = dynamic_cast<Transform*>(component)) {
-        os << (*tf);
-    }
+    os << gameObject._tf << std::endl;
 
-    component = gameObject.getComponent(TypeComp::MATERIAL);
+    Component *component = gameObject.getComponent(TypeComp::MATERIAL);
     if (Material *material = dynamic_cast<Material*>(component)) {
         os << (*material);
     }
