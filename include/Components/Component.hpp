@@ -1,7 +1,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "Constants/TypeComp.hpp"
+#include "Constants/CompType.hpp"
 
 #include "Systems/Mouse.hpp"
 #include "Systems/Keyboard.hpp"
@@ -29,7 +29,7 @@ protected:
 
     friend class GameObject;
 
-    TypeComp _type;
+    CompType _type;
 
     GameObject *_gObject;
 };

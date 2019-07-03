@@ -55,7 +55,7 @@ public:
     void use();
     void cleanup();
 
-    void setUniforms(Uniforms *uniforms);
+    void update(Uniforms *uniforms);
     void createUniform(std::string uniformName);
 
     void setUniform(std::string name, glm::mat4 value);
@@ -75,9 +75,9 @@ private:
     std::string getDataFile(const std::string& filename);
     int createShader(const std::string& sc, int shaderType);
 
-    unsigned _programId;
-    unsigned _vertexShaderId;
-    unsigned _fragmentShaderId;
+    uint32_t _programId;
+    uint32_t _vertexShaderId;
+    uint32_t _fragmentShaderId;
 
     std::string _vshader;
     std::string _fshader;

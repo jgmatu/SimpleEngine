@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Constants/TypeComp.hpp"
+#include "Constants/CompType.hpp"
 #include "Program/Uniforms.hpp"
 
 class Light {
@@ -20,12 +20,12 @@ public:
     bool isLigth(std::string id);
     Uniforms* getUniforms();
 
-    CompLigth _type;
+    LightType _type;
 
 protected:
 
     Light();
-    Light(CompLigth type);
+    Light(LightType type);
 
     std::string _id;
     Uniforms *_uniforms;

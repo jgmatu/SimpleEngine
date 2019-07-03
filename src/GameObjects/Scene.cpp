@@ -33,10 +33,10 @@ Light* Scene::getLigth(std::string id)
     return ligth;
 }
 
-void Scene::eraseLigth(CompLigth component)
+void Scene::eraseLigth(LightType type)
 {
     for (uint32_t i = 0 ; i < _ligths.size(); ++i) {
-        if (_ligths[i]->_type == component) {
+        if (_ligths[i]->_type == type) {
             delete _ligths[i];
             _ligths.erase(_ligths.begin() + i);
             break;

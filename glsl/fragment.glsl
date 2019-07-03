@@ -104,7 +104,6 @@ void main()
     fragColor = vec4(result, 1.0);
 }
 
-
 vec3 calcDirLight(Directional directional, vec3 normal, vec3 viewDir)
 {
     // Directional...

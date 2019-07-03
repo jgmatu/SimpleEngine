@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include "GameObjects/GameObject.hpp"
-
 #include "Components/Camera.hpp"
 #include "Ligths/Light.hpp"
 
@@ -21,7 +20,7 @@ public:
     void update();
 
     void addLigth(Light *ligth);
-    void eraseLigth(CompLigth type);
+    void eraseLigth(LightType type);
     Light* getLigth(std::string id);
 
 

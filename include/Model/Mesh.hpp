@@ -14,7 +14,9 @@
 #include <string.h>
 
 #include "Program/Program.hpp"
-#include "Texture.hpp"
+#include "Program/Uniforms.hpp"
+
+#include "Model/Texture.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
@@ -56,7 +58,7 @@ class Mesh {
 
 public:
 
-    Mesh(std::string id_mesh, std::vector<Vertex> vertices, std::vector<unsigned> indices);
+    Mesh(std::string id_mesh, std::vector<Vertex> vertices, std::vector<uint32_t> indices);
 
     Mesh();
     ~Mesh();
@@ -65,11 +67,11 @@ public:
 
     void active();
     void draw();
+    void update(Uniforms *uniforms);
     void activeTextures();
 
     void setTexture(Texture *texture);
     void setProgram(Program *program);
-    void setUniforms(Uniforms *uniforms);
 
     friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
 

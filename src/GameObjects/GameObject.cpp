@@ -44,7 +44,7 @@ void GameObject::getCameras(std::vector<Camera*>& cameras)
     }
 };
 
-Component* GameObject::getComponent(TypeComp type) const {
+Component* GameObject::getComponent(CompType type) const {
     Component* search = nullptr;
 
     for (uint32_t i = 0; !search && i < _components.size(); ++i) {
@@ -115,12 +115,12 @@ void GameObject::init()
 // de la escena...
 void GameObject::draw()
 {
-    Component *component = this->getComponent(TypeComp::MATERIAL);
+    Component *component = this->getComponent(CompType::MESH_RENDER);
 
-    if (Material *material = dynamic_cast<Material*>(component)) {
-        material->setParameter("model", _tf->_gModel);
-        material->setView(_camera);
-        material->awakeStart();
+    if (MeshRender *render = dynamic_cast<MeshRender*>(component)) {
+        render->setMatrixModel(_tf->_gModel);
+        render->setView(_camera);
+        render->awakeStart();
     }
 }
 
@@ -128,17 +128,17 @@ void GameObject::getQueueDrawGameObjects(
     std::map<float, std::vector<GameObject*>>& transparents,
     std::vector<GameObject*>& opaques)
 {
-    Component *component = getComponent(TypeComp::MATERIAL);
+    Component *component = getComponent(CompType::MESH_RENDER);
 
-    if (Material *material = dynamic_cast<Material*>(component)) {
-        if (material->isTransparent()) {
+    if (MeshRender *render = dynamic_cast<MeshRender*>(component)) {
+        if (render->isMaterialTransparent()) {
             addTransparentQueue(transparents);
         } else {
             opaques.push_back(this);
         }
     }
 
-    component = getComponent(TypeComp::SKYBOX);
+    component = getComponent(CompType::SKYBOX);
 
     // GameObject with a SkyBox...
     if (SkyBox *skybox = dynamic_cast<SkyBox*>(component)) {
@@ -185,11 +185,12 @@ void GameObject::update()
 
 void GameObject::addLigths(std::vector<Light*> ligths)
 {
-    Component *component = this->getComponent(TypeComp::MATERIAL);
+    Component *component = this->getComponent(CompType::MESH_RENDER);
 
     this->_ligths = ligths;
-    if (Material *material = dynamic_cast<Material*>(component)) {
-        material->addLigths(ligths);
+
+    if (MeshRender *render = dynamic_cast<MeshRender*>(component)) {
+        render->setLigths(ligths);
     }
     for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
         _gameObjects[i]->addLigths(ligths);
@@ -246,9 +247,10 @@ float GameObject::distance(std::string id)
 
 void GameObject::setColor(glm::vec3 rgb)
 {
-    Component *component = getComponent(TypeComp::MATERIAL);
+    Component *component = getComponent(CompType::MESH_RENDER);
 
-    if (Material *material = dynamic_cast<Material*>(component)) {
+    if (MeshRender *render = dynamic_cast<MeshRender*>(component)) {
+        Material *material = render->getMaterial();
         material->setParameter("material.isrgb", 1);
         material->setParameter("material.rgb", rgb);
     }
@@ -257,9 +259,9 @@ std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
     os << gameObject._id << std::endl;
     os << gameObject._tf << std::endl;
 
-    Component *component = gameObject.getComponent(TypeComp::MATERIAL);
-    if (Material *material = dynamic_cast<Material*>(component)) {
-        os << (*material);
+    Component *component = gameObject.getComponent(CompType::MESH_RENDER);
+    if (MeshRender *render = dynamic_cast<MeshRender*>(component)) {
+        os << (*render->getMaterial());
     }
     return os;
 }

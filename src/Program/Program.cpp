@@ -23,16 +23,14 @@ void Program::active() {
     this->link();
 }
 
-void Program::setUniforms(Uniforms *uniforms) {
+void Program::update(Uniforms *uniforms) {
     std::vector<std::string> names;
 
     names = uniforms->getUniformsNamesInt();
     for (unsigned i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
-//            std::cout << "Create : " << names[i] << " : " <<  '\n';
             this->createUniform(names[i]);
         } else {
-//            std::cout << "Update : " << names[i] << " : " << uniforms->getUniformValueInt(names[i]) << '\n';
             this->setUniform(names[i], uniforms->getUniformValueInt(names[i]));
         }
     }
@@ -40,10 +38,8 @@ void Program::setUniforms(Uniforms *uniforms) {
     names = uniforms->getUniformsNamesFloat();
     for (unsigned i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
-//            std::cout << "Create : " << names[i] << '\n';
             this->createUniform(names[i]);
         } else {
-//            std::cout << "Update : " << names[i] << " : " << uniforms->getUniformValueFloat(names[i]) << '\n';
             this->setUniform(names[i], uniforms->getUniformValueFloat(names[i]));
         }
     }
@@ -51,10 +47,8 @@ void Program::setUniforms(Uniforms *uniforms) {
     names = uniforms->getUniformsNamesVec3();
     for (unsigned i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
-//            std::cout << "Create : " << names[i] << '\n';
             this->createUniform(names[i]);
         } else {
-//            std::cout << "Update : " << names[i] << " : " << glm::to_string(uniforms->getUniformValueVec3(names[i])) << '\n';
             this->setUniform(names[i], uniforms->getUniformValueVec3(names[i]));
         }
     }
@@ -62,10 +56,8 @@ void Program::setUniforms(Uniforms *uniforms) {
     names = uniforms->getUniformsNamesMat4();
     for (unsigned i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
-//            std::cout << "Create : " << names[i] << '\n';
             this->createUniform(names[i]);
         } else {
-//            std::cout << "Update : " << names[i] << " : " << glm::to_string(uniforms->getUniformValueMat4(names[i])) << '\n';
             this->setUniform(names[i], uniforms->getUniformValueMat4(names[i]));
         }
     }

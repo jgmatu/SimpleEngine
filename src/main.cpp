@@ -9,8 +9,10 @@
 
 #include "GameObjects/GameObject.hpp"
 #include "Components/Camera.hpp"
-#include "Components/Material.hpp"
+
 #include "Components/SkyBox.hpp"
+
+#include "Model/Material.hpp"
 
 #include "Geometries/Cube.hpp"
 #include "Geometries/Sphere.hpp"
@@ -143,7 +145,7 @@ public:
     void update()
     {
         if (Keyboard::instance->isKeyPressed("f")) {
-            _gObject->setColor(glm::vec3(1.0, 1.0, 0.0));
+            _gObject->setColor(glm::vec3(1.0, 0.0, 0.0));
         } else {
             _gObject->setColor(glm::vec3(0.0, 0.0, 1.0));
         }
@@ -160,7 +162,7 @@ GameObject* getCube(std::string name)
     GameObject *cube = new GameObject(name);
     Cube *geometry_cube = new Cube(name);
 
-    Material *material = new Material(new Model(geometry_cube->getMesh()));
+    Material *material = new Material();
     material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
     Texture *diffuse = new Texture("container2.png", "texture_diffuse");
@@ -169,8 +171,11 @@ GameObject* getCube(std::string name)
     Texture *specular = new Texture("container2_specular.png", "texture_specular");
     material->setTexture(name, specular);
 
-    cube->addComponent(material);
+    MeshRender *render = new MeshRender();
+    render->setMaterial(material);
+    render->setModel(new Model(geometry_cube->getMesh()));
 
+    cube->addComponent(render);
     return cube;
 }
 
@@ -179,10 +184,15 @@ GameObject* getBasicSphere(std::string name)
     GameObject *sphere = new GameObject(name);
     Sphere *basic = new Sphere(name);
 
-    Material *material = new Material(new Model(basic->getMesh()));
+    Material *material = new Material();
     material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
-    sphere->addComponent(material);
+    MeshRender *render = new MeshRender();
+
+    render->setMaterial(material);
+    render->setModel(new Model(basic->getMesh()));
+
+    sphere->addComponent(render);
     return sphere;
 }
 

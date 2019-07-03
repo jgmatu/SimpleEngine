@@ -31,6 +31,8 @@ public:
     int getUniformValueInt(std::string name);
     float getUniformValueFloat(std::string name);
 
+    friend std::ostream& operator<<(std::ostream& os, const Uniforms& uniforms);
+
 private:
 
     std::map<std::string, int> _uniformsInt;

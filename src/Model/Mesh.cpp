@@ -11,7 +11,7 @@ Mesh::Mesh() :
     _VBO3(-1),
     _EBO(-1)
 {
-    ;
+    _uniforms = new Uniforms();
 }
 
 Mesh::Mesh(std::string id_mesh, std::vector<Vertex> vertices, std::vector<unsigned> indices) :
@@ -34,6 +34,16 @@ std::string Mesh::getId()
     return this->_id_mesh;
 }
 
+void Mesh::setProgram(Program *program)
+{
+    this->_program = program;
+}
+
+void Mesh::update(Uniforms *uniforms)
+{
+    this->_uniforms->update(uniforms);
+}
+
 void Mesh::setTexture(Texture *texture)
 {
     _textures.push_back(texture);
@@ -48,7 +58,7 @@ void Mesh::activeTextures()
 
 void Mesh::active()
 {
-    // Active program to visualize this mesh...
+    // Active this program to visualize this mesh...
     _program->active();
 
     glGenVertexArrays(1, &_VAO);
@@ -82,23 +92,13 @@ void Mesh::active()
     glBindVertexArray(0);
 }
 
-void Mesh::setProgram(Program *program)
-{
-    this->_program = program;
-}
-
-void Mesh::setUniforms(Uniforms *uniforms)
-{
-    this->_uniforms = uniforms;
-}
-
 void Mesh::draw() {
     uint32_t diffuseNr = 0;
     uint32_t specularNr = 0;
     uint32_t normalNr = 0;
 
     _program->use();
-    _program->setUniforms(_uniforms);
+    _program->update(_uniforms);
 
     for(uint32_t i = 0; i < _textures.size(); ++i) {
         glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
@@ -119,6 +119,9 @@ void Mesh::draw() {
     glBindVertexArray(_VAO);
     glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+
+    // Active default texture...
+    glActiveTexture(GL_TEXTURE0);
 }
 
 std::ostream& operator<<(std::ostream& os, const Mesh& mesh) {

@@ -3,7 +3,7 @@
 Camera::Camera() :
     _projection(1)
 {
-    this->_type = TypeComp::CAMERA;
+    this->_type = CompType::CAMERA;
     this->_view = new Transform();
     this->_projection = glm::perspective(glm::radians(60.0f), aspectRatio, 0.1f, 100.0f);
 }

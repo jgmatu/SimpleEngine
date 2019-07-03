@@ -2,11 +2,9 @@
 
 Model::Model() :
     _meshes(),
-    _textures_loaded(),
     _directory()
 {
-    _uniforms = nullptr;
-    _program = nullptr;
+    _material = nullptr;
 }
 
 Model::Model(Mesh *mesh) :
@@ -24,6 +22,7 @@ Model::Model(std::string path) :
 Model::~Model()
 {
     std::map<std::string, Mesh*>::iterator it = _meshes.begin();
+
     while (it != _meshes.end()) {
         it = _meshes.erase(it);
     }
@@ -37,7 +36,7 @@ void Model::loadModel(std::string path)
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
-        return;
+        throw;
     }
     _directory = path.substr(0, path.find_last_of('/'));
     this->processNode(scene->mRootNode, scene);
@@ -46,12 +45,12 @@ void Model::loadModel(std::string path)
 void Model::processNode(aiNode *node, const aiScene *scene)
 {
     // Process all the node's meshes (if any)
-    for (unsigned i = 0; i < node->mNumMeshes; ++i) {
+    for (uint32_t i = 0; i < node->mNumMeshes; ++i) {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
         this->addMesh(processMesh(std::to_string(i), mesh, scene));
     }
     // Then do the same for each of its children
-    for (unsigned i = 0; i < node->mNumChildren; ++i) {
+    for (uint32_t i = 0; i < node->mNumChildren; ++i) {
         this->processNode(node->mChildren[i], scene);
     }
 }
@@ -66,7 +65,7 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
     std::vector<unsigned> indices;
     std::vector<Texture*> textures;
 
-    for (unsigned i = 0; i < mesh->mNumVertices; ++i) {
+    for (uint32_t i = 0; i < mesh->mNumVertices; ++i) {
         Vertex vertex;
 
         glm::vec3 vector;
@@ -94,9 +93,9 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
     }
 
     // process indices
-    for (unsigned i = 0; i < mesh->mNumFaces; ++i) {
+    for (uint32_t i = 0; i < mesh->mNumFaces; ++i) {
         aiFace face = mesh->mFaces[i];
-        for(unsigned j = 0; j < face.mNumIndices; ++j) {
+        for(uint32_t j = 0; j < face.mNumIndices; ++j) {
             indices.push_back(face.mIndices[j]);
         }
     }
@@ -105,10 +104,10 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
     if (mesh->mMaterialIndex >= 0) {
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 
-        std::vector<Texture*> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        std::vector<Texture*> diffuseMaps = loadTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
-        std::vector<Texture*> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        std::vector<Texture*> specularMaps = loadTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 
@@ -120,9 +119,10 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
     return mesh_engine;
 }
 
-std::vector<Texture*> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
+std::vector<Texture*> Model::loadTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
 {
     std::vector<Texture*> textures;
+    std::vector<Texture*> _textures_loaded;
 
     for (uint32_t i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str;
@@ -132,9 +132,9 @@ std::vector<Texture*> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType
             if (std::strcmp(_textures_loaded[j]->_path.data(), str.C_Str()) == 0) {
                 textures.push_back(_textures_loaded[j]);
                 skip = true;
-            }
         }
         if (!skip) {   // if texture hasn't been loaded already, load it
+    }
             Texture *texture = new Texture(str.C_Str(), typeName);
             texture->_path = _directory + "/";
             textures.push_back(texture);
@@ -144,35 +144,31 @@ std::vector<Texture*> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType
     return textures;
 }
 
-void Model::setProgram(Program *program)
+void Model::setMaterial(Material *material)
 {
-    this->_program = program;
+    _material = material;
 }
 
-void Model::setUniforms(Uniforms *uniforms)
+void Model::update(Material *material)
 {
-    this->_uniforms = uniforms;
-}
-
-void Model::setTextures(std::map<std::string, std::vector<Texture*>> textures)
-{
-    this->_textures = textures;
+    _material->update(material);
 }
 
 void Model::active() {
-    if (!_program) {
-        std::cerr << "active: No program load on model!" << '\n';
-        return;
+    if (!_material) {
+        std::cerr << "active: No material load on model!" << '\n';
+        throw;
     }
 
     std::map<std::string, Mesh*>::iterator it;
     for (it = _meshes.begin(); it != _meshes.end(); ++it) {
         Mesh *mesh = it->second;
 
-        mesh->setProgram(_program);
+        mesh->setProgram(_material->_program);
         mesh->active();
+
         // Load all material textures to the proper mesh..
-        std::vector<Texture*> textures = _textures[it->first];
+        std::vector<Texture*> textures = this->_material->_textures[it->first];
         for (uint32_t i = 0; i < textures.size(); ++i) {
             mesh->setTexture(textures[i]);
         }
@@ -181,16 +177,16 @@ void Model::active() {
 }
 
 void Model::draw() {
-    if (!_uniforms) {
-        std::cout << "draw: No data uniforms loaded!" << '\n';
-        return;
+    if (!_material->_uniforms) {
+        std::cerr << "draw: No material loaded!" << '\n';
+        throw;
     }
     std::map<std::string, Mesh*>::iterator it;
 
     for (it = _meshes.begin(); it != _meshes.end(); ++it) {
         Mesh *mesh = it->second;
 
-        mesh->setUniforms(_uniforms);
+        mesh->update(_material->_uniforms);
         mesh->draw();
     }
 }
@@ -201,16 +197,6 @@ std::ostream& operator<<(std::ostream& os, const Model& model) {
     for (it_mesh = model._meshes.begin(); it_mesh != model._meshes.end(); ++it_mesh) {
         Mesh *mesh = it_mesh->second;
         os << *mesh << '\n';
-    }
-
-    std::map<std::string, std::vector<Texture*>>::const_iterator it_textures;
-
-    for (it_textures = model._textures.begin(); it_textures != model._textures.end(); ++it_textures) {
-        std::vector<Texture*> textures = it_textures->second;
-        os << "Mesh : " << it_textures->first << "textures : " <<  '\n';
-        for (uint32_t i = 0; i < textures.size(); ++i) {
-            os << *textures[i] << '\n';
-        }
     }
     return os;
 }

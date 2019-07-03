@@ -1,19 +1,11 @@
-#include "Components/Material.hpp"
+#include "Model/Material.hpp"
 
 Material::Material() :
-    _tranparent(false)
+    _textures(),
+    _transparent(false)
 {
-    this->_type = TypeComp::MATERIAL;
     this->_uniforms = new Uniforms();
-
-    this->_model = nullptr;
     this->_program = nullptr;
-}
-
-Material::Material(Model *model) :
-    Material::Material()
-{
-    this->_model = model;
 }
 
 Material::~Material()
@@ -24,6 +16,11 @@ Material::~Material()
 void Material::setProgram(Program *program)
 {
     this->_program = program;
+}
+
+size_t Material::sizeTextures()
+{
+    return this->_textures.size();
 }
 
 void Material::setTexture(std::string id_mesh, Texture *texture)
@@ -37,52 +34,26 @@ void Material::setTexture(std::string id_mesh, Texture *texture)
         }
     }
     if (!isfound) {
+        std::cout << "add texture : " << texture->_filename << '\n';
         this->_textures[id_mesh].push_back(texture);
     }
 }
 
-void Material::start() {
-    if (_model) {
-        if (_program) {
-            _model->setProgram(_program);
-        }
-        if (_textures.size() == 0) {
-            std::cerr << "Material: Not textures atached" << '\n';
-        }
-        _model->setTextures(_textures);
-        _model->active();
-    }
-}
-
-void Material::addLigths(std::vector<Light*> ligths)
+void Material::update(Light *ligth)
 {
-    for (uint32_t i = 0; i < ligths.size(); ++i) {
-        this->_uniforms->update(ligths[i]->getUniforms());
-    }
+    _uniforms->update(ligth->getUniforms());
 }
 
-void Material::awakeStart() {
-    if (_model) {
-        _model->setUniforms(_uniforms);
-        _model->draw();
-    }
-}
-
-void Material::update()
+void Material::update(Material *material)
 {
-    ;
+    _uniforms->update(material->_uniforms);
 }
 
 void Material::setView(Camera *camera)
 {
-    this->setParameter("projection", camera->_projection);      // Vertex...
-    this->setParameter("view", camera->_view->_gModel);         // Vertex...
-    this->setParameter("viewPos", camera->viewPos());   // Fragments...
-}
-
-void Material::setColor(glm::vec3 rgb)
-{
-    ;
+    setParameter("projection", camera->_projection);      // Vertex...
+    setParameter("view", camera->_view->_gModel);         // Vertex...
+    setParameter("viewPos", camera->viewPos());   // Fragments...
 }
 
 void Material::setParameter(std::string name, glm::vec3 val)
@@ -107,21 +78,30 @@ void Material::setParameter(std::string name, float val)
 
 void Material::setTransparent()
 {
-    this->_tranparent = true;
+    this->_transparent = true;
 }
 
 void Material::setOpaque()
 {
-    this->_tranparent = false;
+    this->_transparent = false;
 }
 
 bool Material::isTransparent()
 {
-    return this->_tranparent;
+    return this->_transparent;
 }
 
 std::ostream& operator<<(std::ostream& os, const Material& material)
 {
-    os << *material._model;
+    std::map<std::string, std::vector<Texture*>>::const_iterator it_textures;
+
+    for (it_textures = material._textures.begin(); it_textures != material._textures.end(); ++it_textures) {
+        std::vector<Texture*> textures = it_textures->second;
+        os << "Mesh : " << it_textures->first << "textures : " <<  '\n';
+        for (uint32_t i = 0; i < textures.size(); ++i) {
+            os << *textures[i] << '\n';
+        }
+    }
+    os << *material._uniforms;
     return os;
 }

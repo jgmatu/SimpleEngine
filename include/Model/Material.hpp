@@ -4,33 +4,28 @@
 #include <memory>
 #include <map>
 
-#include "Constants/TypeComp.hpp"
-
-#include "Model/Model.hpp"
-
-#include "Components/Component.hpp"
+#include "Ligths/Light.hpp"
 #include "Components/Camera.hpp"
+
+#include "Program/Program.hpp"
+#include "Program/Uniforms.hpp"
+
+#include "Texture.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-#include "Ligths/Light.hpp"
-
-class Material : public Component {
+class Material {
 
 public:
 
-    Material(Model *model);
+    Material();
     ~Material();
 
-    void start();
-    void awakeStart();
-    void update();
-
-    void addLigths(std::vector<Light*> ligths);
     void setProgram(Program *program);
+
+    size_t sizeTextures();
     void setTexture(std::string id_mesh, Texture *texture);
-    void setColor(glm::vec3 rgb);
 
     void setView(Camera *camera);
 
@@ -43,19 +38,22 @@ public:
     void setOpaque();
     bool isTransparent();
 
+    void update(Material *material);
+    void update(Light *ligth);
+
     friend std::ostream& operator<<(std::ostream& os, const Material& material);
 
 private:
 
-    Material();
+    friend class Model;
+    friend class Mesh;
+    friend class MeshRender;
 
     Uniforms *_uniforms;
     Program *_program;
-    Model *_model;
 
     std::map<std::string, std::vector<Texture*>> _textures;
-
-    bool _tranparent;
+    bool _transparent;
 };
 
 #endif

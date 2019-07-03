@@ -49,7 +49,7 @@ const float skyboxVertices[] = {
 SkyBox::SkyBox()
 {
     this->_uniforms = new Uniforms();
-    this->_type = TypeComp::SKYBOX;
+    this->_type = CompType::SKYBOX;
 }
 
 SkyBox::SkyBox(std::vector<std::string> faces, Program *program) :
@@ -94,7 +94,7 @@ void SkyBox::active()
 void SkyBox::draw()
 {
     _program->use();
-    _program->setUniforms(_uniforms);
+    _program->update(_uniforms);
 
     glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
     glBindVertexArray(_VAO);

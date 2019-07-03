@@ -19,7 +19,7 @@ Light::Light()
     this->_uniforms = new Uniforms();
 }
 
-Light::Light(CompLigth type) :
+Light::Light(LightType type) :
     Light::Light()
 {
     this->_type = type;
@@ -42,7 +42,7 @@ Uniforms* Light::getUniforms()
 
 
 Directional::Directional() :
-    Light::Light(CompLigth::DIRECTIONAL)
+    Light::Light(LightType::DIRECTIONAL)
 {
     ;
 }
@@ -83,7 +83,7 @@ void Directional::setIntense(float percentage)
 }
 
 Point::Point() :
-    Light::Light(CompLigth::POINT)
+    Light::Light(LightType::POINT)
 {
     ;
 }
@@ -139,7 +139,7 @@ void Point::setIntense(float percentage)
 }
 
 Spot::Spot() :
-    Light::Light(CompLigth::SPOT)
+    Light::Light(LightType::SPOT)
 {
     ;
 }

@@ -14,10 +14,10 @@
 
 #include "Components/Component.hpp"
 #include "Components/Transform.hpp"
-#include "Components/Material.hpp"
 #include "Components/SkyBox.hpp"
+#include "Components/MeshRender.hpp"
 
-#include "Constants/TypeComp.hpp"
+#include "Constants/CompType.hpp"
 
 class Camera;
 class Keyboard;
@@ -36,7 +36,7 @@ public:
     void addChild(GameObject *gameObject);
 
     void addComponent(Component *component);
-    Component* getComponent(TypeComp type) const;
+    Component* getComponent(CompType type) const;
 
     void init();
 
