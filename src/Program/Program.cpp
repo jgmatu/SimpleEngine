@@ -27,7 +27,7 @@ void Program::update(Uniforms *uniforms) {
     std::vector<std::string> names;
 
     names = uniforms->getUniformsNamesInt();
-    for (unsigned i = 0; i < names.size(); ++i) {
+    for (uint32_t i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
             this->createUniform(names[i]);
         } else {
@@ -36,7 +36,7 @@ void Program::update(Uniforms *uniforms) {
     }
 
     names = uniforms->getUniformsNamesFloat();
-    for (unsigned i = 0; i < names.size(); ++i) {
+    for (uint32_t i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
             this->createUniform(names[i]);
         } else {
@@ -44,8 +44,17 @@ void Program::update(Uniforms *uniforms) {
         }
     }
 
+    names = uniforms->getUniformsNamesVec4();
+    for (uint32_t i = 0; i < names.size(); ++i) {
+        if (_uniforms.find(names[i]) == _uniforms.end()) {
+            this->createUniform(names[i]);
+        } else {
+            this->setUniform(names[i], uniforms->getUniformValueVec4(names[i]));
+        }
+    }
+
     names = uniforms->getUniformsNamesVec3();
-    for (unsigned i = 0; i < names.size(); ++i) {
+    for (uint32_t i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
             this->createUniform(names[i]);
         } else {
@@ -54,7 +63,7 @@ void Program::update(Uniforms *uniforms) {
     }
 
     names = uniforms->getUniformsNamesMat4();
-    for (unsigned i = 0; i < names.size(); ++i) {
+    for (uint32_t i = 0; i < names.size(); ++i) {
         if (_uniforms.find(names[i]) == _uniforms.end()) {
             this->createUniform(names[i]);
         } else {
@@ -122,6 +131,13 @@ void Program::setUniform(std::string name, float value) {
     glUniform1f(_uniforms[name], value);
 }
 
+void Program::setUniform(std::string name, glm::vec4 value) {
+    if (_uniforms.find(name) == _uniforms.end()) {
+        createUniform(name);
+    }
+    glUniform4f(_uniforms[name], value.x, value.y, value.z, value.a);
+}
+
 void Program::setUniform(std::string name, glm::vec3 value) {
     if (_uniforms.find(name) == _uniforms.end()) {
         createUniform(name);
@@ -153,10 +169,10 @@ int Program::createShader(const std::string& sc, int shaderType) {
     int InfoLogLength;
     glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &InfoLogLength);
     if (InfoLogLength > 0) {
-        std::vector<GLchar> ShaderErrorMessage(InfoLogLength + 1);
-        glGetShaderInfoLog(shaderId, InfoLogLength, NULL, &ShaderErrorMessage[0]);
-        std::cerr << "Shader Error Message: " << ShaderErrorMessage[0] << '\n';
-        throw ProgramException(std::string("Shader Error Message: " + ShaderErrorMessage[0] + '\n'));
+        std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
+        glGetShaderInfoLog(shaderId, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+        std::cerr << "Shader Error Message: " << VertexShaderErrorMessage[0] << '\n';
+        throw ProgramException(std::string("Shader Error Message: " + VertexShaderErrorMessage[0] + '\n'));
     }
     glAttachShader(_programId, shaderId);
     return shaderId;

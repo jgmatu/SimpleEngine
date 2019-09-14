@@ -30,6 +30,11 @@ void Uniforms::update(Uniforms *uniforms)
         setUniformVec3(names[i], uniforms->_uniformsVec3[names[i]]);
     }
 
+    names = uniforms->getUniformsNamesVec4();
+    for (uint32_t i = 0; i < names.size(); ++i) {
+        setUniformVec4(names[i], uniforms->_uniformsVec4[names[i]]);
+    }
+
     names = uniforms->getUniformsNamesMat4();
     for (uint32_t i = 0; i < names.size(); ++i) {
         setUniformMat4(names[i], uniforms->_uniformsMat4[names[i]]);
@@ -46,6 +51,10 @@ void Uniforms::setUniformFloat(std::string name, float value) {
 
 void Uniforms::setUniformVec3(std::string name, glm::vec3 value) {
     _uniformsVec3[name] = value;
+}
+
+void Uniforms::setUniformVec4(std::string name, glm::vec4 value) {
+    _uniformsVec4[name] = value;
 }
 
 void Uniforms::setUniformMat4(std::string name, glm::mat4 value) {
@@ -82,6 +91,16 @@ std::vector<std::string> Uniforms::getUniformsNamesMat4() {
     return names;
 }
 
+std::vector<std::string> Uniforms::getUniformsNamesVec4() {
+    std::vector<std::string> names;
+    std::map <std::string, glm::vec4>::const_iterator it;
+
+    for (it = _uniformsVec4.begin(); it != _uniformsVec4.end(); ++it) {
+        names.push_back(it->first);
+    }
+    return names;
+}
+
 std::vector<std::string> Uniforms::getUniformsNamesVec3() {
     std::vector<std::string> names;
     std::map <std::string, glm::vec3>::const_iterator it;
@@ -98,6 +117,10 @@ int Uniforms::getUniformValueInt(std::string name) {
 
 float Uniforms::getUniformValueFloat(std::string name) {
     return _uniformsFloat[name];
+}
+
+glm::vec4 Uniforms::getUniformValueVec4(std::string name) {
+    return _uniformsVec4[name];
 }
 
 glm::vec3 Uniforms::getUniformValueVec3(std::string name) {

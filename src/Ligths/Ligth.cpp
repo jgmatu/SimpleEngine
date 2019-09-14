@@ -77,8 +77,8 @@ void Directional::setDistance()
 
 void Directional::setIntense(float percentage)
 {
-    this->_uniforms->setUniformVec3("directional.diffuse", percentage * glm::vec3(1.0f));
-    this->_uniforms->setUniformVec3("directional.specular", percentage *  glm::vec3(1.0f));
+    this->_uniforms->setUniformVec4("directional.diffuse", percentage * glm::vec4(1.0f));
+    this->_uniforms->setUniformVec4("directional.specular", percentage *  glm::vec4(1.0f));
 }
 
 Point::Point() :
@@ -132,8 +132,8 @@ void Point::setIntense(float percentage)
 {
     std::string index = std::string(std::to_string(this->_index));
 
-    this->_uniforms->setUniformVec3("points[" + index + "].diffuse", percentage * glm::vec3(0.5f));
-    this->_uniforms->setUniformVec3("points[" + index + "].specular", percentage * glm::vec3(0.8f));
+    this->_uniforms->setUniformVec4("points[" + index + "].diffuse", percentage * glm::vec4(1.0f));
+    this->_uniforms->setUniformVec4("points[" + index + "].specular", percentage * glm::vec4(1.0f));
 }
 
 Spot::Spot() :
@@ -167,8 +167,8 @@ void Spot::setDirection(glm::vec3 direction)
 
 void Spot::setIntense(float percentage)
 {
-    this->_uniforms->setUniformVec3("spot.diffuse", percentage * glm::vec3(0.6f));
-    this->_uniforms->setUniformVec3("spot.specular", percentage * glm::vec3(1.0f));
+    this->_uniforms->setUniformVec4("spot.diffuse", percentage * glm::vec4(1.0f));
+    this->_uniforms->setUniformVec4("spot.specular", percentage * glm::vec4(1.0f));
 }
 
 void Spot::setDistance()
