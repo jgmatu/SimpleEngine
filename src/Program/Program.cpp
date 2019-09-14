@@ -153,10 +153,10 @@ int Program::createShader(const std::string& sc, int shaderType) {
     int InfoLogLength;
     glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &InfoLogLength);
     if (InfoLogLength > 0) {
-        std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
-        glGetShaderInfoLog(shaderId, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-        std::cerr << "Shader Error Message: " << VertexShaderErrorMessage[0] << '\n';
-        throw ProgramException(std::string("Shader Error Message: " + VertexShaderErrorMessage[0] + '\n'));
+        std::vector<GLchar> ShaderErrorMessage(InfoLogLength + 1);
+        glGetShaderInfoLog(shaderId, InfoLogLength, NULL, &ShaderErrorMessage[0]);
+        std::cerr << "Shader Error Message: " << ShaderErrorMessage[0] << '\n';
+        throw ProgramException(std::string("Shader Error Message: " + ShaderErrorMessage[0] + '\n'));
     }
     glAttachShader(_programId, shaderId);
     return shaderId;

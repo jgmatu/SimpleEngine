@@ -44,7 +44,7 @@ public:
         std::vector<Light*> ligths = _gObject->getLigths();
 
         for (uint32_t i = 0; i < ligths.size(); ++i) {
-            if (!ligths[i]->isLigth("s")) {
+            if (!ligths[i]->isLigth("s") && !ligths[i]->isLigth("d")) {
                 ligths[i]->setIntense(0.0);
             }
         }
@@ -133,7 +133,7 @@ public:
 
     ~ChangeColor()
     {
-
+        ;
     }
 
     void start()
@@ -149,6 +149,35 @@ public:
         } else {
             _gObject->setColor(glm::vec3(0.0, 0.0, 1.0));
         }
+    }
+
+    void awakeStart()
+    {
+        ;
+    }
+};
+
+class Glass : public Component {
+public:
+
+    Glass()
+    {
+        ;
+    }
+
+    ~Glass()
+    {
+        ;
+    }
+
+    void start()
+    {
+        _gObject->translate(glm::vec3(3.0, 0.0, -5.0));
+    }
+
+    void update()
+    {
+        ;
     }
 
     void awakeStart()
@@ -182,7 +211,7 @@ GameObject* getCube(std::string name)
 GameObject* getBasicSphere(std::string name)
 {
     GameObject *sphere = new GameObject(name);
-    Sphere *basic = new Sphere(name);
+    Sphere *sphere_basic = new Sphere(name);
 
     Material *material = new Material();
     material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
@@ -190,10 +219,35 @@ GameObject* getBasicSphere(std::string name)
     MeshRender *render = new MeshRender();
 
     render->setMaterial(material);
-    render->setModel(new Model(basic->getMesh()));
+    render->setModel(new Model(sphere_basic->getMesh()));
 
     sphere->addComponent(render);
     return sphere;
+}
+
+GameObject* getGlass(std::string name)
+{
+    GameObject* glass = new GameObject(name);
+    Plane *plane = new Plane(name);
+
+    Material *material = new Material();
+    material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
+    material->setTransparent();
+
+    Texture *diffuse = new Texture("blending_transparent_window.png", "texture_diffuse");
+    Texture *specular = new Texture("blending_transparent_window.png", "texture_specular");
+
+    material->setTexture(name, diffuse);
+    material->setTexture(name, specular);
+
+    MeshRender *render = new MeshRender();
+
+    render->setMaterial(material);
+    render->setModel(new Model(plane->getMesh()));
+
+    glass->addComponent(render);
+
+    return glass;
 }
 
 std::vector<Light*> getLigthPoints()
@@ -223,6 +277,7 @@ void addLigths(Scene *scene)
     for (uint32_t i = 0; i < points.size(); ++i) {
         scene->addLigth(points[i]);
     }
+
     Spot *s = new Spot("s", 2.5, 7.5);
 
     s->setDistance();
@@ -232,7 +287,10 @@ void addLigths(Scene *scene)
 
     scene->addLigth(s);
 
-    //    this->setLigth(new Directional(glm::vec3(0.0, 0.0, 1.0)));
+    Directional *d = new Directional("d");
+    d->setIntense(1.0);
+    d->setDirection(glm::vec3(-1.0, 0, -1.0));
+    scene->addLigth(d);
 }
 
 Scene* sceneSimulation()
@@ -252,6 +310,11 @@ Scene* sceneSimulation()
     sphere->addComponent(new ChangeColor());
 
     scene->addChild(sphere);
+
+    GameObject *glass = getGlass("glass");
+    glass->addComponent(new Glass());
+
+    scene->addChild(glass);
 
     addLigths(scene);
     return scene;

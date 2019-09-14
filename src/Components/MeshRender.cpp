@@ -54,6 +54,7 @@ void MeshRender::start()
     if (_model && _material) {
         if (_material->sizeTextures() == 0) {
             std::cerr << "Start : Material: Doesn't have textures attached" << '\n';
+            return;
         }
         _model->setMaterial(_material);
         _model->active();
@@ -62,22 +63,17 @@ void MeshRender::start()
 
 void MeshRender::awakeStart()
 {
-    if (_model && _material) {
-        _model->update(_material);
-        _model->draw();
-    } else {
-        std::cerr << "Error invalid material or model" << '\n';
-        throw;
-    }
+    ;
 }
 
 void MeshRender::update()
 {
-    if (_model && _material) {
-        _model->update(_material);
-        _model->draw();
-    } else {
+    if (!_model || !_material) {
         std::cerr << "Error invalid material or model" << '\n';
         throw;
+    }
+    if (_material->sizeTextures() > 0) {
+        _model->update(_material);
+        _model->draw();
     }
 }

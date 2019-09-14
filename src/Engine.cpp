@@ -4,7 +4,7 @@ Engine::Engine()
 {
     _clock = Clock::getInstance();
     _keyboard = Keyboard::getInstance();
-    _mouse = Mouse::getInstance();
+//    _mouse = Mouse::getInstance();
 }
 
 Engine::Engine(Scene *scene) :
@@ -18,7 +18,7 @@ Engine::~Engine()
     delete _scene;
     delete _keyboard;
     delete _clock;
-    delete _mouse;
+//    delete _mouse;
 }
 
 void Engine::initWindow() {
@@ -42,8 +42,8 @@ void Engine::initWindow() {
     glfwSetKeyCallback(_window, Keyboard::CallBackCharacters);
 
     // Cursor pos input...
-    glfwSetCursorPosCallback(_window, Mouse::CursorPositionCallback);
-    glfwSetMouseButtonCallback(_window, Mouse::MouseButtonCallback);
+//    glfwSetCursorPosCallback(_window, Mouse::CursorPositionCallback);
+//    glfwSetMouseButtonCallback(_window, Mouse::MouseButtonCallback);
 
     GLFWcursor *cursor = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
     if (!cursor) {
@@ -51,7 +51,7 @@ void Engine::initWindow() {
         throw;
     }
     glfwSetCursor(_window, cursor);
-    glfwSetCursorEnterCallback(_window, Mouse::CursorEnterAreaCallback);
+//    glfwSetCursorEnterCallback(_window, Mouse::CursorEnterAreaCallback);
 
     // Make the OpenGL context current.
     glfwMakeContextCurrent(_window);
@@ -67,7 +67,7 @@ void Engine::initWindow() {
     glEnable(GL_DEPTH_TEST);
 
     // Stencil buffer... 8 bits...
-     glEnable(GL_STENCIL_TEST);
+    glEnable(GL_STENCIL_TEST);
 
     // Enabling transparency...
     glEnable(GL_BLEND);
@@ -95,8 +95,7 @@ void Engine::init() {
 
 void Engine::update()
 {
-    _scene->draw();
-    _scene->update();
+    ;
 }
 
 void Engine::mainLoop() {
@@ -104,10 +103,11 @@ void Engine::mainLoop() {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-        update(); // ... Update Scene ...
+        _scene->draw();
+        _scene->update();
 
         glfwSwapBuffers(_window); // Swap the color buffers.
         std::this_thread::sleep_for(std::chrono::milliseconds(LOOP_INTERVAL_TIME_MS));
-    } while(!glfwWindowShouldClose(_window));
+    } while (!glfwWindowShouldClose(_window));
     glfwTerminate();
 }
