@@ -92,6 +92,18 @@ void Mesh::active()
     glBindVertexArray(0);
 }
 
+void Mesh::setBlending()
+{
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+}
+
+void Mesh::unsetBlending()
+{
+    glDisable(GL_BLEND);
+}
+
 void Mesh::draw() {
     uint32_t diffuseNr = 0;
     uint32_t specularNr = 0;

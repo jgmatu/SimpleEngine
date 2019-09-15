@@ -97,6 +97,7 @@ Point::Point(std::string id) :
         std::cerr << "Error limit points in engine!" << '\n';
         throw;
     }
+    std::cerr << "npoints " << Point::_num << '\n';
     this->_uniforms->setUniformInt("npoints", Point::_num);
 }
 

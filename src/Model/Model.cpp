@@ -185,8 +185,12 @@ void Model::draw() {
 
     for (it = _meshes.begin(); it != _meshes.end(); ++it) {
         Mesh *mesh = it->second;
-
         mesh->update(_material->_uniforms);
+        if (_material->isTransparent()) {
+            mesh->setBlending();
+        } else {
+            mesh->unsetBlending();
+        }
         mesh->draw();
     }
 }

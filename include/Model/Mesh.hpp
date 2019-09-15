@@ -73,6 +73,9 @@ public:
     void setTexture(Texture *texture);
     void setProgram(Program *program);
 
+    void setBlending();
+    void unsetBlending();
+
     friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
 
 private:
@@ -87,7 +90,7 @@ private:
 
     // Vertex data...
     std::vector<Vertex> _vertices;
-    std::vector<unsigned> _indices;
+    std::vector<GLuint> _indices;
 
     //Textures mesh...
     std::vector<Texture*> _textures;

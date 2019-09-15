@@ -4,7 +4,7 @@ Engine::Engine()
 {
     _clock = Clock::getInstance();
     _keyboard = Keyboard::getInstance();
-//    _mouse = Mouse::getInstance();
+    _mouse = Mouse::getInstance();
 }
 
 Engine::Engine(Scene *scene) :
@@ -18,7 +18,7 @@ Engine::~Engine()
     delete _scene;
     delete _keyboard;
     delete _clock;
-//    delete _mouse;
+    delete _mouse;
 }
 
 void Engine::initWindow() {
@@ -67,12 +67,9 @@ void Engine::initWindow() {
     glEnable(GL_DEPTH_TEST);
 
     // Stencil buffer... 8 bits...
-    glEnable(GL_STENCIL_TEST);
+     glEnable(GL_STENCIL_TEST);
 
     // Enabling transparency...
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
     // Perfomance Culling draw...
 //    glEnable(GL_CULL_FACE);
@@ -95,7 +92,8 @@ void Engine::init() {
 
 void Engine::update()
 {
-    ;
+    _scene->draw();
+    _scene->update();
 }
 
 void Engine::mainLoop() {
@@ -103,11 +101,10 @@ void Engine::mainLoop() {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-        _scene->draw();
-        _scene->update();
+        update(); // ... Update Scene ...
 
         glfwSwapBuffers(_window); // Swap the color buffers.
         std::this_thread::sleep_for(std::chrono::milliseconds(LOOP_INTERVAL_TIME_MS));
-    } while (!glfwWindowShouldClose(_window));
+    } while(!glfwWindowShouldClose(_window));
     glfwTerminate();
 }

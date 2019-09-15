@@ -285,7 +285,7 @@ void addLigths(Scene *scene)
     s->setPosition(glm::vec3(0, 0, 2.0f));
     s->setDirection(glm::vec3(0.0f, 0.0f, -1.0));
 
-    scene->addLigth(s);
+//    scene->addLigth(s);
 
     Directional *d = new Directional("d");
     d->setIntense(1.0);
@@ -309,7 +309,7 @@ Scene* sceneSimulation()
     GameObject *sphere = getBasicSphere("basic");
     sphere->addComponent(new ChangeColor());
 
-    scene->addChild(sphere);
+//    scene->addChild(sphere);
 
     GameObject *glass = getGlass("glass");
     glass->addComponent(new Glass());
