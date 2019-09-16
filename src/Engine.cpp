@@ -24,6 +24,7 @@ Engine::~Engine()
 void Engine::initWindow() {
     // Initialize GLFW. Most GLFW functions will not work before doing this.
     if (!glfwInit()) {
+        std::cerr << "Failed to initialize OpenGL context" << std::endl;
         throw;
     }
 
@@ -37,6 +38,7 @@ void Engine::initWindow() {
         std::cerr << "Failed to create the GLFW System window" << std::endl;
         throw;
     }
+    glfwMakeContextCurrent(_window);
 
     // Setup a key callback. It will be called every time a key is pressed, repeated or released.
     glfwSetKeyCallback(_window, Keyboard::CallBackCharacters);
@@ -61,7 +63,11 @@ void Engine::initWindow() {
 
     // Make the window visible.
     glfwShowWindow(_window);
-    gladLoadGL();
+
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+        std::cout << "Failed to initialize OpenGL context" << std::endl;
+        throw;
+    }
 
     // Depth buffer-z... 24 bits...
     glEnable(GL_DEPTH_TEST);

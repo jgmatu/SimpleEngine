@@ -5,7 +5,10 @@
 #define _USE_MATH_DEFINES
 
 #include <glad/glad.h>
+
+// glad, include glad *before* glfw
 #include <GLFW/glfw3.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
 
