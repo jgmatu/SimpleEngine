@@ -41,6 +41,7 @@ public:
     void init();
 
     void draw();
+    
     void getQueueDrawGameObjects(
         std::map<float, std::vector<GameObject*>>& transparents,
         std::vector<GameObject*>& opaques

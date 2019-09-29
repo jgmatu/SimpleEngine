@@ -75,9 +75,6 @@ void SkyBox::start()
 // Método que se llama cada vez que el Componente se activa.
 void SkyBox::awakeStart()
 {
-    glDepthMask(GL_FALSE);
-    draw();
-    glDepthMask(GL_TRUE);
 }
 
 void SkyBox::active()
@@ -108,7 +105,9 @@ void SkyBox::draw()
 // Método que realiza transformaciones, cálculos de cosas.
 void SkyBox::update()
 {
-    ;
+    glDepthMask(GL_FALSE);
+    draw();
+    glDepthMask(GL_TRUE);
 }
 
 void SkyBox::setView(Camera *camera)

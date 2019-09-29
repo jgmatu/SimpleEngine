@@ -44,9 +44,10 @@ void Camera::update()
     if (Keyboard::instance->isKeyPressed(GLFW_KEY_DOWN)) {
         _view->_model = glm::translate(_view->_model, glm::vec3(0, 0, -0.05));
     }
-    // Rotate camera....
-    // *** ROTATE ***
-    // Tracker camera, gameObject...
+
+    // *** Implementar las rotaciones de cámara aquí ***
+
+    // Tracker camera, de un gameObject...
     _view->_gModel = _tfObj->_gModel * _view->_model;
 }
 

@@ -143,7 +143,7 @@ void GameObject::getQueueDrawGameObjects(
     // GameObject with a SkyBox...
     if (SkyBox *skybox = dynamic_cast<SkyBox*>(component)) {
         skybox->setView(_camera);
-        skybox->awakeStart();
+        skybox->update();
     }
 
     for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
@@ -174,7 +174,11 @@ void GameObject::update()
     size_t size = _components.size();
 
     for (uint32_t i = 0; i < size; ++i) {
-        _components[i]->update();
+        SkyBox *skybox = dynamic_cast<SkyBox*>(_components[i]);
+        Render *render = dynamic_cast<Render*>(_components[i]);
+        if (!skybox && !render) {
+            _components[i]->update();
+        }
     }
 
     size = _gameObjects.size();
