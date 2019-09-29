@@ -15,7 +15,7 @@
 #include "Components/Component.hpp"
 #include "Components/Transform.hpp"
 #include "Components/SkyBox.hpp"
-#include "Components/MeshRender.hpp"
+#include "Components/Render.hpp"
 
 #include "Constants/CompType.hpp"
 

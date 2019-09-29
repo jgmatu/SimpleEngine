@@ -47,7 +47,7 @@ private:
 
     friend class Model;
     friend class Mesh;
-    friend class MeshRender;
+    friend class Render;
 
     Uniforms *_uniforms;
     Program *_program;

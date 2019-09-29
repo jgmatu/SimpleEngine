@@ -4,13 +4,13 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #define _USE_MATH_DEFINES
 
+// Include glad *before* glfw
 #include <glad/glad.h>
-
-// glad, include glad *before* glfw
 #include <GLFW/glfw3.h>
 
+// First <glm/glm.hpp>
 #include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include <chrono>
 #include <thread>

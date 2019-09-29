@@ -117,10 +117,10 @@ void GameObject::draw()
 {
     Component *component = this->getComponent(CompType::MESH_RENDER);
 
-    if (MeshRender *render = dynamic_cast<MeshRender*>(component)) {
+    if (Render *render = dynamic_cast<Render*>(component)) {
         render->setMatrixModel(_tf->_gModel);
         render->setView(_camera);
-        render->awakeStart();
+        render->update();
     }
 }
 
@@ -130,7 +130,7 @@ void GameObject::getQueueDrawGameObjects(
 {
     Component *component = getComponent(CompType::MESH_RENDER);
 
-    if (MeshRender *render = dynamic_cast<MeshRender*>(component)) {
+    if (Render *render = dynamic_cast<Render*>(component)) {
         if (render->isMaterialTransparent()) {
             addTransparentQueue(transparents);
         } else {
@@ -189,7 +189,7 @@ void GameObject::addLigths(std::vector<Light*> ligths)
 
     this->_ligths = ligths;
 
-    if (MeshRender *render = dynamic_cast<MeshRender*>(component)) {
+    if (Render *render = dynamic_cast<Render*>(component)) {
         render->setLigths(ligths);
     }
     for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
@@ -238,6 +238,7 @@ void GameObject::rotate(glm::vec3 vec3, float angle)
 float GameObject::distance(std::string id)
 {
     GameObject *gameObject = search(id);
+
     if (!gameObject) {
         std::cerr << "The GameObject doesn't exist!" << '\n';
         throw;
@@ -247,20 +248,17 @@ float GameObject::distance(std::string id)
 
 void GameObject::setColor(glm::vec3 rgb)
 {
-    Component *component = getComponent(CompType::MESH_RENDER);
-
-    if (MeshRender *render = dynamic_cast<MeshRender*>(component)) {
-        Material *material = render->getMaterial();
-        material->setParameter("material.isrgb", 1);
-        material->setParameter("material.rgb", rgb);
-    }
+    // No implementado cambios de material se realizarán a partir de texturas
+    // hasta que no exista una forma dinámica de crear programas de shaders
+    // para la etapa de fragmentos.
 }
+
 std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
     os << gameObject._id << std::endl;
     os << gameObject._tf << std::endl;
 
     Component *component = gameObject.getComponent(CompType::MESH_RENDER);
-    if (MeshRender *render = dynamic_cast<MeshRender*>(component)) {
+    if (Render *render = dynamic_cast<Render*>(component)) {
         os << (*render->getMaterial());
     }
     return os;

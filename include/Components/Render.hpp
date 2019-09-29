@@ -6,12 +6,12 @@
 #include "Program/Program.hpp"
 #include "Ligths/Light.hpp"
 
-class MeshRender : public Component {
+class Render : public Component {
 
 public:
 
-    MeshRender();
-    ~MeshRender();
+    Render();
+    ~Render();
 
     void start();
     void awakeStart();

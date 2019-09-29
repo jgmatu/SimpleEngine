@@ -43,7 +43,7 @@ void Engine::initWindow() {
     // Setup a key callback. It will be called every time a key is pressed, repeated or released.
     glfwSetKeyCallback(_window, Keyboard::CallBackCharacters);
 
-    // Cursor pos input...
+    // Cursor pos input...11
 //    glfwSetCursorPosCallback(_window, Mouse::CursorPositionCallback);
 //    glfwSetMouseButtonCallback(_window, Mouse::MouseButtonCallback);
 
@@ -77,7 +77,7 @@ void Engine::initWindow() {
 
     // Enabling transparency...
 
-    // Perfomance Culling draw...
+    // Perfomance Culling draw..
 //    glEnable(GL_CULL_FACE);
 //    glCullFace(GL_BACK);
 }

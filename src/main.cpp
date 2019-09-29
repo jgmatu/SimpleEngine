@@ -200,7 +200,7 @@ GameObject* getCube(std::string name)
     Texture *specular = new Texture("container2_specular.png", "texture_specular");
     material->setTexture(name, specular);
 
-    MeshRender *render = new MeshRender();
+    Render *render = new Render();
     render->setMaterial(material);
     render->setModel(new Model(geometry_cube->getMesh()));
 
@@ -216,7 +216,7 @@ GameObject* getBasicSphere(std::string name)
     Material *material = new Material();
     material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
-    MeshRender *render = new MeshRender();
+    Render *render = new Render();
 
     render->setMaterial(material);
     render->setModel(new Model(sphere_basic->getMesh()));
@@ -240,7 +240,7 @@ GameObject* getGlass(std::string name)
     material->setTexture(name, diffuse);
     material->setTexture(name, specular);
 
-    MeshRender *render = new MeshRender();
+    Render *render = new Render();
 
     render->setMaterial(material);
     render->setModel(new Model(plane->getMesh()));

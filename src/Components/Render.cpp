@@ -1,59 +1,59 @@
-#include "Components/MeshRender.hpp"
+#include "Components/Render.hpp"
 
-MeshRender::MeshRender()
+Render::Render()
 {
     this->_type = CompType::MESH_RENDER;
     this->_model = nullptr;
     this->_material = nullptr;
 }
 
-MeshRender::~MeshRender()
+Render::~Render()
 {
     ;
 }
 
-bool MeshRender::isMaterialTransparent()
+bool Render::isMaterialTransparent()
 {
     return this->_material->isTransparent();
 }
 
-void MeshRender::setMatrixModel(glm::mat4 model)
+void Render::setMatrixModel(glm::mat4 model)
 {
     this->_material->setParameter("model", model);
 }
 
-void MeshRender::setModel(Model *model)
+void Render::setModel(Model *model)
 {
     this->_model = model;
 }
 
-void MeshRender::setMaterial(Material *material)
+void Render::setMaterial(Material *material)
 {
     this->_material = material;
 }
 
-Material* MeshRender::getMaterial()
+Material* Render::getMaterial()
 {
     return this->_material;
 }
 
-void MeshRender::setView(Camera *camera)
+void Render::setView(Camera *camera)
 {
     _material->setView(camera);
 }
 
-void MeshRender::setLigths(std::vector<Light*> ligths)
+void Render::setLigths(std::vector<Light*> ligths)
 {
     for (uint32_t i = 0; i < ligths.size(); ++i) {
         _material->update(ligths[i]);
     }
 }
 
-void MeshRender::start()
+void Render::start()
 {
     if (_model && _material) {
         if (_material->sizeTextures() == 0) {
-            std::cerr << "Start : Material: Doesn't have textures attached" << '\n';
+            std::cerr << "Start Render: Doesn't have a model or material attached" << '\n';
             return;
         }
         _model->setMaterial(_material);
@@ -61,15 +61,15 @@ void MeshRender::start()
     }
 }
 
-void MeshRender::awakeStart()
+void Render::awakeStart()
 {
     ;
 }
 
-void MeshRender::update()
+void Render::update()
 {
     if (!_model || !_material) {
-        std::cerr << "Error invalid material or model" << '\n';
+        std::cerr << "Update Render: Error invalid material or model" << '\n';
         throw;
     }
     if (_material->sizeTextures() > 0) {
