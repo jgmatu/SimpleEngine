@@ -290,7 +290,7 @@ void addLigths(Scene *scene)
     Directional *d = new Directional("d");
     d->setIntense(1.0);
     d->setDirection(glm::vec3(-1.0, 0, -1.0));
-    scene->addLigth(d);
+//    scene->addLigth(d);
 }
 
 Scene* sceneSimulation()

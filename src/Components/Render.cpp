@@ -32,11 +32,6 @@ void Render::setMaterial(Material *material)
     this->_material = material;
 }
 
-Material* Render::getMaterial()
-{
-    return this->_material;
-}
-
 void Render::setView(Camera *camera)
 {
     _material->setView(camera);

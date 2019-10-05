@@ -9,7 +9,7 @@
 
 #include <Model/Mesh.hpp>
 
-class Geometry {
+class Geometry : public Mesh {
 
 public:
 

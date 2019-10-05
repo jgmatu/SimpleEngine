@@ -24,7 +24,6 @@ public:
     void awakeStart();
     void update();
 
-
     void addChild(Transform *tf);
     glm::vec3 position() const;
 

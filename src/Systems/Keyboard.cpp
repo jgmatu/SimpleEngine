@@ -14,7 +14,7 @@ Keyboard::Keyboard()
 Keyboard::~Keyboard()
 {
     Keyboard::instance = nullptr;
-    std::cout << "Delete keyboard :)" << '\n';
+    std::cout << "Delete reference to keyboard :)" << '\n';
 }
 
 bool Keyboard::isKeyPressed(std::string key)

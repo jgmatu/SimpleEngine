@@ -17,20 +17,17 @@ public:
     void awakeStart();
     void update();
 
-    void setProgram(Program *program);
     void setModel(Model *model);
-
     void setMaterial(Material *material);
-    Material* getMaterial();
-
-    void setMatrixModel(glm::mat4 model);
-
-    bool isMaterialTransparent();
-
-    void setView(Camera *camera);
-    void setLigths(std::vector<Light*> ligths);
 
 private:
+
+    friend class GameObject;
+
+    void setMatrixModel(glm::mat4 model);
+    bool isMaterialTransparent();
+    void setView(Camera *camera);
+    void setLigths(std::vector<Light*> ligths);
 
     Model *_model;
     Material *_material;

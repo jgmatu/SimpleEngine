@@ -263,7 +263,8 @@ std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
 
     Component *component = gameObject.getComponent(CompType::MESH_RENDER);
     if (Render *render = dynamic_cast<Render*>(component)) {
-        os << (*render->getMaterial());
+        (void) render;
+        std::cout << "Renderizable objetc" << '\n';
     }
     return os;
 }

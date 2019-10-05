@@ -11,6 +11,7 @@ Texture::Texture(std::string filename, std::string type) :
     this->_type = type;
     this->_path = Texture::DEFAULT_PATH;
 }
+
 void Texture::activeTexture()
 {
     this->_id = Texture::TextureFromFile(this->_path, this->_filename);

@@ -132,9 +132,9 @@ std::vector<Texture*> Model::loadTextures(aiMaterial *mat, aiTextureType type, s
             if (std::strcmp(_textures_loaded[j]->_path.data(), str.C_Str()) == 0) {
                 textures.push_back(_textures_loaded[j]);
                 skip = true;
+            }
         }
         if (!skip) {   // if texture hasn't been loaded already, load it
-    }
             Texture *texture = new Texture(str.C_Str(), typeName);
             texture->_path = _directory + "/";
             textures.push_back(texture);

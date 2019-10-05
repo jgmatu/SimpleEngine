@@ -29,12 +29,10 @@ void Material::setTexture(std::string id_mesh, Texture *texture)
     std::vector<Texture*> textures = this->_textures[id_mesh];
 
     for (uint32_t i = 0; i < textures.size() && !isfound; ++i) {
-        if (textures[i]->_filename.compare(texture->_filename) == 0) {
-            isfound = true;
-        }
+        isfound = textures[i]->_filename.compare(texture->_filename) == 0;
     }
     if (!isfound) {
-        std::cout << "add texture : " << texture->_filename << '\n';
+        std::cout << "addded texture : " << texture->_filename << '\n';
         this->_textures[id_mesh].push_back(texture);
     }
 }
