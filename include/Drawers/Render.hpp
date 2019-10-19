@@ -1,24 +1,25 @@
 #ifndef RENDER_H
 #define RENDER_H
 
+#include "Drawers/Drawer.hpp"
 #include "Model/Material.hpp"
 #include "Model/Model.hpp"
 #include "Program/Program.hpp"
 #include "Ligths/Light.hpp"
 
-class Render : public Component {
+class Render : public Drawer {
 
 public:
 
     Render();
     ~Render();
 
-    void start();
-    void awakeStart();
-    void update();
+    void active();
+    void draw();
 
     void setModel(Model *model);
     void setMaterial(Material *material);
+    void setView(Camera *camera);
 
 private:
 
@@ -26,7 +27,6 @@ private:
 
     void setMatrixModel(glm::mat4 model);
     bool isMaterialTransparent();
-    void setView(Camera *camera);
     void setLigths(std::vector<Light*> ligths);
 
     Model *_model;

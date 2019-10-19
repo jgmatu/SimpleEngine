@@ -33,19 +33,21 @@ Light* Scene::getLigth(std::string id)
     return ligth;
 }
 
-void Scene::eraseLigth(LightType type)
+void Scene::eraseLigth(std::string id)
 {
     for (uint32_t i = 0 ; i < _ligths.size(); ++i) {
-        if (_ligths[i]->_type == type) {
+        if (_ligths[i]->_id == id) {
             delete _ligths[i];
             _ligths.erase(_ligths.begin() + i);
             break;
         }
     }
 }
+
 void Scene::init()
 {
     _root->init();
+    _root->active();
     _root->getCameras(this->_cameras);
 }
 

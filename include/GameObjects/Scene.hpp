@@ -20,7 +20,8 @@ public:
     void update();
 
     void addLigth(Light *ligth);
-    void eraseLigth(LightType type);
+
+    void eraseLigth(std::string id);
     Light* getLigth(std::string id);
 
 

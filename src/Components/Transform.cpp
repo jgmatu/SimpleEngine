@@ -4,7 +4,7 @@ Transform::Transform() :
     _gModel(1.0f),
     _model(1.0f)
 {
-    this->_type = CompType::TRANSFORM;
+    ;
 }
 
 Transform::~Transform()

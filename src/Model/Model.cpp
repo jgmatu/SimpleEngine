@@ -149,7 +149,7 @@ void Model::setMaterial(Material *material)
     _material = material;
 }
 
-void Model::update(Material *material)
+void Model::updateMaterial(Material *material)
 {
     _material->update(material);
 }
@@ -164,14 +164,13 @@ void Model::active() {
     for (it = _meshes.begin(); it != _meshes.end(); ++it) {
         Mesh *mesh = it->second;
 
-        mesh->setProgram(_material->_program);
-        mesh->active();
-
         // Load all material textures to the proper mesh..
         std::vector<Texture*> textures = this->_material->_textures[it->first];
         for (uint32_t i = 0; i < textures.size(); ++i) {
             mesh->setTexture(textures[i]);
         }
+        mesh->setProgram(_material->_program);
+        mesh->active();
         mesh->activeTextures();
     }
 }

@@ -26,10 +26,11 @@ public:
 
     void active();
     void draw();
+
     void addMesh(Mesh *mesh);
 
     void setMaterial(Material *material);
-    void update(Material *material);
+    void updateMaterial(Material *material);
 
     friend std::ostream& operator<<(std::ostream& os, const Model& model);
 

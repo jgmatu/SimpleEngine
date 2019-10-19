@@ -3,7 +3,6 @@
 
 #include <iostream>
 
-#include "Constants/CompType.hpp"
 #include "Program/Uniforms.hpp"
 
 class Light {
@@ -20,17 +19,15 @@ public:
     bool isLigth(std::string id);
     Uniforms* getUniforms();
 
-    LightType _type;
-
 protected:
 
     Light();
-    Light(LightType type);
 
     std::string _id;
     Uniforms *_uniforms;
     std::map<int, glm::vec3> _distances;
 
+    friend class Scene;
 };
 
 class Directional : public Light {

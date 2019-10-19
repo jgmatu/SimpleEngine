@@ -10,7 +10,7 @@
 #include "GameObjects/GameObject.hpp"
 #include "Components/Camera.hpp"
 
-#include "Components/SkyBox.hpp"
+#include "Drawers/Skybox.hpp"
 
 #include "Model/Material.hpp"
 
@@ -204,7 +204,7 @@ GameObject* getCube(std::string name)
     render->setMaterial(material);
     render->setModel(new Model(geometry_cube->getMesh()));
 
-    cube->addComponent(render);
+    cube->addDrawer(render);
     return cube;
 }
 
@@ -221,7 +221,7 @@ GameObject* getBasicSphere(std::string name)
     render->setMaterial(material);
     render->setModel(new Model(sphere_basic->getMesh()));
 
-    sphere->addComponent(render);
+    sphere->addDrawer(render);
     return sphere;
 }
 
@@ -245,7 +245,7 @@ GameObject* getGlass(std::string name)
     render->setMaterial(material);
     render->setModel(new Model(plane->getMesh()));
 
-    glass->addComponent(render);
+    glass->addDrawer(render);
 
     return glass;
 }

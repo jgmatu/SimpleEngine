@@ -5,11 +5,8 @@
 #include <string>
 #include <iostream>
 
-#include "Model/Mesh.hpp"
-
-#include "Components/Component.hpp"
+#include "Drawers/Drawer.hpp"
 #include "Components/Camera.hpp"
-
 
 class SkyBox : public Component {
 
@@ -19,18 +16,8 @@ public:
     SkyBox(std::vector<std::string> faces, Program *program);
     ~SkyBox();
 
-    // Este método SOLO se llama una vez la primera vez que se crea el componente.
-    void start();
-
-    // Método que se llama cada vez que el Componente se activa.
-    void awakeStart();
-
-    // Método que realiza transformaciones, cálculos de cosas.
-    void update();
-
-    void draw();
     void active();
-
+    void draw();
     void setView(Camera *camera);
 
 private:
@@ -49,8 +36,8 @@ private:
 
     Camera *_camera;
     Program *_program;
-
     Uniforms *_uniforms;
+
 };
 
 

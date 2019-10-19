@@ -63,22 +63,27 @@ public:
     Mesh();
     ~Mesh();
 
-    std::string getId();
+    friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
 
-    void active();
-    void draw();
-    void update(Uniforms *uniforms);
-    void activeTextures();
+protected:
+
+    friend class Model;
+
+    std::string getId();
 
     void setTexture(Texture *texture);
     void setProgram(Program *program);
 
+    void active();
+    void activeTextures();
+    void update(Uniforms *uniforms);
+    void draw();
+
     void setBlending();
     void unsetBlending();
 
-    friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
-
 private:
+    // OpenGL Interface internal processing.
 
     void vertexArrayID();
     void genVertexBufferPosition();
@@ -92,14 +97,15 @@ private:
     std::vector<Vertex> _vertices;
     std::vector<GLuint> _indices;
 
-    //Textures mesh...
+    // Textures mesh...
     std::vector<Texture*> _textures;
 
     // Active Buffer.
     GLuint _VAO;
 
-    // Vertices Buffers... // Se puede splitear para meter varias cosas de los vertices
-    // en el mismo buffer.
+    // Vertices Buffers...
+    // Se puede splitear para meter varios atributos de los vertices en el
+    // mismo buffer.
     GLuint _VBO, _VBO2, _VBO3, _EBO;
 
     Program *_program;

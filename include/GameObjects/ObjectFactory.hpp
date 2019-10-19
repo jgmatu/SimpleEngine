@@ -1,6 +1,7 @@
 #ifndef OBJECT_FACTORY_H
 #define OBJECT_FACTORY_H
 
+/*
 #define _USE_MATH_DEFINES
 
 #include <iostream>
@@ -52,5 +53,5 @@ private:
 
     std::vector<GameObject*> _GameObjects;
 };
-
+*/
 #endif // OBJECT_FACTORY_H

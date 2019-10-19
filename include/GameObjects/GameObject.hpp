@@ -14,19 +14,14 @@
 
 #include "Components/Component.hpp"
 #include "Components/Transform.hpp"
-#include "Components/SkyBox.hpp"
-#include "Components/Render.hpp"
 
-#include "Constants/CompType.hpp"
+#include "Drawers/Drawer.hpp"
+#include "Drawers/Skybox.hpp"
+#include "Drawers/Render.hpp"
 
 class Camera;
-class Keyboard;
-class Clock;
 
 class GameObject {
-
-    friend class Update;
-    friend class Scene;
 
 public:
 
@@ -36,18 +31,7 @@ public:
     void addChild(GameObject *gameObject);
 
     void addComponent(Component *component);
-    Component* getComponent(CompType type) const;
-
-    void init();
-
-    void draw();
-
-    void getQueueDrawGameObjects(
-        std::map<float, std::vector<GameObject*>>& transparents,
-        std::vector<GameObject*>& opaques
-    );
-
-    void update();
+    void addDrawer(Drawer *drawer);
 
     void scale(glm::vec3 vec3);
     void translate(glm::vec3 vec3);
@@ -56,17 +40,8 @@ public:
     float distance(std::string id);
 
     void addLigths(std::vector<Light*> ligths);
-    Light* getLigth(std::string id);
     std::vector<Light*> getLigths();
-
-    void addGameObjects(std::vector<GameObject*> objects) {
-        this->_gameObjects = objects;
-    }
-
-    void getCameras(std::vector<Camera*>& cameras);
-    void setCamera(Camera *camera) {
-        this->_camera = camera;
-    };
+    Light* getLigth(std::string id);
 
     void setColor(glm::vec3 rgb);
 
@@ -78,6 +53,8 @@ protected:
     GameObject *_root;
 
     std::vector<Component*> _components;
+    std::vector<Drawer*> _drawers;
+
     std::vector<GameObject*> _gameObjects;
     std::vector<Light*> _ligths;
 
@@ -88,11 +65,26 @@ private:
 
     GameObject();
 
+    void init();
+    void update();
+
+    void active();
+    void draw();
+
+    void getCameras(std::vector<Camera*>& cameras);
+    void setCamera(Camera *camera) {
+        this->_camera = camera;
+    };
+    void getQueueDrawGameObjects(
+        std::map<float, std::vector<GameObject*>>& transparents,
+        std::vector<GameObject*>& opaques
+    );
     void addTransparentQueue(std::map<float, std::vector<GameObject*>>& transparents);
 
     GameObject* search(std::string id);
     GameObject* _search(std::string id);
 
+    friend class Scene;
 };
 
 #endif

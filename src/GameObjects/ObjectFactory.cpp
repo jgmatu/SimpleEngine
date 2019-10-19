@@ -1,14 +1,15 @@
 #include "GameObjects/ObjectFactory.hpp"
+/*
 
 ObjectFactory::ObjectFactory() :
     _GameObjects()
 {
-//    std::cout << "Creating Factory Objects..." << '\n';
+    std::cout << "Creating Factory Objects..." << '\n';
 }
 
 ObjectFactory::~ObjectFactory()
 {
-//    std::cout << "Delete All Game Objects!" << '\n'
+    std::cout << "Delete All Game Objects!" << '\n'
     for (uint32_t i = 0; i < _GameObjects.size(); ++i) {
         delete _GameObjects[i];
     }
@@ -32,10 +33,10 @@ std::vector<GameObject*> ObjectFactory::getGameObjects()
 void ObjectFactory::generateDemoObjects()
 {
     this->simulation1();
-//    this->solarSystem();
-    // this->wallNormalMapping();
+    this->solarSystem();
+    this->wallNormalMapping();
 }
-/*
+
 void ObjectFactory::wallNormalMapping()
 {
     std::string mesh_plane = "mesh_plane";
@@ -59,13 +60,11 @@ void ObjectFactory::wallNormalMapping()
 
     wall_plane->addComponent(material);
     wall_plane->setMove(new Rotate(0.8, glm::vec3(1.0, 0.0, 0.0)));
-//    plane->setPosition(new Position(glm::vec3(1.0, 0.0, 0.0), M_PI / 2.0f));
-//    plane->setPosition(new Position(glm::vec3(0.0, 0.0, -1.0), M_PI / 12.0f));
+    plane->setPosition(new Position(glm::vec3(1.0, 0.0, 0.0), M_PI / 2.0f));
+    plane->setPosition(new Position(glm::vec3(0.0, 0.0, -1.0), M_PI / 12.0f));
     _GameObjects.push_back(wall_plane);
 }
-*/
 
-/*
 void ObjectFactory::solarSystem() {
 //{
     // SUN
@@ -185,7 +184,6 @@ void ObjectFactory::solarSystem() {
     sun->addGameObject(earth);
     sun->addGameObject(mars);
 }
-*/
 
 void ObjectFactory::simulation1()
 {
@@ -216,3 +214,4 @@ void ObjectFactory::simulation1()
 unsigned ObjectFactory::size() {
     return _GameObjects.size();
 }
+*/

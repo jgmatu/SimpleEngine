@@ -1,8 +1,6 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "Constants/CompType.hpp"
-
 #include "Systems/Mouse.hpp"
 #include "Systems/Keyboard.hpp"
 #include "Systems/Clock.hpp"
@@ -28,8 +26,6 @@ public:
 protected:
 
     friend class GameObject;
-
-    CompType _type;
 
     GameObject *_gObject;
 };

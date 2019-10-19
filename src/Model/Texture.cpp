@@ -59,7 +59,7 @@ uint32_t Texture::TextureCubeMap(std::vector<std::string> _faces) {
     glGenTextures(1, &_textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, _textureID);
 
-    for (unsigned int i = 0; i < _faces.size(); ++i) {
+    for (uint32_t i = 0; i < _faces.size(); ++i) {
         unsigned char *data = stbi_load(_faces[i].c_str(), &width, &height, &nrChannels, 0);
         if (!data) {
             std::cerr << "Cubemap texture failed to load at path: " << _faces[i] << std::endl;

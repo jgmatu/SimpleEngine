@@ -26,10 +26,10 @@ file(GLOB PROJECT_CONFIGS CMakeLists.txt
                          .gitmodules)
 
 file(GLOB PROJECT_SOURCES
-    src/Operations/*cpp
     src/Geometries/*cpp
     src/Ligths/*cpp
     src/Components/*cpp
+    src/Drawers/*cpp
     src/GameObjects/*cpp
     src/Model/*cpp
     src/Messages/*cpp

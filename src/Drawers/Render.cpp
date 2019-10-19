@@ -1,8 +1,7 @@
-#include "Components/Render.hpp"
+#include "Drawers/Render.hpp"
 
 Render::Render()
 {
-    this->_type = CompType::MESH_RENDER;
     this->_model = nullptr;
     this->_material = nullptr;
 }
@@ -44,7 +43,7 @@ void Render::setLigths(std::vector<Light*> ligths)
     }
 }
 
-void Render::start()
+void Render::active()
 {
     if (_model && _material) {
         if (_material->sizeTextures() == 0) {
@@ -56,19 +55,14 @@ void Render::start()
     }
 }
 
-void Render::awakeStart()
-{
-    ;
-}
-
-void Render::update()
+void Render::draw()
 {
     if (!_model || !_material) {
         std::cerr << "Update Render: Error invalid material or model" << '\n';
         throw;
     }
     if (_material->sizeTextures() > 0) {
-        _model->update(_material);
+        _model->updateMaterial(_material);
         _model->draw();
     }
 }

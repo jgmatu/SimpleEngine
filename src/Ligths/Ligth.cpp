@@ -19,12 +19,6 @@ Light::Light()
     this->_uniforms = new Uniforms();
 }
 
-Light::Light(LightType type) :
-    Light::Light()
-{
-    this->_type = type;
-}
-
 Light::~Light()
 {
     delete this->_uniforms;
@@ -41,8 +35,7 @@ Uniforms* Light::getUniforms()
 }
 
 
-Directional::Directional() :
-    Light::Light(LightType::DIRECTIONAL)
+Directional::Directional()
 {
     ;
 }
@@ -81,8 +74,7 @@ void Directional::setIntense(float percentage)
     this->_uniforms->setUniformVec4("directional.specular", percentage *  glm::vec4(1.0f));
 }
 
-Point::Point() :
-    Light::Light(LightType::POINT)
+Point::Point()
 {
     ;
 }
@@ -137,8 +129,7 @@ void Point::setIntense(float percentage)
     this->_uniforms->setUniformVec4("points[" + index + "].specular", percentage * glm::vec4(1.0f));
 }
 
-Spot::Spot() :
-    Light::Light(LightType::SPOT)
+Spot::Spot()
 {
     ;
 }

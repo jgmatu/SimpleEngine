@@ -1,5 +1,4 @@
-
-#include "Components/SkyBox.hpp"
+#include "Drawers/Skybox.hpp"
 
 const float skyboxVertices[] = {
     // positions
@@ -49,7 +48,6 @@ const float skyboxVertices[] = {
 SkyBox::SkyBox()
 {
     this->_uniforms = new Uniforms();
-    this->_type = CompType::SKYBOX;
 }
 
 SkyBox::SkyBox(std::vector<std::string> faces, Program *program) :
@@ -64,21 +62,10 @@ SkyBox::~SkyBox()
     ;
 }
 
-// Este método SOLO se llama una vez la primera vez que se crea el componente.
-void SkyBox::start()
-{
-    _program->active();
-    this->active();
-    _textureID = Texture::TextureCubeMap(_faces);
-}
-
-// Método que se llama cada vez que el Componente se activa.
-void SkyBox::awakeStart()
-{
-}
-
 void SkyBox::active()
 {
+    _program->active();
+
     glGenVertexArrays(1, &_VAO);
     glGenBuffers(1, &_VBO);
     glBindVertexArray(_VAO);
@@ -86,12 +73,16 @@ void SkyBox::active()
     glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+
+    _textureID = Texture::TextureCubeMap(_faces);
 }
 
 void SkyBox::draw()
 {
     _program->use();
     _program->update(_uniforms);
+
+    glDepthMask(GL_FALSE);
 
     glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
     glBindVertexArray(_VAO);
@@ -100,13 +91,7 @@ void SkyBox::draw()
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
     glDepthFunc(GL_LESS); // set depth function back to default
-}
 
-// Método que realiza transformaciones, cálculos de cosas.
-void SkyBox::update()
-{
-    glDepthMask(GL_FALSE);
-    draw();
     glDepthMask(GL_TRUE);
 }
 

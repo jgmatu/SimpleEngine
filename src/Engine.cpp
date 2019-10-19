@@ -43,7 +43,7 @@ void Engine::initWindow() {
     // Setup a key callback. It will be called every time a key is pressed, repeated or released.
     glfwSetKeyCallback(_window, Keyboard::CallBackCharacters);
 
-    // Cursor pos input...11
+    // Cursor pos input...
 //    glfwSetCursorPosCallback(_window, Mouse::CursorPositionCallback);
 //    glfwSetMouseButtonCallback(_window, Mouse::MouseButtonCallback);
 
@@ -98,8 +98,8 @@ void Engine::init() {
 
 void Engine::update()
 {
-    _scene->draw();
     _scene->update();
+    _scene->draw();
 }
 
 void Engine::mainLoop() {

@@ -22,12 +22,12 @@ public:
     Material();
     ~Material();
 
-    void setProgram(Program *program);
-
     size_t sizeTextures();
     void setTexture(std::string id_mesh, Texture *texture);
 
     void setView(Camera *camera);
+    void setProgram(Program *program);
+
 
     void setParameter(std::string, glm::vec3);
     void setParameter(std::string, glm::mat4);

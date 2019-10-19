@@ -44,17 +44,6 @@ void GameObject::getCameras(std::vector<Camera*>& cameras)
     }
 };
 
-Component* GameObject::getComponent(CompType type) const {
-    Component* search = nullptr;
-
-    for (uint32_t i = 0; !search && i < _components.size(); ++i) {
-        if (_components[i]->_type == type) {
-            search = _components[i];
-        }
-    }
-    return search;
-}
-
 GameObject *GameObject::search(std::string id)
 {
     return this->_root->_search(id);
@@ -84,6 +73,11 @@ void GameObject::addComponent(Component *component) {
     _components.push_back(component);
 }
 
+void GameObject::addDrawer(Drawer *drawer)
+{
+    _drawers.push_back(drawer);
+}
+
 void GameObject::addChild(GameObject *gameObject) {
     if (search(gameObject->_id)) {
         std::cerr << "This gameObject already exist on the scene..." << '\n';
@@ -95,16 +89,27 @@ void GameObject::addChild(GameObject *gameObject) {
 
 }
 
+void GameObject::active()
+{
+    size_t drawers_size = _drawers.size();
+    size_t gameObjects_size = _gameObjects.size();
+
+    for (uint32_t i = 0; i < drawers_size; ++i) {
+        _drawers[i]->active();
+    }
+    for (uint32_t i = 0; i < gameObjects_size; ++i) {
+        _gameObjects[i]->active();
+    }
+}
+
 void GameObject::init()
 {
     size_t components_size  = _components.size();
+    size_t gameObjects_size = _gameObjects.size();
 
     for (uint32_t i = 0; i < components_size; ++i) {
         _components[i]->start();
     }
-
-    size_t gameObjects_size = _gameObjects.size();
-
     for (uint32_t i = 0; i < gameObjects_size; ++i) {
         _gameObjects[i]->init();
     }
@@ -115,12 +120,12 @@ void GameObject::init()
 // de la escena...
 void GameObject::draw()
 {
-    Component *component = this->getComponent(CompType::MESH_RENDER);
-
-    if (Render *render = dynamic_cast<Render*>(component)) {
-        render->setMatrixModel(_tf->_gModel);
-        render->setView(_camera);
-        render->update();
+    for (uint32_t i = 0; i < _drawers.size(); ++i) {
+        if (Render *render = dynamic_cast<Render*>(_drawers[i])) {
+            render->setMatrixModel(_tf->_gModel);
+        }
+        _drawers[i]->setView(_camera);
+        _drawers[i]->draw();
     }
 }
 
@@ -128,22 +133,14 @@ void GameObject::getQueueDrawGameObjects(
     std::map<float, std::vector<GameObject*>>& transparents,
     std::vector<GameObject*>& opaques)
 {
-    Component *component = getComponent(CompType::MESH_RENDER);
-
-    if (Render *render = dynamic_cast<Render*>(component)) {
-        if (render->isMaterialTransparent()) {
-            addTransparentQueue(transparents);
-        } else {
-            opaques.push_back(this);
+    for (uint32_t i = 0; i < _drawers.size(); ++i) {
+        if (Render *render = dynamic_cast<Render*>(_drawers[i])) {
+            if (render->isMaterialTransparent()) {
+                addTransparentQueue(transparents);
+            } else {
+                opaques.push_back(this);
+            }
         }
-    }
-
-    component = getComponent(CompType::SKYBOX);
-
-    // GameObject with a SkyBox...
-    if (SkyBox *skybox = dynamic_cast<SkyBox*>(component)) {
-        skybox->setView(_camera);
-        skybox->update();
     }
 
     for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
@@ -174,11 +171,7 @@ void GameObject::update()
     size_t size = _components.size();
 
     for (uint32_t i = 0; i < size; ++i) {
-        SkyBox *skybox = dynamic_cast<SkyBox*>(_components[i]);
-        Render *render = dynamic_cast<Render*>(_components[i]);
-        if (!skybox && !render) {
-            _components[i]->update();
-        }
+        _components[i]->update();
     }
 
     size = _gameObjects.size();
@@ -189,13 +182,14 @@ void GameObject::update()
 
 void GameObject::addLigths(std::vector<Light*> ligths)
 {
-    Component *component = this->getComponent(CompType::MESH_RENDER);
-
     this->_ligths = ligths;
 
-    if (Render *render = dynamic_cast<Render*>(component)) {
-        render->setLigths(ligths);
+    for (uint32_t i = 0; i < _drawers.size(); ++i) {
+        if (Render *render = dynamic_cast<Render*>(_drawers[i])) {
+            render->setLigths(ligths);
+        }
     }
+
     for (uint32_t i = 0; i < _gameObjects.size(); ++i) {
         _gameObjects[i]->addLigths(ligths);
     }
@@ -205,10 +199,9 @@ Light* GameObject::getLigth(std::string id)
 {
     Light *ligth = nullptr;
 
-    for (uint32_t i = 0; i < _ligths.size(); ++i) {
+    for (uint32_t i = 0; i < _ligths.size() && !ligth; ++i) {
         if (_ligths[i]->isLigth(id)) {
             ligth = _ligths[i];
-            break;
         }
     }
     return ligth;
@@ -261,10 +254,11 @@ std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
     os << gameObject._id << std::endl;
     os << gameObject._tf << std::endl;
 
-    Component *component = gameObject.getComponent(CompType::MESH_RENDER);
-    if (Render *render = dynamic_cast<Render*>(component)) {
-        (void) render;
-        std::cout << "Renderizable objetc" << '\n';
+    for (uint32_t i = 0; i < gameObject._drawers.size(); ++i) {
+        if (Render *render = dynamic_cast<Render*>(gameObject._drawers[i])) {
+            (void) render;
+            std::cout << "Renderizable object" << '\n';
+        }
     }
     return os;
 }
