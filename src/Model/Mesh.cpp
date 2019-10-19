@@ -130,9 +130,9 @@ void Mesh::draw() {
     }
     glBindVertexArray(_VAO);
     glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
 
     // Active default texture...
+    glBindVertexArray(0);
     glActiveTexture(GL_TEXTURE0);
 }
 
