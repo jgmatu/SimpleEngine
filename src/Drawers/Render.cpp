@@ -47,11 +47,14 @@ void Render::active()
 {
     if (_model && _material) {
         if (_material->sizeTextures() == 0) {
-            std::cerr << "Start Render: Doesn't have a model or material attached" << '\n';
+            std::cerr << "Active Render: Doesn't have textures attached" << '\n';
             return;
         }
         _model->setMaterial(_material);
         _model->active();
+    } else {
+        std::cerr << "Active Render: Doesn't have a model or material attached" << '\n';
+        throw;
     }
 }
 

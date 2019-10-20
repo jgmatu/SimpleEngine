@@ -16,6 +16,7 @@ Program::~Program() {
 void Program::active() {
     _programId = glCreateProgram();
     if (_programId == 0) {
+        std::cerr << "Failed to create program id" << '\n';
         throw ProgramException("Failed to create program id");
     }
     this->createVertexShader();
@@ -169,10 +170,9 @@ int Program::createShader(const std::string& sc, int shaderType) {
     int InfoLogLength;
     glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &InfoLogLength);
     if (InfoLogLength > 0) {
-        std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
-        glGetShaderInfoLog(shaderId, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-        std::cerr << "Shader Error Message: " << VertexShaderErrorMessage[0] << '\n';
-        throw ProgramException(std::string("Shader Error Message: " + VertexShaderErrorMessage[0] + '\n'));
+        char VertexShaderErrorMessage[InfoLogLength + 1];
+        glGetShaderInfoLog(shaderId, InfoLogLength, NULL, VertexShaderErrorMessage);
+        throw ProgramException(std::string("Shader Error Message: " + std::string(VertexShaderErrorMessage) + '\n'));
     }
     glAttachShader(_programId, shaderId);
     return shaderId;
