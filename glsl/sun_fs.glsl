@@ -79,7 +79,7 @@ void main()
 
     // phase 2: Point lights
     for (int i = 0; i < npoints; ++i) {
-        result += calcPointLight(points[i], norm, fragPos, viewDir);
+        result += calcPointLight(points[i], -norm, fragPos, viewDir);
     }
 
     fragColor = result;

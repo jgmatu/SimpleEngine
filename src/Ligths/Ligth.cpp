@@ -107,7 +107,7 @@ void Point::setPosition(glm::vec3 position)
 
 void Point::setDistance()
 {
-    glm::vec3 distance = _distances[20];
+    glm::vec3 distance = _distances[3250];
     std::string index = std::string(std::to_string(this->_index));
 
     this->_uniforms->setUniformFloat("points[" + index + "].constant", distance[0]);

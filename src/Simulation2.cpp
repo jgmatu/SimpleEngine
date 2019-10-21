@@ -178,7 +178,7 @@ GameObject* getEarth(std::string name)
     Sphere *sphere_basic = new Sphere(name);
 
     Material *material = new Material();
-    material->setProgram(new Program("../glsl/sun_vs.glsl", "../glsl/sun_fs.glsl"));
+    material->setProgram(new Program("../glsl/earth_vs.glsl", "../glsl/earth_fs.glsl"));
 
     Texture *diffuse = new Texture("earth_diffuse.jpg", "texture_diffuse");
     Texture *specular = new Texture("earth_diffuse.jpg", "texture_specular");
@@ -242,7 +242,7 @@ Scene* sceneSimulation2()
 {
     Scene *scene = new Scene();
 
-    scene->addLigth(ambientLigth());
+//    scene->addLigth(ambientLigth());
     scene->addLigth(sunLigth());
 
     scene->addChild(getSun("sun"));
