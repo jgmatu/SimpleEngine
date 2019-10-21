@@ -24,9 +24,11 @@ Model::~Model()
     std::map<std::string, Mesh*>::iterator it = _meshes.begin();
 
     while (it != _meshes.end()) {
+        delete it->second;
         it = _meshes.erase(it);
     }
     _meshes.clear();
+    std::cout << "Delete Model" << '\n';
 }
 
 void Model::loadModel(std::string path)

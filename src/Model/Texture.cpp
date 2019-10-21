@@ -60,11 +60,17 @@ uint32_t Texture::TextureCubeMap(std::vector<std::string> _faces) {
     glBindTexture(GL_TEXTURE_CUBE_MAP, _textureID);
 
     for (uint32_t i = 0; i < _faces.size(); ++i) {
+        std::ifstream file(_faces[i]);
+        if (file.fail()) {
+            std::cerr << "Texture file not exists : " << _faces[i] << '\n';
+            throw;
+        }
         unsigned char *data = stbi_load(_faces[i].c_str(), &width, &height, &nrChannels, 0);
         if (!data) {
             std::cerr << "Cubemap texture failed to load at path: " << _faces[i] << std::endl;
             continue;
         }
+        std::cerr << _faces[i] << " Loaded..." << nrChannels << '\n';
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,  0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         stbi_image_free(data);
     }

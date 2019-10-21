@@ -8,7 +8,7 @@
 #include "Drawers/Drawer.hpp"
 #include "Components/Camera.hpp"
 
-class SkyBox : public Component {
+class SkyBox : public Drawer {
 
 public:
 

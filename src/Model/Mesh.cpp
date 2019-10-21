@@ -27,6 +27,7 @@ Mesh::~Mesh()
     _indices.clear();
     _vertices.clear();
     _textures.clear();
+    std::cerr << "Delete Mesh" << '\n';
 }
 
 std::string Mesh::getId()

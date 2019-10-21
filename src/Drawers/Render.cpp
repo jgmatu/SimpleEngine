@@ -8,7 +8,8 @@ Render::Render()
 
 Render::~Render()
 {
-    ;
+    delete _material;
+    delete _model;
 }
 
 bool Render::isMaterialTransparent()
@@ -54,7 +55,6 @@ void Render::active()
         _model->active();
     } else {
         std::cerr << "Active Render: Doesn't have a model or material attached" << '\n';
-        throw;
     }
 }
 
@@ -62,7 +62,7 @@ void Render::draw()
 {
     if (!_model || !_material) {
         std::cerr << "Update Render: Error invalid material or model" << '\n';
-        throw;
+        return;
     }
     if (_material->sizeTextures() > 0) {
         _model->updateMaterial(_material);

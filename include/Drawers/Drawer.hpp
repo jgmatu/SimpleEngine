@@ -9,8 +9,7 @@ class Drawer {
 
 public:
 
-    Drawer() { ; };
-    ~Drawer() { ; };
+    virtual ~Drawer() { ; };
 
     virtual void active() = 0;
     virtual void draw() = 0;

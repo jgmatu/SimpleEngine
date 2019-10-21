@@ -110,6 +110,7 @@ public:
         if (Keyboard::instance->isKeyPressed("d")) {
             _gObject->translate(glm::vec3(0.1, 0.0, 0.0));
         }
+
         if (_gObject->distance("cube1") < 2.0) {
             std::cout << "Event near cubes: " << counter++ << '\n';
         }

@@ -21,6 +21,11 @@ GameObject::~GameObject() {
         delete _components[i];
     }
 
+    size = _drawers.size();
+    for (uint32_t i = 0; i < size; ++i) {
+        delete _drawers[i];
+    }
+
     size = _gameObjects.size();
     for (uint32_t i = 0; i < size; ++i) {
         delete _gameObjects[i];
@@ -75,6 +80,7 @@ void GameObject::addComponent(Component *component) {
 
 void GameObject::addDrawer(Drawer *drawer)
 {
+    std::cerr << "Drawer " << _id << '\n';
     _drawers.push_back(drawer);
 }
 
@@ -120,10 +126,12 @@ void GameObject::init()
 // de la escena...
 void GameObject::draw()
 {
+//    std::cerr << "Draws : " << _drawers.size() << '\n';
     for (uint32_t i = 0; i < _drawers.size(); ++i) {
         if (Render *render = dynamic_cast<Render*>(_drawers[i])) {
             render->setMatrixModel(_tf->_gModel);
         }
+//        std::cerr << "Draw... " << _id << '\n';
         _drawers[i]->setView(_camera);
         _drawers[i]->draw();
     }
@@ -140,6 +148,8 @@ void GameObject::getQueueDrawGameObjects(
             } else {
                 opaques.push_back(this);
             }
+        } else {
+            opaques.push_back(this);
         }
     }
 
@@ -252,7 +262,7 @@ void GameObject::setColor(glm::vec3 rgb)
 
 std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {
     os << gameObject._id << std::endl;
-    os << gameObject._tf << std::endl;
+    os << *gameObject._tf << std::endl;
 
     for (uint32_t i = 0; i < gameObject._drawers.size(); ++i) {
         if (Render *render = dynamic_cast<Render*>(gameObject._drawers[i])) {

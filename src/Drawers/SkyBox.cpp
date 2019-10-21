@@ -59,7 +59,8 @@ SkyBox::SkyBox(std::vector<std::string> faces, Program *program) :
 
 SkyBox::~SkyBox()
 {
-    ;
+    std::cerr << "Delete Skybox" << '\n';
+    delete _uniforms;
 }
 
 void SkyBox::active()
@@ -93,6 +94,8 @@ void SkyBox::draw()
     glDepthFunc(GL_LESS); // set depth function back to default
 
     glDepthMask(GL_TRUE);
+
+    std::cerr << "Draw.." << '\n';
 }
 
 void SkyBox::setView(Camera *camera)
