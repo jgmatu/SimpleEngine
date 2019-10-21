@@ -81,17 +81,49 @@ public:
     }
 };
 
-class Earth : public Component {
+class EarthAux : public Component {
 
 private:
 
-    bool reset;
+    float angle;
+
+public:
+
+    EarthAux()
+    {
+        angle = 0;
+    }
+
+    ~EarthAux()
+    {
+        ;
+    }
+
+    void start()
+    {
+        ;
+    }
+
+    void update()
+    {
+        _gObject->reset();
+        _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
+        _gObject->translate(glm::vec3(5.0, 0.0, 0.0));
+    }
+
+    void awakeStart()
+    {
+        ;
+    }
+};
+
+class Earth : public Component {
 
 public:
 
     Earth()
     {
-        reset = 0;
+        ;
     }
 
     ~Earth()
@@ -102,16 +134,12 @@ public:
     void start()
     {
         _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), -2.0);
-        _gObject->translate(glm::vec3(5.0, 0.0, 0.0));
         _gObject->scale(glm::vec3(0.25, 0.25, 0.25));
     }
 
     void update()
     {
-        _gObject->rotate(glm::vec3(0.0, 0.0, 1.0), -0.01);
-
-//        std::cerr << "distance : " << _gObject->distance("sun") << '\n';
-//        std::cerr << *_gObject << '\n';
+        _gObject->rotate(glm::vec3(0.0, 0.0, 1.0), 0.05);
     }
 
     void awakeStart()
@@ -129,12 +157,19 @@ GameObject* getStars(std::string name)
         "../skybox/ame_nebula/top.tga", "../skybox/ame_nebula/right.tga"
     };
     Program *program = new Program("../glsl/skybox_vs.glsl", "../glsl/skybox_fs.glsl");
-
     SkyBox *skybox = new SkyBox(faces, program);
 
     stars->addDrawer(skybox);
     stars->addComponent(new Stars());
     return stars;
+}
+
+GameObject *getEarthAux(std::string name)
+{
+    GameObject *earthAux = new GameObject(name);
+
+    earthAux->addComponent(new EarthAux());
+    return earthAux;
 }
 
 GameObject* getEarth(std::string name)
@@ -211,8 +246,11 @@ Scene* sceneSimulation2()
     scene->addLigth(sunLigth());
 
     scene->addChild(getSun("sun"));
-    scene->addChild(getEarth("earth"));
     scene->addChild(getStars("stars"));
+
+    GameObject *earthAux = getEarthAux("earthAux");
+    scene->addChild(earthAux);
+    earthAux->addChild(getEarth("earth"));
 
     return scene;
 }

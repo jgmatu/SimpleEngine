@@ -37,6 +37,8 @@ public:
     void translate(glm::vec3 vec3);
     void rotate(glm::vec3 vec3, glm::quat quad);
     void rotate(glm::vec3 vec3, float angle);
+    void reset();
+
     float distance(std::string id);
 
     void addLigths(std::vector<Light*> ligths);

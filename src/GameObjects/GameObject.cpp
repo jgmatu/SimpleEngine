@@ -80,7 +80,6 @@ void GameObject::addComponent(Component *component) {
 
 void GameObject::addDrawer(Drawer *drawer)
 {
-    std::cerr << "Drawer " << _id << '\n';
     _drawers.push_back(drawer);
 }
 
@@ -121,17 +120,12 @@ void GameObject::init()
     }
 }
 
-// Obtener la componente camara activa... Camara activa de todos los gameObject
-// de la escena... (Escena...) dibujar todos los gameObject respecto a la camara activa
-// de la escena...
 void GameObject::draw()
 {
-//    std::cerr << "Draws : " << _drawers.size() << '\n';
     for (uint32_t i = 0; i < _drawers.size(); ++i) {
         if (Render *render = dynamic_cast<Render*>(_drawers[i])) {
             render->setMatrixModel(_tf->_gModel);
         }
-//        std::cerr << "Draw... " << _id << '\n';
         _drawers[i]->setView(_camera);
         _drawers[i]->draw();
     }
@@ -230,6 +224,11 @@ void GameObject::scale(glm::vec3 vec3)
 void GameObject::translate(glm::vec3 vec3)
 {
     this->_tf->_model = glm::translate(this->_tf->_model, vec3);
+}
+
+void GameObject::reset()
+{
+    this->_tf->_model = glm::mat4(1.0);
 }
 
 void GameObject::rotate(glm::vec3 vec3, glm::quat quad)

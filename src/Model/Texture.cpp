@@ -70,7 +70,6 @@ uint32_t Texture::TextureCubeMap(std::vector<std::string> _faces) {
             std::cerr << "Cubemap texture failed to load at path: " << _faces[i] << std::endl;
             continue;
         }
-        std::cerr << _faces[i] << " Loaded..." << nrChannels << '\n';
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,  0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         stbi_image_free(data);
     }
