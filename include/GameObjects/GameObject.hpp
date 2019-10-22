@@ -37,7 +37,7 @@ public:
     void translate(glm::vec3 vec3);
     void rotate(glm::vec3 vec3, glm::quat quad);
     void rotate(glm::vec3 vec3, float angle);
-    void reset();
+    GameObject* search(std::string id);
 
     float distance(std::string id);
 
@@ -48,6 +48,8 @@ public:
     void setColor(glm::vec3 rgb);
 
     friend std::ostream& operator<<(std::ostream&, const GameObject& gameObject);
+
+    Transform *_tf;
 
 protected:
 
@@ -60,7 +62,6 @@ protected:
     std::vector<GameObject*> _gameObjects;
     std::vector<Light*> _ligths;
 
-    Transform *_tf;
     Camera *_camera;
 
 private:
@@ -83,7 +84,6 @@ private:
     );
     void addTransparentQueue(std::map<float, std::vector<GameObject*>>& transparents);
 
-    GameObject* search(std::string id);
     GameObject* _search(std::string id);
 
     friend class Scene;

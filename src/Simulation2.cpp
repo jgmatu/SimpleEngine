@@ -106,7 +106,7 @@ public:
 
     void update()
     {
-        _gObject->reset();
+        _gObject->_tf->_model = _gObject->search("sun")->_tf->_gModel;
         _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
         _gObject->translate(glm::vec3(5.0, 0.0, 0.0));
     }
@@ -148,6 +148,72 @@ public:
     }
 };
 
+class MoonAux : public Component {
+
+private:
+    float angle;
+
+public:
+
+    MoonAux()
+    {
+        angle = 0;
+    }
+
+    ~MoonAux()
+    {
+
+    }
+
+    void start()
+    {
+        ;
+    }
+
+    void update()
+    {
+        _gObject->_tf->_model = _gObject->search("sun")->_tf->_gModel;
+        _gObject->rotate(glm::vec3(0.0, 1.0, 1.0), std::fmod(angle += 0.05, (2.0f * M_PI)));
+        _gObject->translate(glm::vec3(1.0, 0.0, 0.0));
+    }
+
+    void awakeStart()
+    {
+        ;
+    }
+
+};
+
+class Moon : public Component {
+
+public:
+
+    Moon()
+    {
+        ;
+    }
+
+    ~Moon()
+    {
+        ;
+    }
+
+    void start()
+    {
+        _gObject->scale(glm::vec3(0.10, 0.10, 0.10));
+    }
+
+    void update()
+    {
+        _gObject->rotate(glm::vec3(0.0, 0.0, 1.0), 0.05);
+    }
+
+    void awakeStart()
+    {
+        ;
+    }
+};
+
 GameObject* getStars(std::string name)
 {
     GameObject *stars = new GameObject(name);
@@ -170,6 +236,14 @@ GameObject *getEarthAux(std::string name)
 
     earthAux->addComponent(new EarthAux());
     return earthAux;
+}
+
+GameObject *getMoonAux(std::string name)
+{
+    GameObject *moonAux = new GameObject(name);
+
+    moonAux->addComponent(new MoonAux());
+    return moonAux;
 }
 
 GameObject* getEarth(std::string name)
@@ -220,6 +294,30 @@ GameObject* getSun(std::string name)
     return sphere;
 }
 
+GameObject* getMoon(std::string name)
+{
+    GameObject *moon = new GameObject(name);
+    Sphere *sphere_basic = new Sphere(name);
+
+    Material *material = new Material();
+    material->setProgram(new Program("../glsl/earth_vs.glsl", "../glsl/earth_fs.glsl"));
+
+    Texture *diffuse = new Texture("moon.png", "texture_diffuse");
+    Texture *specular = new Texture("moon.png", "texture_specular");
+
+    material->setTexture(name, diffuse);
+    material->setTexture(name, specular);
+
+    Render *render = new Render();
+
+    render->setMaterial(material);
+    render->setModel(new Model(sphere_basic->getMesh()));
+
+    moon->addDrawer(render);
+    moon->addComponent(new Moon());
+    return moon;
+}
+
 Light* sunLigth()
 {
     Point *p = new Point("p1");
@@ -242,15 +340,18 @@ Scene* sceneSimulation2()
 {
     Scene *scene = new Scene();
 
-//    scene->addLigth(ambientLigth());
     scene->addLigth(sunLigth());
-
-    scene->addChild(getSun("sun"));
-    scene->addChild(getStars("stars"));
 
     GameObject *earthAux = getEarthAux("earthAux");
     scene->addChild(earthAux);
     earthAux->addChild(getEarth("earth"));
+
+    GameObject *moonAux = getMoonAux("moonAux");
+    earthAux->addChild(moonAux);
+    moonAux->addChild(getMoon("moon"));
+
+    scene->addChild(getSun("sun"));
+    scene->addChild(getStars("stars"));
 
     return scene;
 }

@@ -84,7 +84,7 @@ void GameObject::addDrawer(Drawer *drawer)
 }
 
 void GameObject::addChild(GameObject *gameObject) {
-    if (search(gameObject->_id)) {
+    if (this->_root && search(gameObject->_id)) {
         std::cerr << "This gameObject already exist on the scene..." << '\n';
         throw;
     }
@@ -224,11 +224,6 @@ void GameObject::scale(glm::vec3 vec3)
 void GameObject::translate(glm::vec3 vec3)
 {
     this->_tf->_model = glm::translate(this->_tf->_model, vec3);
-}
-
-void GameObject::reset()
-{
-    this->_tf->_model = glm::mat4(1.0);
 }
 
 void GameObject::rotate(glm::vec3 vec3, glm::quat quad)
