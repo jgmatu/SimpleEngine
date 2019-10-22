@@ -52,15 +52,15 @@ struct Spot {
 };
 
 
-#define MAX_POINT_LIGHTS 255
 
 uniform Material material;
 
-uniform int npoints;
-uniform Point points[MAX_POINT_LIGHTS];
+// #define MAX_POINT_LIGHTS 255
+// uniform int npoints;
+// uniform Point points[MAX_POINT_LIGHTS];
+// uniform Spot spot;
 
 uniform Directional directional;
-uniform Spot spot;
 
 // Viewer position...
 uniform vec3 viewPos;
@@ -87,12 +87,12 @@ void main()
     vec4 result = vec4(0.0, 0.0, 0.0, 0.0);
 
     // phase 1: Directional lights
-    result = calcDirLight(directional, norm, viewDir);
+    result += calcDirLight(directional, norm, viewDir);
 
     // phase 2: Point lights
-    for (int i = 0; i < npoints; ++i) {
-        result += calcPointLight(points[i], norm, fragPos, viewDir);
-    }
+//    for (int i = 0; i < npoints; ++i) {
+//        result += calcPointLight(points[i], norm, fragPos, viewDir);
+//    }
 
     // phase 3: Spot light ...
 //    result += calcSpotLight(spot, norm, fragPos, viewDir);
@@ -106,7 +106,7 @@ vec4 calcDirLight(Directional directional, vec3 normal, vec3 viewDir)
     vec3 lightDir = normalize(-directional.direction);
 
     // Diffuse shading...
-    float diff = max(dot(normal, lightDir), 0.0);
+    float diff = max(dot(normal, lightDir), 0.1);
 
     // Specular shading...
     vec3 reflectDir = reflect(-lightDir, normal);

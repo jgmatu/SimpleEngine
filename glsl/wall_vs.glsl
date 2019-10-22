@@ -12,7 +12,7 @@ uniform mat4 model;
 out vec3 normal;
 out vec3 fragPos;
 out vec2 texCoord;
-out mat3 TBN;
+// out mat3 TBN;
 
 void main()
 {
@@ -23,7 +23,7 @@ void main()
     texCoord = aTexCoords;
     normal = mat3(transpose(inverse(model))) * aNormal;
     fragPos = vec3(model * vec4(aPos, 1.0));
-    TBN = mat3(T, B, N);
+//    TBN = mat3(T, B, N);
 
     gl_Position = projection * view * model * vec4(aPos, 1.0);
 }

@@ -6,7 +6,7 @@ int main(int argc, char* argv[]) {
     Engine *engine = nullptr;
 
     try {
-        Scene *scene = sceneSimulation2();
+        Scene *scene = sceneSimulation1();
         engine = new Engine(scene);
         engine->init();
         engine->mainLoop();

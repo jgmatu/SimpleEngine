@@ -173,7 +173,38 @@ public:
 
     void start()
     {
-        _gObject->translate(glm::vec3(3.0, 0.0, -5.0));
+        _gObject->translate(glm::vec3(3.0, 0.5, -5.0));
+    }
+
+    void update()
+    {
+        ;
+    }
+
+    void awakeStart()
+    {
+        ;
+    }
+};
+
+class Floor : public Component {
+public:
+
+    Floor()
+    {
+        ;
+    }
+
+    ~Floor()
+    {
+        ;
+    }
+
+    void start()
+    {
+        _gObject->translate(glm::vec3(0.0, -0.5, -5.0));
+        _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), -1.5);
+        _gObject->scale(glm::vec3(10.0, 10.0, 10.0));
     }
 
     void update()
@@ -226,6 +257,34 @@ GameObject* getBasicSphere(std::string name)
     return sphere;
 }
 
+GameObject* getPlaneToShadows(std::string name)
+{
+    GameObject* floor = new GameObject(name);
+    Plane *plane = new Plane(name);
+
+    Material *material = new Material();
+    material->setProgram(new Program("../glsl/wall_vs.glsl", "../glsl/wall_fs.glsl"));
+
+    Texture *diffuse = new Texture("brickwall.jpg", "texture_diffuse");
+    Texture *specular = new Texture("brickwall.jpg", "texture_specular");
+    Texture *normal = new Texture("brickwall_normal.jpg", "texture_normal");
+
+    material->setTexture(name, diffuse);
+    material->setTexture(name, specular);
+    material->setTexture(name, normal);
+
+    Render *render = new Render();
+
+    render->setMaterial(material);
+    render->setModel(new Model(plane->getMesh()));
+
+    floor->addDrawer(render);
+    floor->addComponent(new Floor());
+
+    return floor;
+}
+
+
 GameObject* getGlass(std::string name)
 {
     GameObject* glass = new GameObject(name);
@@ -273,25 +332,10 @@ std::vector<Light*> getLigthPoints()
 
 void addLigths(Scene *scene)
 {
-    std::vector<Light*> points = getLigthPoints();
-
-    for (uint32_t i = 0; i < points.size(); ++i) {
-        scene->addLigth(points[i]);
-    }
-
-    Spot *s = new Spot("s", 2.5, 7.5);
-
-    s->setDistance();
-    s->setIntense(1.0f);
-    s->setPosition(glm::vec3(0, 0, 2.0f));
-    s->setDirection(glm::vec3(0.0f, 0.0f, -1.0));
-
-//    scene->addLigth(s);
-
     Directional *d = new Directional("d");
     d->setIntense(1.0);
-    d->setDirection(glm::vec3(-1.0, 0, -1.0));
-//    scene->addLigth(d);
+    d->setDirection(glm::vec3(-1.0, -1.0, -1.0));
+    scene->addLigth(d);
 }
 
 Scene* sceneSimulation1()
@@ -310,12 +354,12 @@ Scene* sceneSimulation1()
     GameObject *sphere = getBasicSphere("basic");
     sphere->addComponent(new ChangeColor());
 
-//    scene->addChild(sphere);
-
     GameObject *glass = getGlass("glass");
     glass->addComponent(new Glass());
 
     scene->addChild(glass);
+
+    scene->addChild(getPlaneToShadows("plane"));
 
     addLigths(scene);
     return scene;
