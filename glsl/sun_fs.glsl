@@ -7,6 +7,9 @@ struct Material {
 
     sampler2D texture_specular0;
     sampler2D texture_specular1;
+
+    sampler2D texture_normal0;
+    sampler2D texture_normal1;
 };
 
 struct Directional {
@@ -61,6 +64,8 @@ uniform vec3 viewPos;
 in vec3 normal;
 in vec3 fragPos;
 in vec2 texCoord;
+in mat3 TBN;
+
 
 // Final fragment...
 out vec4 fragColor;
@@ -70,7 +75,9 @@ vec4 calcDirLight(Directional light, vec3 normal, vec3 viewDir);
 
 void main()
 {
-    vec3 norm = normalize(normal);
+    vec3 _normal = texture(material.texture_normal0, texCoord).rgb;
+    _normal = normalize(normal * 2.0 - 1.0);
+    vec3 norm = normalize(_normal);
     vec3 viewDir = normalize(viewPos - fragPos);
     vec4 result = vec4(0.0, 0.0, 0.0, 0.0);
 
@@ -79,9 +86,8 @@ void main()
 
     // phase 2: Point lights
     for (int i = 0; i < npoints; ++i) {
-        result += calcPointLight(points[i], -norm, fragPos, viewDir);
+        result += calcPointLight(points[i], norm, fragPos, viewDir);
     }
-
     fragColor = result;
 }
 
@@ -91,7 +97,7 @@ vec4 calcDirLight(Directional directional, vec3 normal, vec3 viewDir)
     vec3 lightDir = normalize(-directional.direction);
 
     // Diffuse shading...
-    float diff = max(dot(normal, lightDir), 0.0);
+    float diff = max(dot(normal, lightDir), 0.5);
 
     // Specular shading...
     vec3 reflectDir = reflect(-lightDir, normal);
@@ -108,7 +114,7 @@ vec4 calcPointLight(Point point, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 lightDir = normalize(point.position - fragPos);
 
     // diffuse shading...
-    float diff = max(dot(normal, lightDir), 0.0);
+    float diff = max(dot(normal, lightDir), 1.0);
 
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);

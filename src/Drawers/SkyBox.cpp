@@ -65,6 +65,7 @@ SkyBox::~SkyBox()
 
 void SkyBox::active()
 {
+    std::cerr << "Active Skybox" << '\n';
     _program->active();
 
     glGenVertexArrays(1, &_VAO);

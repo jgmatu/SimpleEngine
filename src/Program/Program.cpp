@@ -16,8 +16,7 @@ Program::~Program() {
 void Program::active() {
     _programId = glCreateProgram();
     if (_programId == 0) {
-        std::cerr << "Failed to create program id" << '\n';
-        throw ProgramException("Failed to create program id");
+        throw ProgramException("Failed to create program id : " + _programId);
     }
     this->createVertexShader();
     this->createFragmentShader();
@@ -80,12 +79,14 @@ void Program::use() {
 void Program::createVertexShader() {
     const std::string sc = getDataFile(this->_vshader);
 
+    std::cerr << "shader : " << _vshader << '\n';
     _vertexShaderId = createShader(sc, GL_VERTEX_SHADER);
 }
 
 void Program::createFragmentShader() {
     const std::string sc = getDataFile(this->_fshader);
 
+    std::cerr << "shader : " << _fshader << '\n';
     _fragmentShaderId = createShader(sc, GL_FRAGMENT_SHADER);
 }
 
@@ -112,7 +113,6 @@ void Program::createUniform(std::string uniformName) {
         if (uniformLocation == GL_INVALID_OPERATION) {
             err += "Invalid operation";
         }
-        std::cerr << "Could not find uniform to create: " << uniformName << " " << err << '\n';
         throw ProgramException("Could not find uniform to create: " + uniformName + " " + err);
     }
     _uniforms.insert(std::pair<std::string, int>(uniformName, uniformLocation));
@@ -160,7 +160,6 @@ int Program::createShader(const std::string& sc, int shaderType) {
 
     int shaderId = glCreateShader(shaderType);
     if (shaderId == 0) {
-        std::cerr << "Program error : " << "Error creating shader. Type: " << shaderType << '\n';
         throw ProgramException("Error creating shader. Type: " + shaderType);
     }
     glShaderSource(shaderId, 1, &_sc, &size);
@@ -180,7 +179,7 @@ int Program::createShader(const std::string& sc, int shaderType) {
 
 void Program::link() {
     int params;
-    char inflog[1024];
+    char inflog[32 * 1024];
     int size;
 
     glLinkProgram(_programId);

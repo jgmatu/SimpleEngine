@@ -31,15 +31,14 @@ struct ProgramException : public std::exception {
     }
 
     const char* what() const throw () {
-        const int MAX_STR = 255;
+        const int MAX_STR = 32 * 1024;
         char *data = (char*) malloc(MAX_STR * sizeof(char));
 
         if (!data) {
             fprintf(stderr, "%s\n", strerror(errno));
             return NULL;
         }
-        strncpy(data, std::string("Program error: " + _msg).c_str(), MAX_STR);
-        sprintf(data, "%s", data);
+        strncpy(data, std::string("Program error...\n " + _msg).c_str(), MAX_STR);
         return data;
     }
 };

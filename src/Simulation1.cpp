@@ -123,6 +123,38 @@ public:
 
 };
 
+class Nanosuit : public Component {
+
+public:
+
+    Nanosuit()
+    {
+        ;
+    }
+
+    ~Nanosuit()
+    {
+
+    }
+
+    void start()
+    {
+        _gObject->translate(glm::vec3(0.0, 0.3, 0.0));
+        _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), 2.0);
+    }
+
+    void update()
+    {
+        ;
+    }
+
+    void awakeStart()
+    {
+        ;
+    }
+
+};
+
 class ChangeColor : public Component {
 
 public:
@@ -221,20 +253,14 @@ public:
 GameObject* getCube(std::string name)
 {
     GameObject *cube = new GameObject(name);
-    Cube *geometry_cube = new Cube(name);
+    Model *plane = new Model("../models/Rubix/model/obj/RubixCube.obj");
 
     Material *material = new Material();
     material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
-    Texture *diffuse = new Texture("container2.png", "texture_diffuse");
-    material->setTexture(name, diffuse);
-
-    Texture *specular = new Texture("container2_specular.png", "texture_specular");
-    material->setTexture(name, specular);
-
     Render *render = new Render();
     render->setMaterial(material);
-    render->setModel(new Model(geometry_cube->getMesh()));
+    render->setModel(plane);
 
     cube->addDrawer(render);
     return cube;
@@ -335,6 +361,7 @@ void addLigths(Scene *scene)
     Directional *d = new Directional("d");
     d->setIntense(1.0);
     d->setDirection(glm::vec3(-1.0, -1.0, -1.0));
+//    d->setDirection(glm::vec3(0.0, 0.0, -1.0));
     scene->addLigth(d);
 }
 
@@ -342,25 +369,26 @@ Scene* sceneSimulation1()
 {
     Scene *scene = new Scene();
 
-    GameObject *cube1 = getCube("cube1");
-    cube1->addComponent(new Example());
+    addLigths(scene);
 
-    GameObject *cube2 = getCube("cube2");
-    cube2->addComponent(new ExampleMove());
+    GameObject *cube1 = getCube("cube1");
+    cube1->addComponent(new Nanosuit());
+
+//    GameObject *cube2 = getCube("cube2");
+//    cube2->addComponent(new ExampleMove());
 
     scene->addChild(cube1);
-    cube1->addChild(cube2);
+//    cube1->addChild(cube2);
 
-    GameObject *sphere = getBasicSphere("basic");
-    sphere->addComponent(new ChangeColor());
+//    GameObject *sphere = getBasicSphere("basic");
+//    sphere->addComponent(new ChangeColor());
 
-    GameObject *glass = getGlass("glass");
-    glass->addComponent(new Glass());
+//    GameObject *glass = getGlass("glass");
+//    glass->addComponent(new Glass());
 
-    scene->addChild(glass);
+//    scene->addChild(glass);
 
     scene->addChild(getPlaneToShadows("plane"));
 
-    addLigths(scene);
     return scene;
 }

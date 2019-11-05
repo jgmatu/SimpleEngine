@@ -47,7 +47,7 @@ void Render::setLigths(std::vector<Light*> ligths)
 void Render::active()
 {
     if (_model && _material) {
-        if (_material->sizeTextures() == 0) {
+        if (_material->sizeTextures() == 0 && !_model->isLoadModel()) {
             std::cerr << "Active Render: Doesn't have textures attached" << '\n';
             return;
         }

@@ -66,7 +66,7 @@ public:
 
     void start()
     {
-        _gObject->translate(glm::vec3(0.0, 0.0, 0.0));
+//        _gObject->scale(glm::vec3(0.001, 0.001, 0.001));
     }
 
     void update()
@@ -133,13 +133,14 @@ public:
 
     void start()
     {
-        _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), -2.0);
         _gObject->scale(glm::vec3(0.25, 0.25, 0.25));
+        _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), (2.0f * M_PI * 23.0f) / 360.0f);
+//        _gObject->rotate(glm::vec3(0.0, 0.0, 1.0), 2.0f * M_PI);
     }
 
     void update()
     {
-        _gObject->rotate(glm::vec3(0.0, 0.0, 1.0), 0.05);
+        _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), -0.01);
     }
 
     void awakeStart()
@@ -248,28 +249,40 @@ GameObject *getMoonAux(std::string name)
 
 GameObject* getEarth(std::string name)
 {
-    GameObject *sphere = new GameObject(name);
-    Sphere *sphere_basic = new Sphere(name);
+    GameObject *earth = new GameObject(name);
+    Model *earth_model = new Model("../models/earth/sphere.obj");
 
     Material *material = new Material();
-    material->setProgram(new Program("../glsl/earth_vs.glsl", "../glsl/earth_fs.glsl"));
-
-    Texture *diffuse = new Texture("earth_diffuse.jpg", "texture_diffuse");
-    Texture *specular = new Texture("earth_diffuse.jpg", "texture_specular");
-
-    material->setTexture(name, diffuse);
-    material->setTexture(name, specular);
+    material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
     Render *render = new Render();
-
     render->setMaterial(material);
-    render->setModel(new Model(sphere_basic->getMesh()));
+    render->setModel(earth_model);
 
-    sphere->addDrawer(render);
-    sphere->addComponent(new Earth());
-    return sphere;
+    earth->addComponent(new Earth());
+    earth->addDrawer(render);
+
+    return earth;
 }
 
+GameObject* getSun(std::string name)
+{
+    GameObject *sun = new GameObject(name);
+
+    Material *material = new Material();
+    material->setProgram(new Program("../glsl/sun_vs.glsl", "../glsl/sun_fs.glsl"));
+
+    Render *render = new Render();
+    render->setMaterial(material);
+    render->setModel(new Model("../models/sun/sphere.obj"));
+
+    sun->addDrawer(render);
+    sun->addComponent(new Sun());
+
+    return sun;
+}
+
+/*
 GameObject* getSun(std::string name)
 {
     GameObject *sphere = new GameObject(name);
@@ -293,28 +306,23 @@ GameObject* getSun(std::string name)
     sphere->addComponent(new Sun());
     return sphere;
 }
+*/
 
 GameObject* getMoon(std::string name)
 {
     GameObject *moon = new GameObject(name);
-    Sphere *sphere_basic = new Sphere(name);
+    Model *moon_model = new Model("../models/moon/sphere.obj");
 
     Material *material = new Material();
-    material->setProgram(new Program("../glsl/earth_vs.glsl", "../glsl/earth_fs.glsl"));
-
-    Texture *diffuse = new Texture("moon.png", "texture_diffuse");
-    Texture *specular = new Texture("moon.png", "texture_specular");
-
-    material->setTexture(name, diffuse);
-    material->setTexture(name, specular);
+    material->setProgram(new Program("../glsl/vertex.glsl", "../glsl/fragment.glsl"));
 
     Render *render = new Render();
-
     render->setMaterial(material);
-    render->setModel(new Model(sphere_basic->getMesh()));
+    render->setModel(moon_model);
 
-    moon->addDrawer(render);
     moon->addComponent(new Moon());
+    moon->addDrawer(render);
+
     return moon;
 }
 

@@ -1,10 +1,13 @@
 #include "Model/Model.hpp"
+#include <iomanip>      // std::setprecision
 
 Model::Model() :
     _meshes(),
-    _directory()
+    _directory(),
+    _path("")
 {
     _material = nullptr;
+    _id_mesh = 0;
 }
 
 Model::Model(Mesh *mesh) :
@@ -16,7 +19,7 @@ Model::Model(Mesh *mesh) :
 Model::Model(std::string path) :
     Model::Model()
 {
-    loadModel(path);
+    _path = path;
 }
 
 Model::~Model()
@@ -34,10 +37,11 @@ Model::~Model()
 void Model::loadModel(std::string path)
 {
     Assimp::Importer import;
-    const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate |
+        aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiTextureType_HEIGHT);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-        std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
+        std::cerr << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
         throw;
     }
     _directory = path.substr(0, path.find_last_of('/'));
@@ -49,7 +53,7 @@ void Model::processNode(aiNode *node, const aiScene *scene)
     // Process all the node's meshes (if any)
     for (uint32_t i = 0; i < node->mNumMeshes; ++i) {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        this->addMesh(processMesh(std::to_string(i), mesh, scene));
+        this->addMesh(processMesh(std::to_string(_id_mesh++), mesh, scene));
     }
     // Then do the same for each of its children
     for (uint32_t i = 0; i < node->mNumChildren; ++i) {
@@ -67,19 +71,42 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
     std::vector<unsigned> indices;
     std::vector<Texture*> textures;
 
+//    std::cout << "mesh->mNumVertices: " << mesh->mNumVertices << '\n';
     for (uint32_t i = 0; i < mesh->mNumVertices; ++i) {
         Vertex vertex;
 
-        glm::vec3 vector;
-        vector.x = mesh->mVertices[i].x;
-        vector.y = mesh->mVertices[i].y;
-        vector.z = mesh->mVertices[i].z;
+        glm::vec3 vector(1.0);
+
+        if (mesh->mVertices) {
+            vector.x = mesh->mVertices[i].x;
+            vector.y = mesh->mVertices[i].y;
+            vector.z = mesh->mVertices[i].z;
+        } else {
+            std::cerr << "/* error message */" << '\n';
+        }
         vertex.Position = vector;
 
-        vector.x = mesh->mNormals[i].x;
-        vector.y = mesh->mNormals[i].y;
-        vector.z = mesh->mNormals[i].z;
-        vertex.Normal = vector;
+//        std::cout << "v : " << std::fixed << vector.x << " " << vector.y << " " << vector.z << '\n';
+
+        if (mesh->mNormals) {
+            vector.x = mesh->mNormals[i].x;
+            vector.y = mesh->mNormals[i].y;
+            vector.z = mesh->mNormals[i].z;
+            vertex.Normal = glm::normalize(vector);
+        } else {
+            std::cerr << "/* error message */" << '\n';
+        }
+//        std::cout << "vn : " << std::fixed << vector.x << " "  << vector.y << " " << vector.z << '\n';
+
+        if (mesh->mTangents) {
+            vector.x = mesh->mTangents[i].x;
+            vector.y = mesh->mTangents[i].y;
+            vector.z = mesh->mTangents[i].z;
+            vertex.Tangent = glm::normalize(vector);
+        } else {
+            std::cerr << "/* error message */" << '\n';
+        }
+//      std::cerr << "Tangent : " << vector.x << " " << vector.y << " " << vector.z << '\n';
 
         if (mesh->mTextureCoords[0])  {
             // does the mesh contain texture coordinates?
@@ -87,6 +114,7 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
             vec.x = mesh->mTextureCoords[0][i].x;
             vec.y = mesh->mTextureCoords[0][i].y;
             vertex.TexCoords = vec;
+//            std::cout << "vt " << vec.x << " " << vec.y << '\n';
         } else {
             vertex.TexCoords = glm::vec2(0.0f, 0.0f);
         }
@@ -97,12 +125,18 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
     // process indices
     for (uint32_t i = 0; i < mesh->mNumFaces; ++i) {
         aiFace face = mesh->mFaces[i];
+//        std::cout << "f ";
         for(uint32_t j = 0; j < face.mNumIndices; ++j) {
+            if (j != 0) {
+//                std::cout << "/";
+            }
+//            std::cout <<  face.mIndices[j];
             indices.push_back(face.mIndices[j]);
         }
+//        std::cout << '\n';
     }
 
-    // process material
+    // Process material.
     if (mesh->mMaterialIndex >= 0) {
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 
@@ -111,12 +145,16 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
 
         std::vector<Texture*> specularMaps = loadTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
+        std::vector<Texture*> normalMaps = loadTextures(material, aiTextureType_HEIGHT, "texture_normal");
+        textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
     }
 
     // Add primitive textures for complex models...
     Mesh *mesh_engine = new Mesh(id_mesh, vertices, indices);
     for (uint32_t i = 0; i < textures.size(); ++i) {
-        mesh_engine->setTexture(textures[i]);
+        std::cerr << "Model add texture: " << _directory + "/" << textures[i]->_filename << std::endl;
+        _material->setTexture(id_mesh, textures[i]);
     }
     return mesh_engine;
 }
@@ -156,12 +194,19 @@ void Model::updateMaterial(Material *material)
     _material->update(material);
 }
 
+bool Model::isLoadModel()
+{
+    return _path.compare("") != 0;
+}
+
 void Model::active() {
     if (!_material) {
         std::cerr << "active: No material load on model!" << '\n';
         throw;
     }
-
+    if (isLoadModel()) {
+        loadModel(_path);
+    }
     std::map<std::string, Mesh*>::iterator it;
     for (it = _meshes.begin(); it != _meshes.end(); ++it) {
         Mesh *mesh = it->second;

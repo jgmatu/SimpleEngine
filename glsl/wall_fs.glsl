@@ -60,14 +60,13 @@ uniform Directional directional;
 uniform Point points[NR_POINT_LIGHTS];
 uniform Spot spot;
 
-// Viewer position...
-uniform vec3 viewPos;
-
 // Parametros del programa   de vertices del modelo...
-in vec3 normal;
-in vec3 fragPos;
+
 in vec2 texCoord;
-in mat3 TBN;
+in vec3 TangentLightPos;
+in vec3 TangentViewPos;
+in vec3 TangentFragPos;
+in vec3 normal;
 
 // Final fragment...
 out vec4 fragColor;
@@ -84,16 +83,14 @@ void main()
 {
     vec3 norm = texture(material.texture_normal0, texCoord).rgb;
     norm = normalize(norm * 2.0 - 1.0);
-//    norm = normalize(TBN * norm);
 
-    vec4 result = vec4(0, 0, 0, 0);
-    vec3 viewDir = normalize(viewPos - fragPos);
+    vec3 viewDir = normalize(TangentViewPos - TangentFragPos);
+    vec4 result = vec4(0.0, 0.0, 0.0, 0.0);
 
     // phase 1: Directional lights
     result = calcDirLight(directional, norm, viewDir);
     fragColor = result;
 }
-
 
 vec4 calcDirLight(Directional light, vec3 normal, vec3 viewDir)
 {
@@ -101,7 +98,7 @@ vec4 calcDirLight(Directional light, vec3 normal, vec3 viewDir)
     vec3 lightDir = normalize(-light.direction);
 
     // Diffuse shading...
-    float diff = max(dot(normal, lightDir), 0.1);
+    float diff = max(dot(normal, lightDir), 0.0);
 
     // Specular shading...
     vec3 reflectDir = reflect(-lightDir, normal);
@@ -113,7 +110,7 @@ vec4 calcDirLight(Directional light, vec3 normal, vec3 viewDir)
 
 //    return ambient + diffuse + specular;
 //    return ambient + diffuse;
-    return diffuse + spec;
+    return diffuse + specular;
 }
 
 vec3 calcPointLight(Point point, vec3 normal, vec3 fragPos, vec3 viewDir)
