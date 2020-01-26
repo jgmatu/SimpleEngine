@@ -84,7 +84,7 @@ void Material::setOpaque()
     this->_transparent = false;
 }
 
-bool Material::isTransparent()
+bool Material::isTransparent() const
 {
     return this->_transparent;
 }

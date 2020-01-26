@@ -71,7 +71,7 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
     std::vector<unsigned> indices;
     std::vector<Texture*> textures;
 
-//    std::cout << "mesh->mNumVertices: " << mesh->mNumVertices << '\n';
+    std::cout << "mesh->mNumVertices: " << mesh->mNumVertices << '\n';
     for (uint32_t i = 0; i < mesh->mNumVertices; ++i) {
         Vertex vertex;
 
@@ -86,7 +86,7 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
         }
         vertex.Position = vector;
 
-//        std::cout << "v : " << std::fixed << vector.x << " " << vector.y << " " << vector.z << '\n';
+        std::cout << "v : " << std::fixed << vector.x << " " << vector.y << " " << vector.z << '\n';
 
         if (mesh->mNormals) {
             vector.x = mesh->mNormals[i].x;
@@ -96,7 +96,7 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
         } else {
             std::cerr << "/* error message */" << '\n';
         }
-//        std::cout << "vn : " << std::fixed << vector.x << " "  << vector.y << " " << vector.z << '\n';
+        std::cout << "vn : " << std::fixed << vector.x << " "  << vector.y << " " << vector.z << '\n';
 
         if (mesh->mTangents) {
             vector.x = mesh->mTangents[i].x;
@@ -106,7 +106,7 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
         } else {
             std::cerr << "/* error message */" << '\n';
         }
-//      std::cerr << "Tangent : " << vector.x << " " << vector.y << " " << vector.z << '\n';
+        std::cerr << "Tangent : " << vector.x << " " << vector.y << " " << vector.z << '\n';
 
         if (mesh->mTextureCoords[0])  {
             // does the mesh contain texture coordinates?
@@ -114,7 +114,7 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
             vec.x = mesh->mTextureCoords[0][i].x;
             vec.y = mesh->mTextureCoords[0][i].y;
             vertex.TexCoords = vec;
-//            std::cout << "vt " << vec.x << " " << vec.y << '\n';
+            std::cout << "vt " << vec.x << " " << vec.y << '\n';
         } else {
             vertex.TexCoords = glm::vec2(0.0f, 0.0f);
         }

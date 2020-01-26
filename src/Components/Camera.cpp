@@ -12,19 +12,11 @@ Camera::~Camera()
     std::cout << "Delete component camera" << '\n';
 }
 
-// Este método SOLO se llama una vez la primera vez que se crea el componente.
 void Camera::start()
 {
     this->_view->_gModel = glm::translate(this->_view->_gModel, glm::vec3(0, 0, 5.0));
 }
 
-// Método que se llama cada vez que el Componente se activa.
-void Camera::awakeStart()
-{
-    ;
-}
-
-// Método que realiza transformaciones, cálculos de cosas.
 void Camera::update()
 {
     if (!_tfObj) {

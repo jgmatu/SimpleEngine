@@ -9,7 +9,5 @@ Ks 0.8 0.8 0.8
 d 1
 illum 2
 
-map_Ks moon.png
 map_Kd moon.png
 map_Ka moon.png
-map_bump moon_normal.jpg

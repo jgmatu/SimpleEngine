@@ -1,17 +1,12 @@
 #version 330 core
 
 struct Material {
-    int isrgb;
-    vec3 rgb;
-
     sampler2D texture_diffuse0;
     sampler2D texture_diffuse1;
+    sampler2D texture_diffuse2;
 
     sampler2D texture_specular0;
     sampler2D texture_specular1;
-
-    sampler2D texture_normal0;
-    sampler2D texture_normal1;
 
     float shininess;
 };
@@ -53,32 +48,24 @@ struct Spot {
     float outerCutOff;
 };
 
-#define MAX_POINT_LIGHTS 255
+
 
 uniform Material material;
 
+#define MAX_POINT_LIGHTS 255
 uniform int npoints;
 uniform Point points[MAX_POINT_LIGHTS];
-uniform Spot spot;
 
-uniform Directional directional;
+// uniform Spot spot;
+// uniform Directional directional;
 
 // Viewer position...
 uniform vec3 viewPos;
 
 // Parametros del programa   de vertices del modelo...
-
-in VS_OUT {
-    vec2 textCoord;
-    vec3 TangentPointPos[MAX_POINT_LIGHTS];
-    vec3 TangentSpotPos;
-    vec3 TangentViewPos;
-    vec3 TangentFragPos;
-    mat3 TBN;
-    // Materials with no one normal map
-    vec3 normal;
-} fs_in;
-
+in vec3 normal;
+in vec3 fragPos;
+in vec2 texCoord;
 
 // Final fragment...
 out vec4 fragColor;
@@ -92,26 +79,14 @@ uniform sampler2D screenTexture;
 
 void main()
 {
-    vec3 norm = texture(material.texture_normal0, fs_in.textCoord).rgb;
-    norm = normalize(norm * 2.0 - 1.0);
-    norm = normalize(fs_in.TBN * norm);
-
-//    norm = normalize(fs_in.normal);
-
-    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+    vec3 norm = normalize(normal);
+    vec3 viewDir = normalize(viewPos - fragPos);
     vec4 result = vec4(0.0, 0.0, 0.0, 0.0);
 
-    // phase 1: Directional lights
-    result += calcDirLight(directional, norm, viewDir);
-
     // phase 2: Point lights
-//    for (int i = 0; i < npoints; ++i) {
-//        result += calcPointLight(points[i], norm, fs_in.TangentFragPos, viewDir);
-//    }
-
-    // phase 3: Spot light ...
-//    result += calcSpotLight(spot, norm, fs_in.TangentFragPos, viewDir);
-
+    for (int i = 0; i < npoints; ++i) {
+        result += calcPointLight(points[i], norm, fragPos, viewDir);
+    }
     fragColor = result;
 }
 
@@ -125,10 +100,10 @@ vec4 calcDirLight(Directional directional, vec3 normal, vec3 viewDir)
 
     // Specular shading...
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1024.0);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 128.0);
 
-    vec4 diffuse = directional.diffuse * diff * texture(material.texture_diffuse0, fs_in.textCoord);
-    vec4 specular = directional.specular * spec * texture(material.texture_specular0, fs_in.textCoord);
+    vec4 diffuse = directional.diffuse * diff * texture(material.texture_diffuse0, texCoord);
+    vec4 specular = directional.specular * spec * texture(material.texture_specular0, texCoord);
 
     return diffuse + specular;
 }
@@ -149,8 +124,8 @@ vec4 calcPointLight(Point point, vec3 normal, vec3 fragPos, vec3 viewDir)
     float attenuation = 1.0 / (point.constant + point.linear * distance + point.quadratic * (distance * distance));
 
     // combine results
-    vec4 diffuse = point.diffuse * diff * texture(material.texture_diffuse0, fs_in.textCoord);
-    vec4 specular = point.specular * spec * texture(material.texture_specular0 , fs_in.textCoord);
+    vec4 diffuse = point.diffuse * diff * texture(material.texture_diffuse0, texCoord);
+    vec4 specular = point.specular * spec * texture(material.texture_specular0 , texCoord);
 
     diffuse = diffuse * attenuation;
     specular = specular * attenuation;
@@ -158,7 +133,7 @@ vec4 calcPointLight(Point point, vec3 normal, vec3 fragPos, vec3 viewDir)
     return diffuse + specular;
 }
 
-vec4 calcSpotLight(Spot spot, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec4 calcSpotLight(Spot spot, vec3 norm, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(spot.position - fragPos);
 
@@ -175,8 +150,8 @@ vec4 calcSpotLight(Spot spot, vec3 normal, vec3 fragPos, vec3 viewDir)
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
     // Combine results...
-    vec4 diffuse = spot.diffuse  * diff * texture(material.texture_diffuse0, fs_in.textCoord);
-    vec4 specular = spot.specular * spec * texture(material.texture_specular0, fs_in.textCoord);
+    vec4 diffuse = spot.diffuse  * diff * texture(material.texture_diffuse0, texCoord);
+    vec4 specular = spot.specular * spec * texture(material.texture_specular0, texCoord);
 
     diffuse = diffuse * intensity;
     specular = specular * intensity;

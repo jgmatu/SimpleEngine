@@ -14,7 +14,7 @@ public:
     virtual void setIntense(float percentage) = 0;
     virtual void setPosition(glm::vec3 position) = 0;
     virtual void setDirection(glm::vec3 direction) = 0;
-    virtual void setDistance() = 0;
+    virtual void setDistance(int distance) = 0;
 
     bool isLigth(std::string id);
     Uniforms* getUniforms();
@@ -40,7 +40,7 @@ public:
     void setIntense(float percentage);
     void setPosition(glm::vec3 position);
     void setDirection(glm::vec3 direction);
-    void setDistance();
+    void setDistance(int distance);
 
 private:
 
@@ -58,7 +58,7 @@ public:
     void setIntense(float percentage);
     void setPosition(glm::vec3 position);
     void setDirection(glm::vec3 direction);
-    void setDistance();
+    void setDistance(int distance);
 
 private:
 
@@ -81,7 +81,7 @@ public:
     void setIntense(float percentage);
     void setPosition(glm::vec3 position);
     void setDirection(glm::vec3 direction);
-    void setDistance();
+    void setDistance(int distance);
 
 private:
 

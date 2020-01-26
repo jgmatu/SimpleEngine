@@ -29,6 +29,10 @@ public:
         this->_root->addChild(gameObject);
     }
 
+    void addLigths(const std::vector<Light*>& ilumination) {
+        _ligths = ilumination;
+    }
+
     std::vector<Light*> _ligths;
     std::vector<Camera*> _cameras;
 

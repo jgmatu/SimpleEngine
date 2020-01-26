@@ -21,7 +21,6 @@ public:
     ~Transform();
 
     void start();
-    void awakeStart();
     void update();
 
     void addChild(Transform *tf);

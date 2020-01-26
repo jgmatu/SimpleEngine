@@ -20,23 +20,17 @@ public:
     Camera();
     ~Camera();
 
-    // Este método SOLO se llama una vez la primera vez que se crea el componente.
     void start();
-
-    // Método que se llama cada vez que el Componente se activa.
-    void awakeStart();
-
-    // Método que realiza transformaciones, cálculos de cosas.
     void update();
 
     // position vector is inverted since we eventually want to translate
     // the world in the opposite direction of where we want to move.
     glm::vec3 viewPos();
 
-    friend std::ostream& operator<<(std::ostream& os, const Camera& camera);
-
     Transform *_view;
     glm::mat4 _projection;
+
+    friend std::ostream& operator<<(std::ostream& os, const Camera& camera);
 
 private:
     friend class GameObject;

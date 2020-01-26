@@ -1,13 +1,13 @@
-#include "Simulation1.cpp"
-#include "Simulation2.cpp"
-#include "Simulation3.cpp"
+#include "MoveBoxes.cpp"
+#include "NormalWall.cpp"
+#include "SolarSystem.cpp"
 #include "Engine.hpp"
 
 int main(int argc, char* argv[]) {
     Engine *engine = nullptr;
 
     try {
-        Scene *scene = sceneSimulation3();
+        Scene *scene = MoveBoxesSim();
         engine = new Engine(scene);
         engine->init();
         engine->mainLoop();

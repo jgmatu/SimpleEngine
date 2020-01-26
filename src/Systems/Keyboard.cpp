@@ -55,12 +55,14 @@ void Keyboard::pressKey(int32_t key, bool pressed)
 void Keyboard::CallBackCharacters(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
     const char* name = glfwGetKeyName(key, 0);
+    bool pressed = action == GLFW_PRESS || action == GLFW_REPEAT;
 
     if (name) {
-        Keyboard::instance->pressKey(std::string(name), action == GLFW_PRESS || action == GLFW_REPEAT);
+        Keyboard::instance->pressKey(std::string(name), pressed);
     } else {
-        Keyboard::instance->pressKey(key, action == GLFW_PRESS || action == GLFW_REPEAT);
+        Keyboard::instance->pressKey(key, pressed);
     }
+
     // Exit engine...
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);

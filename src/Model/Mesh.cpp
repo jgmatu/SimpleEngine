@@ -90,6 +90,7 @@ void Mesh::active()
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) offsetof(Vertex, Tangent));
     glEnableVertexAttribArray(3);
 
+    std::cerr << "Active mesh..." << std::endl;
     glBindVertexArray(0);
 }
 

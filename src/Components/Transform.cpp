@@ -17,11 +17,6 @@ void Transform::start()
     ;
 }
 
-void Transform::awakeStart()
-{
-    ;
-}
-
 void Transform::addChild(Transform *tf)
 {
     tfChilds.push_back(tf);

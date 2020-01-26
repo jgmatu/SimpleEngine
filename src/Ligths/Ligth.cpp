@@ -62,7 +62,7 @@ void Directional::setPosition(glm::vec3 position)
     throw;
 }
 
-void Directional::setDistance()
+void Directional::setDistance(int distance)
 {
     std::cerr << "Directional distance doesn't have a distance" << '\n';
     throw;
@@ -105,14 +105,14 @@ void Point::setPosition(glm::vec3 position)
     this->_uniforms->setUniformVec3("points[" + index + "].position", position);
 }
 
-void Point::setDistance()
+void Point::setDistance(int distance)
 {
-    glm::vec3 distance = _distances[3250];
+    glm::vec3 _distance = _distances[distance];
     std::string index = std::string(std::to_string(this->_index));
 
-    this->_uniforms->setUniformFloat("points[" + index + "].constant", distance[0]);
-    this->_uniforms->setUniformFloat("points[" + index + "].linear", distance[1]);
-    this->_uniforms->setUniformFloat("points[" + index + "].quadratic", distance[2]);
+    this->_uniforms->setUniformFloat("points[" + index + "].constant", _distance[0]);
+    this->_uniforms->setUniformFloat("points[" + index + "].linear", _distance[1]);
+    this->_uniforms->setUniformFloat("points[" + index + "].quadratic", _distance[2]);
 }
 
 void Point::setDirection(glm::vec3 direction)
@@ -163,11 +163,11 @@ void Spot::setIntense(float percentage)
     this->_uniforms->setUniformVec4("spot.specular", percentage * glm::vec4(1.0f));
 }
 
-void Spot::setDistance()
+void Spot::setDistance(int distance)
 {
-    glm::vec3 distance = _distances[65];
+    glm::vec3 _distance = _distances[distance];
 
-    this->_uniforms->setUniformFloat("spot.constant", distance[0]);
-    this->_uniforms->setUniformFloat("spot.linear", distance[1]);
-    this->_uniforms->setUniformFloat("spot.quadratic", distance[2]);
+    this->_uniforms->setUniformFloat("spot.constant", _distance[0]);
+    this->_uniforms->setUniformFloat("spot.linear", _distance[1]);
+    this->_uniforms->setUniformFloat("spot.quadratic", _distance[2]);
 }
