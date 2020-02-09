@@ -35,9 +35,6 @@ private:
     unsigned _textureID;
 
     Camera *_camera;
-    Program *_program;
-    Uniforms *_uniforms;
-
 };
 
 

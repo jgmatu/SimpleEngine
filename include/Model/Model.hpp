@@ -25,15 +25,14 @@ public:
     ~Model();
 
     void active();
+    void update(Uniforms *uniforms);
     void draw();
 
     void addMesh(Mesh *mesh);
-
-    void setMaterial(Material *material);
-    void updateMaterial(Material *material);
-
     bool isLoadModel();
-
+    bool isTransparentModel();
+    bool isModelLoaded();
+    
     friend std::ostream& operator<<(std::ostream& os, const Model& model);
 
 private:
@@ -49,7 +48,6 @@ private:
     std::string _path;
 
     int _id_mesh;
-    Material *_material;
 };
 
 #endif

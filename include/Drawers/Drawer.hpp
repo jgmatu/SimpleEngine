@@ -15,6 +15,11 @@ public:
     virtual void draw() = 0;
     virtual void setView(Camera *camera) = 0;
 
+protected:
+
+    Program *_program;
+    Uniforms *_uniforms;
+    Camera *_camera;
 };
 
 #endif // DRAWER_H

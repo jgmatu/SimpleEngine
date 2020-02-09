@@ -45,8 +45,6 @@ public:
     std::vector<Light*> getLigths();
     Light* getLigth(std::string id);
 
-    void setColor(glm::vec3 rgb);
-
     friend std::ostream& operator<<(std::ostream&, const GameObject& gameObject);
 
     Transform *_tf;

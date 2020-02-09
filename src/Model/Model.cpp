@@ -6,7 +6,6 @@ Model::Model() :
     _directory(),
     _path("")
 {
-    _material = nullptr;
     _id_mesh = 0;
 }
 
@@ -81,12 +80,11 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
             vector.x = mesh->mVertices[i].x;
             vector.y = mesh->mVertices[i].y;
             vector.z = mesh->mVertices[i].z;
+            vertex.Position = vector;
         } else {
             std::cerr << "/* error message */" << '\n';
         }
-        vertex.Position = vector;
-
-        std::cout << "v : " << std::fixed << vector.x << " " << vector.y << " " << vector.z << '\n';
+//      std::cout << "v : " << std::fixed << vector.x << " " << vector.y << " " << vector.z << '\n';
 
         if (mesh->mNormals) {
             vector.x = mesh->mNormals[i].x;
@@ -96,7 +94,7 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
         } else {
             std::cerr << "/* error message */" << '\n';
         }
-        std::cout << "vn : " << std::fixed << vector.x << " "  << vector.y << " " << vector.z << '\n';
+//      std::cout << "vn : " << std::fixed << vector.x << " "  << vector.y << " " << vector.z << '\n';
 
         if (mesh->mTangents) {
             vector.x = mesh->mTangents[i].x;
@@ -106,7 +104,7 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
         } else {
             std::cerr << "/* error message */" << '\n';
         }
-        std::cerr << "Tangent : " << vector.x << " " << vector.y << " " << vector.z << '\n';
+//      std::cerr << "Tangent : " << vector.x << " " << vector.y << " " << vector.z << '\n';
 
         if (mesh->mTextureCoords[0])  {
             // does the mesh contain texture coordinates?
@@ -114,10 +112,11 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
             vec.x = mesh->mTextureCoords[0][i].x;
             vec.y = mesh->mTextureCoords[0][i].y;
             vertex.TexCoords = vec;
-            std::cout << "vt " << vec.x << " " << vec.y << '\n';
         } else {
-            vertex.TexCoords = glm::vec2(0.0f, 0.0f);
+            std::cerr << "/* error message */" << '\n';
         }
+//      std::cout << "vt " << vec.x << " " << vec.y << '\n';
+
         // process vertex positions, normals and texture coordinates
         vertices.push_back(vertex);
     }
@@ -125,15 +124,9 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
     // process indices
     for (uint32_t i = 0; i < mesh->mNumFaces; ++i) {
         aiFace face = mesh->mFaces[i];
-//        std::cout << "f ";
         for(uint32_t j = 0; j < face.mNumIndices; ++j) {
-            if (j != 0) {
-//                std::cout << "/";
-            }
-//            std::cout <<  face.mIndices[j];
             indices.push_back(face.mIndices[j]);
         }
-//        std::cout << '\n';
     }
 
     // Process material.
@@ -152,10 +145,11 @@ Mesh* Model::processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene
 
     // Add primitive textures for complex models...
     Mesh *mesh_engine = new Mesh(id_mesh, vertices, indices);
+    Material *material = new Material();
     for (uint32_t i = 0; i < textures.size(); ++i) {
-        std::cerr << "Model add texture: " << _directory + "/" << textures[i]->_filename << std::endl;
-        _material->setTexture(id_mesh, textures[i]);
+        material->setTexture(id_mesh, textures[i]);
     }
+    mesh_engine->setMaterial(material);
     return mesh_engine;
 }
 
@@ -184,14 +178,9 @@ std::vector<Texture*> Model::loadTextures(aiMaterial *mat, aiTextureType type, s
     return textures;
 }
 
-void Model::setMaterial(Material *material)
+bool Model::isModelLoaded()
 {
-    _material = material;
-}
-
-void Model::updateMaterial(Material *material)
-{
-    _material->update(material);
+    return _meshes.size() != 0;
 }
 
 bool Model::isLoadModel()
@@ -200,47 +189,48 @@ bool Model::isLoadModel()
 }
 
 void Model::active() {
-    if (!_material) {
-        std::cerr << "active: No material load on model!" << '\n';
-        throw;
-    }
     if (isLoadModel()) {
         loadModel(_path);
     }
     std::map<std::string, Mesh*>::iterator it;
     for (it = _meshes.begin(); it != _meshes.end(); ++it) {
         Mesh *mesh = it->second;
-
-        // Load all material textures to the proper mesh..
-        std::vector<Texture*> textures = this->_material->_textures[it->first];
-        for (uint32_t i = 0; i < textures.size(); ++i) {
-            mesh->setTexture(textures[i]);
-        }
-        mesh->setProgram(_material->_program);
         mesh->active();
-        mesh->activeTextures();
     }
 }
 
-void Model::draw() {
-    if (!_material->_uniforms) {
-        std::cerr << "draw: No material loaded!" << '\n';
-        throw;
-    }
-    std::map<std::string, Mesh*>::iterator it;
+void Model::update(Uniforms *uniforms)
+{
+    std::map<std::string, Mesh*>::const_iterator it;
 
     for (it = _meshes.begin(); it != _meshes.end(); ++it) {
         Mesh *mesh = it->second;
-        mesh->update(_material->_uniforms);
-        if (_material->isTransparent()) {
-            mesh->setBlending();
-        } else {
-            mesh->unsetBlending();
-        }
+
+        uniforms->update(mesh->_material->_uniforms);
+    }
+}
+void Model::draw() {
+    std::map<std::string, Mesh*>::const_iterator it;
+
+    for (it = _meshes.begin(); it != _meshes.end(); ++it) {
+        Mesh *mesh = it->second;
+        mesh->setBlending();
         mesh->draw();
     }
 }
 
+bool Model::isTransparentModel()
+{
+    std::map<std::string, Mesh*>::const_iterator it;
+
+    for (it = _meshes.begin(); it != _meshes.end(); ++it) {
+        Mesh *mesh = it->second;
+        if (mesh->isTransparent()) {
+            return true;
+        }
+    }
+    return false;
+}
 std::ostream& operator<<(std::ostream& os, const Model& model) {
     std::map<std::string, Mesh*>::const_iterator it_mesh;
 

@@ -13,10 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Program/Program.hpp"
-#include "Program/Uniforms.hpp"
-
-#include "Model/Texture.hpp"
+#include "Model/Material.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
@@ -44,7 +41,6 @@ public:
 
 private:
     std::string _msg;
-
 };
 
 struct Vertex {
@@ -63,24 +59,17 @@ public:
     Mesh();
     ~Mesh();
 
-    friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
-
-protected:
-
-    friend class Model;
-
     std::string getId();
 
-    void setTexture(Texture *texture);
-    void setProgram(Program *program);
-
     void active();
-    void activeTextures();
-    void update(Uniforms *uniforms);
     void draw();
-
     void setBlending();
-    void unsetBlending();
+    bool isTransparent();
+
+    void setMaterial(Material *material);
+
+    friend class Model;
+    friend std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
 
 private:
     // OpenGL Interface internal processing.
@@ -97,9 +86,6 @@ private:
     std::vector<Vertex> _vertices;
     std::vector<GLuint> _indices;
 
-    // Textures mesh...
-    std::vector<Texture*> _textures;
-
     // Active Buffer.
     GLuint _VAO;
 
@@ -108,9 +94,7 @@ private:
     // mismo buffer.
     GLuint _VBO, _VBO2, _VBO3, _EBO;
 
-    Program *_program;
-    Uniforms *_uniforms;
-
+    Material *_material;
 };
 
 #endif

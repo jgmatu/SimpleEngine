@@ -14,7 +14,6 @@ void Uniforms::update(Uniforms *uniforms)
 {
     std::vector<std::string> names;
 
-
     names = uniforms->getUniformsNamesInt();
     for (uint32_t i = 0; i < names.size(); ++i) {
         setUniformInt(names[i], uniforms->_uniformsInt[names[i]]);

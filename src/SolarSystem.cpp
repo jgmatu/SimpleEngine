@@ -19,8 +19,102 @@
 #include "Geometries/Sphere.hpp"
 #include "Geometries/Plane.hpp"
 
+class EarthAux : public Component {
+
+private:
+
+    float angle;
+
+public:
+
+    EarthAux()
+    {
+        angle = 0;
+    }
+
+    ~EarthAux()
+    {
+        ;
+    }
+
+    void start()
+    {
+        ;
+    }
+
+    void update()
+    {
+        _gObject->_tf->_model = _gObject->search("sun")->_tf->_gModel;
+        _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
+        _gObject->translate(glm::vec3(5.0, 0.0, 0.0));
+   }
+};
+
+class Earth : public Component {
+
+public:
+
+    Earth()
+    {
+        ;
+    }
+
+    ~Earth()
+    {
+        ;
+    }
+
+    void start()
+    {
+        ;
+    }
+
+    void update()
+    {
+        ;
+    }
+};
+
+std::vector<Light*> solarSystemIlumination()
+{
+    std::vector<Light*> ilumination;
+
+    Directional *dir = new Directional("d");
+    dir->setDirection(glm::vec3(-1.0, -0.5, 0.0));
+    dir->setIntense(0.5);
+
+    Point *p = new Point("p");
+    p->setIntense(1.0);
+    p->setDistance(3250);
+    p->setPosition(glm::vec3(0.0, 0.0, 0.0));
+
+    ilumination.push_back(dir);
+    ilumination.push_back(p);
+    return ilumination;
+}
+
+GameObject* getPlanet(std::string path, std::string id)
+{
+    GameObject *planet = new GameObject(id);
+    Model *model = new Model(path);
+    Render *render = new Render();
+    bool isFile = true;
+
+    render->setProgram(new Program("../glsl/user/sun_vs.glsl", "../glsl/user/sun_fs.glsl", isFile));
+    render->setModel(model);
+    planet->addDrawer(render);
+    return planet;
+}
 
 Scene* SolarSystemSim()
 {
-    return nullptr;
+    Scene *scene = new Scene();
+    scene->addLigths(solarSystemIlumination());
+
+    GameObject *sun = getPlanet("../models/sun/sphere.obj", "sun");
+    GameObject *earth = getPlanet("../models/earth/sphere.obj", "earth");
+    earth->addComponent(new EarthAux());
+    scene->addChild(sun);
+    scene->addChild(earth);
+    return scene;
 }

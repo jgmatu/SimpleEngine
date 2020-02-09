@@ -5,7 +5,6 @@ Material::Material() :
     _transparent(false)
 {
     this->_uniforms = new Uniforms();
-    this->_program = nullptr;
 }
 
 Material::~Material()
@@ -13,65 +12,37 @@ Material::~Material()
     std::cout << "Delete component material" << '\n';
 }
 
-void Material::setProgram(Program *program)
-{
-    this->_program = program;
-}
-
 size_t Material::sizeTextures()
 {
     return this->_textures.size();
 }
 
+void Material::addNewTexture(Texture *texture)
+{
+    std::string number;
+    std::string name = texture->_type; 
+
+    if (name == "texture_diffuse") {
+        number = std::to_string(this->_diffuseNr++);
+    } else if(name == "texture_specular") {
+        number = std::to_string(this->_specularNr++);
+    } else if (name == "texture_normal") {
+        number = std::to_string(this->_normalNr++);
+    }
+    this->_uniforms->setUniformInt(std::string("material.") + name + number, this->_nTexture++);
+    this->_textures.push_back(texture);
+}
+
 void Material::setTexture(std::string id_mesh, Texture *texture)
 {
     bool isfound = false;
-    std::vector<Texture*> textures = this->_textures[id_mesh];
 
-    for (uint32_t i = 0; i < textures.size() && !isfound; ++i) {
-        isfound = textures[i]->_filename.compare(texture->_filename) == 0;
+    for (uint32_t i = 0; i < this->_textures.size() && !isfound; ++i) {
+        isfound = this->_textures[i]->_filename.compare(texture->_filename) == 0;
     }
     if (!isfound) {
-        std::cout << "addded texture : " << texture->_filename << '\n';
-        this->_textures[id_mesh].push_back(texture);
+        addNewTexture(texture);
     }
-}
-
-void Material::update(Light *ligth)
-{
-    _uniforms->update(ligth->getUniforms());
-}
-
-void Material::update(Material *material)
-{
-    _uniforms->update(material->_uniforms);
-}
-
-void Material::setView(Camera *camera)
-{
-    setParameter("projection", camera->_projection);      // Vertex...
-    setParameter("view", camera->_view->_gModel);         // Vertex...
-    setParameter("viewPos", camera->viewPos());   // Fragments...
-}
-
-void Material::setParameter(std::string name, glm::vec3 val)
-{
-    _uniforms->setUniformVec3(name, val);
-}
-
-void Material::setParameter(std::string name, glm::mat4 val)
-{
-    _uniforms->setUniformMat4(name, val);
-}
-
-void Material::setParameter(std::string name, int val)
-{
-    _uniforms->setUniformInt(name, val);
-}
-
-void Material::setParameter(std::string name, float val)
-{
-    _uniforms->setUniformFloat(name, val);
 }
 
 void Material::setTransparent()
@@ -89,16 +60,25 @@ bool Material::isTransparent() const
     return this->_transparent;
 }
 
+void Material::activeTextures()
+{
+    for (uint32_t i = 0; i < _textures.size(); ++i) {
+        _textures[i]->activeTexture();
+    }
+}
+
+void Material::drawTextures()
+{
+    for (uint32_t i = 0; i < _nTexture; ++i) {
+        glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
+        glBindTexture(GL_TEXTURE_2D, _textures[i]->_id);
+    }
+}
+
 std::ostream& operator<<(std::ostream& os, const Material& material)
 {
-    std::map<std::string, std::vector<Texture*>>::const_iterator it_textures;
-
-    for (it_textures = material._textures.begin(); it_textures != material._textures.end(); ++it_textures) {
-        std::vector<Texture*> textures = it_textures->second;
-        os << "Mesh : " << it_textures->first << "textures : " <<  '\n';
-        for (uint32_t i = 0; i < textures.size(); ++i) {
-            os << *textures[i] << '\n';
-        }
+    for (uint32_t i = 0; i < material._textures.size(); ++i) {
+        os << *material._textures[i] << '\n';
     }
     os << *material._uniforms;
     return os;

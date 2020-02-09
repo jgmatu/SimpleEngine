@@ -39,6 +39,8 @@ public:
 
 private:
 
+    // Uniforms engine abstraction
+
     std::map<std::string, int> _uniformsInt;
     std::map<std::string, float> _uniformsFloat;
     std::map<std::string, glm::vec3> _uniformsVec3;

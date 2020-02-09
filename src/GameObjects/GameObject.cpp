@@ -50,7 +50,7 @@ void GameObject::getCameras(std::vector<Camera*>& cameras)
 };
 
 GameObject *GameObject::search(std::string id)
-{
+{   
     return this->_root->_search(id);
 }
 
@@ -99,6 +99,7 @@ void GameObject::active()
     size_t drawers_size = _drawers.size();
     size_t gameObjects_size = _gameObjects.size();
 
+    std::cout << "Game object active..." << std::endl;
     for (uint32_t i = 0; i < drawers_size; ++i) {
         _drawers[i]->active();
     }
@@ -125,7 +126,8 @@ void GameObject::draw()
     for (uint32_t i = 0; i < _drawers.size(); ++i) {
         if (Render *render = dynamic_cast<Render*>(_drawers[i])) {
             render->setMatrixModel(_tf->_gModel);
-        }
+        
+        }     
         _drawers[i]->setView(_camera);
         _drawers[i]->draw();
     }
@@ -137,7 +139,7 @@ void GameObject::getQueueDrawGameObjects(
 {
     for (uint32_t i = 0; i < _drawers.size(); ++i) {
         if (Render *render = dynamic_cast<Render*>(_drawers[i])) {
-            if (render->isMaterialTransparent()) {
+            if (render->isTransparentModel()) {
                 addTransparentQueue(transparents);
             } else {
                 opaques.push_back(this);
@@ -245,13 +247,6 @@ float GameObject::distance(std::string id)
         throw;
     }
     return glm::distance(this->_tf->_gModel[3], gameObject->_tf->_gModel[3]);
-}
-
-void GameObject::setColor(glm::vec3 rgb)
-{
-    // No implementado cambios de material se realizarán a partir de texturas
-    // hasta que no exista una forma dinámica de crear programas de shaders
-    // para la etapa de fragmentos.
 }
 
 std::ostream& operator<<(std::ostream& os, const GameObject& gameObject) {

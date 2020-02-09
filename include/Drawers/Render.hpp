@@ -18,20 +18,20 @@ public:
     void draw();
 
     void setModel(Model *model);
-    void setMaterial(Material *material);
+    void setProgram(Program *program);
     void setView(Camera *camera);
+
 
 private:
 
     friend class GameObject;
 
     void setMatrixModel(glm::mat4 model);
-    bool isMaterialTransparent();
+    bool isTransparentModel();
     void setLigths(std::vector<Light*> ligths);
 
     Model *_model;
-    Material *_material;
-
+    Program *_program;
 };
 
 #endif // RENDER_H
