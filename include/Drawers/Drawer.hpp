@@ -19,7 +19,7 @@ protected:
 
     Program *_program;
     Uniforms *_uniforms;
-    Camera *_camera;
+
 };
 
 #endif // DRAWER_H

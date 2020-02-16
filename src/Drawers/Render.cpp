@@ -54,10 +54,8 @@ void Render::setLigths(std::vector<Light*> ligths)
 
 void Render::active()
 {
-    std::cout << "Active renderized GameObject" << std::endl;
     if (!_model || !_program || !_uniforms) {
         std::cerr << "Active Render: Doesn't have a model or material attached" << '\n';
-        std::cerr << "Model : " << _model << " Program : " << _program << " Uniforms : " << _uniforms << std::endl;
         throw;
     }
     _program->active();
@@ -72,7 +70,7 @@ void Render::draw()
 {
     if (!_model || !_program || !_uniforms) {
         std::cerr << "Update Render: Error invalid material or model" << '\n';
-        return;
+        throw;
     }
     _program->use();
     _model->update(_uniforms);

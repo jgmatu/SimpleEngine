@@ -21,7 +21,6 @@ public:
     void setProgram(Program *program);
     void setView(Camera *camera);
 
-
 private:
 
     friend class GameObject;
@@ -31,7 +30,6 @@ private:
     void setLigths(std::vector<Light*> ligths);
 
     Model *_model;
-    Program *_program;
 };
 
 #endif // RENDER_H

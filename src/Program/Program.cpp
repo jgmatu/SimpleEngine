@@ -10,8 +10,9 @@ Program::Program(std::string vshader, std::string fshader, bool isFile) :
     _isFile = isFile;
 }
 
-Program::~Program() {
-    std::cout << "Destroy program... " << '\n';
+Program::~Program() 
+{
+    ;
 }
 
 void Program::active() {
@@ -19,7 +20,6 @@ void Program::active() {
     if (_programId == 0) {
         throw ProgramException("Failed to create program id : " + _programId);
     }
-    std::cout << "**** ACTIVE PROGRAM ****" << std::endl;
     this->createVertexShader();
     this->createFragmentShader();
     this->link();
