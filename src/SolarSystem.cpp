@@ -44,7 +44,6 @@ public:
 
     void update()
     {
-        _gObject->_tf->_model = _gObject->search("sun")->_tf->_gModel;
         _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
         _gObject->translate(glm::vec3(5.0, 0.0, 0.0));
    }

@@ -24,6 +24,10 @@ void Transform::addChild(Transform *tf)
 
 void Transform::update()
 {
+    // Reset relative matrix model to start new 
+    // dependency operations.
+    this->_model = glm::mat4(1.0); 
+
     for (uint32_t i = 0; i < tfChilds.size(); ++i) {
         tfChilds[i]->_gModel = _gModel * tfChilds[i]->_model;
     }
