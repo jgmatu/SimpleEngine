@@ -13,7 +13,7 @@ class SkyBox : public Drawer {
 public:
 
     SkyBox();
-    SkyBox(std::vector<std::string> faces, Program *program);
+    SkyBox(std::vector<std::string> faces);
     ~SkyBox();
 
     void active();

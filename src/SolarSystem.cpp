@@ -106,6 +106,19 @@ GameObject* getPlanet(std::string path, std::string id)
     return planet;
 }
 
+GameObject *getStars(std::string id)
+{
+    GameObject *stars = new GameObject(id);
+
+    SkyBox *skybox = new SkyBox(std::vector<std::string>({"../skybox/ame_nebula/left.tga", 
+    "../skybox/ame_nebula/front.tga", "../skybox/ame_nebula/bottom.tga", 
+    "../skybox/ame_nebula/back.tga", "../skybox/ame_nebula/top.tga", 
+    "../skybox/ame_nebula/right.tga"}));
+
+    stars->addDrawer(skybox);
+    return stars;
+}
+
 Scene* SolarSystemSim()
 {
     Scene *scene = new Scene();
@@ -113,8 +126,12 @@ Scene* SolarSystemSim()
 
     GameObject *sun = getPlanet("../models/sun/sphere.obj", "sun");
     GameObject *earth = getPlanet("../models/earth/sphere.obj", "earth");
+    GameObject *skybox = getStars("stars");
+
     earth->addComponent(new EarthAux());
+
     scene->addChild(sun);
     scene->addChild(earth);
+    scene->addChild(skybox);
     return scene;
 }

@@ -48,13 +48,13 @@ const float skyboxVertices[] = {
 SkyBox::SkyBox()
 {
     this->_uniforms = new Uniforms();
+    this->_program = new Program("../glsl/utils/skybox_vs.glsl", "../glsl/utils/skybox_fs.glsl", true);
 }
 
-SkyBox::SkyBox(std::vector<std::string> faces, Program *program) :
+SkyBox::SkyBox(std::vector<std::string> faces) :
     SkyBox::SkyBox()
 {
     this->_faces = faces;
-    this->_program = program;
 }
 
 SkyBox::~SkyBox()
