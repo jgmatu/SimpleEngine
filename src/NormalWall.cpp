@@ -22,11 +22,15 @@
 
 class Wall : public Component {
 
+private:
+
+    float angle;
+
 public:
 
     Wall() 
     {
-        ;
+        angle = 0;
     }
     
     ~Wall()
@@ -41,7 +45,7 @@ public:
 
     void update() 
     {
-        _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), 0.01);
+        _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
     }
 };
 
@@ -125,8 +129,8 @@ Light* getSunLigth()
 Scene* NormalWallSim()
 {
     Scene *scene = new Scene();
+
     scene->addChild(getWall("wall"));
     scene->addLigth(getSunLigth());
-
     return scene;
 }

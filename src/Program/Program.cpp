@@ -115,7 +115,6 @@ void Program::createVertexShader() {
     if (_isFile) {
         shaderCode = getDataFile(this->_vshader);
     }
-    std::cout << " **** VERTEX SHADER **** \n" << shaderCode << std::endl;
     _vertexShaderId = createShader(getProgramDefinition(shaderCode, GL_VERTEX_SHADER), GL_VERTEX_SHADER);
     createUserUniforms(shaderCode);
 }
@@ -126,7 +125,6 @@ void Program::createFragmentShader() {
     if (_isFile) {
         shaderCode = getDataFile(this->_fshader);
     }
-    std::cout << "**** FRAGMENTS SHADER ****\n" << shaderCode << std::endl;
     _fragmentShaderId = createShader(getProgramDefinition(shaderCode, GL_FRAGMENT_SHADER), GL_FRAGMENT_SHADER);
     createUserUniforms(shaderCode);
 }

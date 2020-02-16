@@ -51,11 +51,15 @@ public:
 
 class Earth : public Component {
 
+private:
+
+    float angle;
+
 public:
 
     Earth()
     {
-        ;
+        angle = 0;
     }
 
     ~Earth()
@@ -70,7 +74,8 @@ public:
 
     void update()
     {
-        ;
+        _gObject->scale(glm::vec3(0.50, 0.50, 0.50));
+        _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.05, (2.0f * M_PI)));
     }
 };
 
@@ -78,16 +83,11 @@ std::vector<Light*> solarSystemIlumination()
 {
     std::vector<Light*> ilumination;
 
-    Directional *dir = new Directional("d");
-    dir->setDirection(glm::vec3(-1.0, -0.5, 0.0));
-    dir->setIntense(0.5);
-
     Point *p = new Point("p");
     p->setIntense(1.0);
     p->setDistance(3250);
     p->setPosition(glm::vec3(0.0, 0.0, 0.0));
 
-    ilumination.push_back(dir);
     ilumination.push_back(p);
     return ilumination;
 }
@@ -99,10 +99,23 @@ GameObject* getPlanet(std::string path, std::string id)
     Render *render = new Render();
     bool isFile = true;
 
-    render->setProgram(new Program("../glsl/user/sun_vs.glsl", "../glsl/user/sun_fs.glsl", isFile));
+    render->setProgram(new Program("../glsl/user/planet_vs.glsl", "../glsl/user/planet_fs.glsl", isFile));
     render->setModel(model);
     planet->addDrawer(render);
     return planet;
+}
+
+GameObject* getSun(std::string path, std::string id)
+{
+    GameObject *sun = new GameObject(id);
+    Model *model = new Model(path);
+    Render *render = new Render();
+    bool isFile = true;
+
+    render->setProgram(new Program("../glsl/user/sun_vs.glsl", "../glsl/user/sun_fs.glsl", isFile));
+    render->setModel(model);
+    sun->addDrawer(render);
+    return sun;
 }
 
 GameObject *getStars(std::string id)
@@ -123,14 +136,17 @@ Scene* SolarSystemSim()
     Scene *scene = new Scene();
     scene->addLigths(solarSystemIlumination());
 
-    GameObject *sun = getPlanet("../models/sun/sphere.obj", "sun");
+    GameObject *sun = getSun("../models/sun/sphere.obj", "sun");
     GameObject *earth = getPlanet("../models/earth/sphere.obj", "earth");
     GameObject *skybox = getStars("stars");
 
-    earth->addComponent(new EarthAux());
+    GameObject* auxEarth = new GameObject("earthAux");
+    auxEarth->addComponent(new EarthAux());
+    earth->addComponent(new Earth());
 
+    auxEarth->addChild(earth);
+    scene->addChild(auxEarth);
     scene->addChild(sun);
-    scene->addChild(earth);
     scene->addChild(skybox);
     return scene;
 }
