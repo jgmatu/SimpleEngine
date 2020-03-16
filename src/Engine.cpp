@@ -1,5 +1,30 @@
 #include "Engine.hpp"
 
+
+#include <functional>
+#include <chrono>
+#include <future>
+#include <cstdio>
+
+static int nframes;
+
+class FPSInterval {
+
+public:
+
+    template <class callable, class... arguments>
+
+    FPSInterval(int interval, callable&& f, arguments&&... args)
+    {
+        std::function<typename std::result_of<callable(arguments...)>::type()> task(std::bind(std::forward<callable>(f), std::forward<arguments>(args)...));
+
+        std::thread([interval, task]() {
+            std::this_thread::sleep_for(std::chrono::milliseconds(interval));
+            task();
+        }).detach();
+    }
+};
+
 Engine::Engine()
 {
     _clock = Clock::getInstance();
@@ -73,7 +98,7 @@ void Engine::initWindow() {
     glEnable(GL_DEPTH_TEST);
 
     // Stencil buffer... 8 bits...
-     glEnable(GL_STENCIL_TEST);
+    glEnable(GL_STENCIL_TEST);
 
     // Enabling transparency...
 
@@ -102,14 +127,27 @@ void Engine::update()
     _scene->draw();
 }
 
+static void showFPSInterval()
+{
+    FPSInterval fps_interval(1000, &showFPSInterval);
+    int fps = nframes;
+
+    std::cout << "fps :" << fps << std::endl;
+    nframes = 0;
+}
+
+
 void Engine::mainLoop() {
+    FPSInterval fps_interval(1000, &showFPSInterval);
+
     do {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
         update(); // ... Update Scene ...
-
         glfwSwapBuffers(_window); // Swap the color buffers.
+        glFinish();
+
+        nframes++;
         std::this_thread::sleep_for(std::chrono::milliseconds(LOOP_INTERVAL_TIME_MS));
     } while(!glfwWindowShouldClose(_window));
     glfwTerminate();

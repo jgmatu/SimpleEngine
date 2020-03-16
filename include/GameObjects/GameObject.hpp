@@ -47,8 +47,6 @@ public:
 
     friend std::ostream& operator<<(std::ostream&, const GameObject& gameObject);
 
-    Transform *_tf;
-
 protected:
 
     std::string _id;
@@ -61,6 +59,7 @@ protected:
     std::vector<Light*> _ligths;
 
     Camera *_camera;
+    Transform *_tf;
 
 private:
 

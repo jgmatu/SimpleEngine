@@ -200,7 +200,7 @@ void Model::update(Uniforms *uniforms)
     for (it = _meshes.begin(); it != _meshes.end(); ++it) {
         Mesh *mesh = it->second;
 
-        uniforms->update(mesh->_material->_uniforms);
+        uniforms->update(mesh->_material->getUniforms());
     }
 }
 void Model::draw() {

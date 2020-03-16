@@ -136,15 +136,28 @@ Scene* SolarSystemSim()
     Scene *scene = new Scene();
     scene->addLigths(solarSystemIlumination());
 
+    // Sun and Stars...
     GameObject *sun = getSun("../models/sun/sphere.obj", "sun");
-    GameObject *earth = getPlanet("../models/earth/sphere.obj", "earth");
     GameObject *skybox = getStars("stars");
 
+    // Add Earth
+    GameObject *earth = getPlanet("../models/earth/sphere.obj", "earth");
     GameObject* auxEarth = new GameObject("earthAux");
+ 
     auxEarth->addComponent(new EarthAux());
     earth->addComponent(new Earth());
 
+    // Add moon
+    GameObject *moonAux =  new GameObject("moonAux");
+    GameObject *moon = getPlanet("../models/moon/sphere.obj", "moon");
+    
+    moonAux->addComponent(new EarthAux());
+    moon->addComponent(new Earth());
+
+    // Generate tree nodes...
     auxEarth->addChild(earth);
+    moonAux->addChild(moon);
+    auxEarth->addChild(moonAux);
     scene->addChild(auxEarth);
     scene->addChild(sun);
     scene->addChild(skybox);

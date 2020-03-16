@@ -29,26 +29,22 @@ public:
     void draw();
 
     void addMesh(Mesh *mesh);
-    bool isLoadModel();
     bool isTransparentModel();
-    bool isModelLoaded();
-    
+    bool isModelLoaded(); 
+
     friend std::ostream& operator<<(std::ostream& os, const Model& model);
 
 private:
 
+    bool isLoadModel();
     void loadModel(std::string path);
     void processNode(aiNode *node, const aiScene *scene);
-
     Mesh* processMesh(std::string id_mesh, aiMesh *mesh, const aiScene *scene);
-
     std::vector<Texture*> loadTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
 
     std::map<std::string, Mesh*> _meshes;
-
     std::string _directory;
     std::string _path;
-
     int _id_mesh;
 };
 

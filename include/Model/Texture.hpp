@@ -15,17 +15,15 @@ public:
     Texture(std::string filename, std::string type);
     ~Texture();
 
+    static uint32_t TextureFromFile(std::string directory, std::string filename);
+    static uint32_t TextureCubeMap(std::vector<std::string> _faces);
+
     friend std::ostream& operator<<(std::ostream& os, const Texture& texture);
 
 private:
 
-    friend class Mesh;
     friend class Model;
     friend class Material;
-    friend class SkyBox;
-
-    static uint32_t TextureFromFile(std::string directory, std::string filename);
-    static uint32_t TextureCubeMap(std::vector<std::string> _faces);
 
     const std::string DEFAULT_PATH = "../resources";
 

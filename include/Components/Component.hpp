@@ -23,8 +23,8 @@ public:
 protected:
 
     friend class GameObject;
-
     GameObject *_gObject;
+
 };
 
 #endif // COMPONENT_H

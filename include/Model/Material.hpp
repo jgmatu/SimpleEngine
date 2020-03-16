@@ -25,23 +25,24 @@ public:
     void setTexture(std::string id_mesh, Texture *texture);
     void setTransparent();
     void setOpaque();
+    bool isTransparent() const;
+
     void drawTextures();
-    void activeTextures();
+    void activeTextures(); 
+
+    Uniforms* getUniforms() {
+        return this->_uniforms;
+    }
 
     friend std::ostream& operator<<(std::ostream& os, const Material& material);
 
 private:
 
-    bool isTransparent() const;
     size_t sizeTextures();
     void addNewTexture(Texture *texture);
  
     std::vector<Texture*> _textures;
     bool _transparent;
-
-    friend class Model;
-    friend class Mesh;
-    friend class Render;
 
     uint32_t _diffuseNr = 0;
     uint32_t _specularNr = 0;

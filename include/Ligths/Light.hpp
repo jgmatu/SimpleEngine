@@ -16,6 +16,7 @@ public:
     virtual void setDirection(glm::vec3 direction) = 0;
     virtual void setDistance(int distance) = 0;
 
+    // Common functions
     bool isLigth(std::string id);
     Uniforms* getUniforms();
 

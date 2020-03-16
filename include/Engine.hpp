@@ -34,7 +34,6 @@ public:
     ~Engine();
 
     void init();
-    void update();
     void mainLoop();
 
 private:
@@ -42,6 +41,7 @@ private:
     Engine();
 
     void initWindow();
+    void update();
     void genFrameBuffer();
     void genRenderBuffer();
 
