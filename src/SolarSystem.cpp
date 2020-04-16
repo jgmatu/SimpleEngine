@@ -79,6 +79,61 @@ public:
     }
 };
 
+class MoonAux : public Component {
+
+private:
+
+    float angle;
+
+public:
+
+    MoonAux()
+    {
+        angle = 0;
+    }
+
+    ~MoonAux()
+    {
+        ;
+    }
+
+    void start()
+    {
+        ;
+    }
+
+    void update()
+    {
+        _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
+        _gObject->translate(glm::vec3(2.0, 0.0, 0.0));
+   }
+};
+
+class Moon : public Component {
+private:
+    float angle;
+public:
+    Moon()
+    {
+        angle = 0;
+    }
+    ~Moon()
+    {
+        ;
+    }
+
+    void start()
+    {
+        ;
+    }
+
+    void update()
+    {
+        _gObject->scale(glm::vec3(0.15, 0.15, 0.15));
+        _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.05, (2.0f * M_PI)));
+    }
+};
+
 std::vector<Light*> solarSystemIlumination()
 {
     std::vector<Light*> ilumination;
@@ -151,8 +206,8 @@ Scene* SolarSystemSim()
     GameObject *moonAux =  new GameObject("moonAux");
     GameObject *moon = getPlanet("../models/moon/sphere.obj", "moon");
     
-    moonAux->addComponent(new EarthAux());
-    moon->addComponent(new Earth());
+    moonAux->addComponent(new MoonAux());
+    moon->addComponent(new Moon());
 
     // Generate tree nodes...
     auxEarth->addChild(earth);
