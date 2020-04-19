@@ -13,7 +13,7 @@ void main()
     // result = calcDirLight(directional, material.texture_diffuse0, material.texture_specular0, texCoord, norm, viewDir);
 
     // phase 2: Point lights
-    if (npoints == 1) {
+    if (npoints > 0) {
         result = calcPointLight(points[0], material.texture_diffuse0, material.texture_specular0, texCoord, norm, fragPos, viewDir);
     }
     fragColor = result;

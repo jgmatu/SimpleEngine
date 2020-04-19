@@ -14,11 +14,16 @@ public:
     virtual ~Component() {};
 
     // Este método SOLO se llama una vez la primera vez que se crea el componente.
-    virtual void start() = 0;
+    virtual void start()
+    {
+        ;
+    }
 
     // Método que realiza transformaciones, cálculos de cosas.
-    virtual void update() = 0;
-
+    virtual void update()
+    {
+        ;
+    }
 
 protected:
 

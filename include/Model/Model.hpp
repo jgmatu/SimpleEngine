@@ -30,8 +30,8 @@ public:
 
     void addMesh(Mesh *mesh);
     bool isTransparentModel();
+    void setTransparentModel();
     bool isModelLoaded(); 
-
     friend std::ostream& operator<<(std::ostream& os, const Model& model);
 
 private:
@@ -46,6 +46,7 @@ private:
     std::string _directory;
     std::string _path;
     int _id_mesh;
+    bool _isTransparentModel;
 };
 
 #endif

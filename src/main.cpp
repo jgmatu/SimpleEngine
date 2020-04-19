@@ -17,7 +17,7 @@ Scene* getArgsScene(int argc, char* argv[])
         } else if (strncmp(argv[2], "Cube", strlen(argv[2])) == 0) {
             scene = MoveBoxesSim();
         } else if (strncmp(argv[2], "Solar", strlen(argv[2])) == 0) {
-            scene = SolarSystemSim();        
+            scene = SolarSystemSim();
         }
     }
     return scene;

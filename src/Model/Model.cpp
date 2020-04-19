@@ -4,7 +4,8 @@
 Model::Model() :
     _meshes(),
     _directory(),
-    _path("")
+    _path(""),
+    _isTransparentModel(false)
 {
     _id_mesh = 0;
 }
@@ -31,6 +32,7 @@ Model::~Model()
     }
     _meshes.clear();
 }
+
 
 void Model::loadModel(std::string path)
 {
@@ -213,6 +215,11 @@ void Model::draw() {
     }
 }
 
+void Model::setTransparentModel()
+{
+    _isTransparentModel = true; 
+}
+
 bool Model::isTransparentModel()
 {
     std::map<std::string, Mesh*>::const_iterator it;
@@ -223,7 +230,7 @@ bool Model::isTransparentModel()
             return true;
         }
     }
-    return false;
+    return !_isTransparentModel;
 }
 std::ostream& operator<<(std::ostream& os, const Model& model) {
     std::map<std::string, Mesh*>::const_iterator it_mesh;
