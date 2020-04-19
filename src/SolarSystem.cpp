@@ -48,7 +48,7 @@ public:
 
     void update()
     {
-        _gObject->scale(glm::vec3(0.15, 0.15, 0.15));
+        _gObject->scale(glm::vec3(0.10, 0.10, 0.10));
         _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.05, (2.0f * M_PI)));
     }
 };
@@ -66,7 +66,7 @@ public:
 
     void update()
     {
-        _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
+        _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
         _gObject->translate(glm::vec3(3.5, 0.0, 0));
     }
 };
@@ -84,7 +84,7 @@ public:
 
     void update()
     {
-        _gObject->scale(glm::vec3(0.20, 0.20, 0.20));
+        _gObject->scale(glm::vec3(0.12, 0.12, 0.12));
         _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.05, (2.0f * M_PI)));
     }
 };
@@ -120,8 +120,8 @@ public:
 
     void update()
     {
-        _gObject->scale(glm::vec3(0.51, 0.51, 0.51));
-        _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.05, (2.0f * M_PI)));
+        _gObject->scale(glm::vec3(0.502, 0.502, 0.502));
+        _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.08, (2.0f * M_PI)));
     }
 };
 
@@ -193,7 +193,7 @@ public:
 
     void update()
     {
-        _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
+        _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
         _gObject->translate(glm::vec3(10.9, 0.0, 5));
     }
 };
@@ -214,6 +214,23 @@ public:
         _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.05, (2.0f * M_PI)));
     }
 };
+class JupiterAux : public Component {
+private:
+    float angle;
+
+public:
+
+    JupiterAux()
+    {
+        angle = 0;
+    }
+
+    void update()
+    {
+        _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
+        _gObject->translate(glm::vec3(12.0, 0.0, 16.0));
+    }
+};
 
 class Jupiter : public Component {
 private:
@@ -232,21 +249,61 @@ public:
     }
 };
 
-class JupiterAux : public Component {
+class SaturnAux : public Component {
 private:
     float angle;
 
 public:
+    SaturnAux()
+    {
+        ;
+    }
 
-    JupiterAux()
+    void update()
+    {
+        _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
+        _gObject->translate(glm::vec3(14.0, 0.0, 26.53));
+    }
+};
+
+class Saturn : public Component {
+private:
+    float angle;
+
+public:
+    Saturn()
     {
         angle = 0;
     }
 
     void update()
     {
-        _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
-        _gObject->translate(glm::vec3(12.0, 0.0, 16.0));
+        _gObject->scale(glm::vec3(0.40, 0.40, 0.40));
+//        _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.05, (2.0f * M_PI)));
+    }
+};
+
+class SaturnRing : public Component {
+
+private:
+    float angle;
+
+public:
+
+    SaturnRing()
+    {
+        angle = 0;
+    }
+
+    void start()
+    {
+        ;
+    }
+
+    void update()
+    {
+//        _gObject->rotate(glm::vec3(1.0, 1.0, 0.0), std::fmod(angle += 0.005, (M_PI / 12.0f)));
+        _gObject->rotate(glm::vec3(1.0, 1.0, 0.0), M_PI / 12.0f);
     }
 };
 
@@ -283,11 +340,24 @@ GameObject *getClouds(std::string path, std::string id)
     Render *render = new Render();
     bool isFile = true;
 
-    render->setProgram(new Program("../glsl/user/clouds_vs.glsl", "../glsl/user/clouds_fs.glsl", isFile));
     model->setTransparentModel();
+    render->setProgram(new Program("../glsl/user/clouds_vs.glsl", "../glsl/user/clouds_fs.glsl", isFile));
     render->setModel(model);
     clouds->addDrawer(render);
     return clouds;
+}
+
+GameObject *getRing(std::string path, std::string id)
+{
+    GameObject *ring = new GameObject(id);
+    Model *model = new Model(path);
+    Render *render = new Render();
+    bool isFile = true;
+
+    render->setProgram(new Program("../glsl/user/ring_vs.glsl", "../glsl/user/ring_fs.glsl", isFile));
+    render->setModel(model);
+    ring->addDrawer(render);
+    return ring;
 }
 
 GameObject* getSun(std::string path, std::string id)
@@ -384,7 +454,20 @@ Scene* SolarSystemSim()
     jupiter->addComponent(new Jupiter());
     jupiterAux->addChild(jupiter);
 
+    // Add Saturn
+    GameObject *saturnAux = new GameObject("saturnAux");
+    GameObject *saturn = getPlanet("../models/saturn/sphere.obj", "saturn");
+    GameObject *saturnRing = getRing("../models/saturn/saturn_ring.obj", "saturnRing");
+
+    saturnAux->addComponent(new SaturnAux());
+    saturn->addComponent(new Saturn());
+    saturn->addComponent(new Camera());
+    saturnRing->addComponent(new SaturnRing());
+    saturnAux->addChild(saturn);
+    saturnAux->addChild(saturnRing);
+
     // Generate tree nodes...
+    scene->addChild(skybox);
     scene->addChild(sun);
     scene->addChild(mercuryAux);
     scene->addChild(venuxAux);
@@ -392,6 +475,6 @@ Scene* SolarSystemSim()
     scene->addChild(auxEarth);
     scene->addChild(marsAux);
     scene->addChild(jupiterAux);
-    scene->addChild(skybox);
+    scene->addChild(saturnAux);
     return scene;
 }

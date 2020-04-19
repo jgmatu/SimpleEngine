@@ -17,8 +17,8 @@ void main()
         result = calcPointLight(points[0], material.texture_diffuse0, material.texture_specular0, texCoord, norm, fragPos, viewDir);
     }
 
-    vec4 textColor = texture(material.texture_diffuse0, texCoord);
-    if (textColor.a < 0.1) {
+    float alpha = texture(material.texture_diffuse0, texCoord).a;
+    if (alpha == 0.0) {
         discard;
     }
     fragColor = result;

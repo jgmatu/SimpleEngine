@@ -195,7 +195,7 @@ void Model::active() {
     }
 }
 
-void Model::update(Uniforms *uniforms)
+void Model::insertModelVariables(Uniforms *uniforms)
 {
     std::map<std::string, Mesh*>::const_iterator it;
 
@@ -230,7 +230,7 @@ bool Model::isTransparentModel()
             return true;
         }
     }
-    return !_isTransparentModel;
+    return _isTransparentModel;
 }
 std::ostream& operator<<(std::ostream& os, const Model& model) {
     std::map<std::string, Mesh*>::const_iterator it_mesh;

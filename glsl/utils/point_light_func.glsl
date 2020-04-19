@@ -15,7 +15,7 @@ vec4 calcPointLight(Point p, sampler2D texture_diffuse, sampler2D texture_specul
 {
     vec3 lightDir = normalize(p.position - fragPos);
 
-    // diffuse shading...
+    // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
 
     // specular shading
@@ -29,11 +29,12 @@ vec4 calcPointLight(Point p, sampler2D texture_diffuse, sampler2D texture_specul
     // combine results
     vec4 diffuse = p.diffuse * diff * texture(texture_diffuse, textCoord);
     vec4 specular = p.specular * spec * texture(texture_specular , textCoord);
+    vec4 ambient = texture(texture_diffuse, textCoord) * 0.1;
 
     diffuse = diffuse * attenuation;
     specular = specular * attenuation;
-
-    return diffuse + specular;
+    ambient = ambient * attenuation;
+    return diffuse + specular + ambient;
 }
 
 #define MAX_POINT_LIGHTS 255

@@ -25,7 +25,7 @@ public:
     ~Model();
 
     void active();
-    void update(Uniforms *uniforms);
+    void insertModelVariables(Uniforms *uniforms);
     void draw();
 
     void addMesh(Mesh *mesh);

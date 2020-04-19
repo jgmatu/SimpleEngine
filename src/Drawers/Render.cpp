@@ -73,7 +73,7 @@ void Render::draw()
         throw;
     }
     _program->use();
-    _model->update(_uniforms);
+    _model->insertModelVariables(_uniforms);
     _program->update(_uniforms);
     _model->draw();
 }

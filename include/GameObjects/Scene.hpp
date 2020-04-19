@@ -35,7 +35,7 @@ private:
 
     void eraseLigth(std::string id);
 
-    uint32_t _camera = 0;
+    uint32_t _camera = 1;
     GameObject *_root;
 
     std::vector<Light*> _ligths;
