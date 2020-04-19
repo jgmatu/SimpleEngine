@@ -307,6 +307,20 @@ public:
     }
 };
 
+class Stars : public Component {
+
+public:
+    Stars()
+    {
+        ;
+    }
+
+    void update()
+    {
+        _gObject->scale(glm::vec3(100.0, 100.0, 100.0));
+    }
+};
+
 std::vector<Light*> solarSystemIlumination()
 {
     std::vector<Light*> ilumination;
@@ -378,10 +392,10 @@ GameObject *getStars(std::string id)
 {
     GameObject *stars = new GameObject(id);
 
-    SkyBox *skybox = new SkyBox(std::vector<std::string>({"../skybox/ame_nebula/left.tga", 
+    SkyBox *skybox = new SkyBox(std::vector<std::string>({"../skybox/ame_nebula/right.tga", 
     "../skybox/ame_nebula/front.tga", "../skybox/ame_nebula/bottom.tga", 
     "../skybox/ame_nebula/back.tga", "../skybox/ame_nebula/top.tga", 
-    "../skybox/ame_nebula/right.tga"}));
+    "../skybox/ame_nebula/left.tga"}));
 
     stars->addDrawer(skybox);
     return stars;
@@ -395,6 +409,7 @@ Scene* SolarSystemSim()
     // Sun and Stars...
     GameObject *sun = getSun("../models/sun/sphere.obj", "sun");
     GameObject *skybox = getStars("stars");
+    skybox->addComponent(new Stars());
 
     // Add mercury
     GameObject *mercuryAux = new GameObject("mercuryAux");
@@ -425,6 +440,7 @@ Scene* SolarSystemSim()
     
     auxEarth->addComponent(new EarthAux());
     earth->addComponent(new Earth());
+    auxEarth->addComponent(new Camera());
     auxEarth->addChild(earth);
 
     // Add moon
@@ -461,7 +477,6 @@ Scene* SolarSystemSim()
 
     saturnAux->addComponent(new SaturnAux());
     saturn->addComponent(new Saturn());
-    saturn->addComponent(new Camera());
     saturnRing->addComponent(new SaturnRing());
     saturnAux->addChild(saturn);
     saturnAux->addChild(saturnRing);
