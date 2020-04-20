@@ -1,13 +1,43 @@
 #include "GameObjects/Scene.hpp"
 
+class Root : public Component {
+
+private:
+
+    bool wasPressed;
+
+public: 
+
+    Root()
+    {
+        wasPressed = false;
+    }
+
+    void update()
+    {
+        Scene *scene = this->_gObject->_scene;
+        if (!scene) {
+            std::cerr << "Scene not found!" << std::endl;
+            throw;
+        }
+        bool isPressed = Keyboard::instance->isKeyPressed("x");
+        if (!wasPressed && isPressed) {
+            scene->changeCamera();
+        }
+        wasPressed = isPressed;
+    }
+};
+
 Scene::Scene() :
     _cameras()
 {
-    this->_root = new GameObject("root");
+    this->_root = new GameObject(this, "root");
     this->_root->_root = this->_root;
 
-    // Add main camera...
+    // Add main camera
     this->_root->addComponent(new Camera());
+    // Add scene component
+    this->_root->addComponent(new Root());
 }
 
 Scene::~Scene()
@@ -42,6 +72,10 @@ void Scene::eraseLigth(std::string id)
             break;
         }
     }
+}
+
+void Scene::changeCamera() {
+    this->_camera = (this->_camera + 1) % this->_cameras.size();
 }
 
 void Scene::init()

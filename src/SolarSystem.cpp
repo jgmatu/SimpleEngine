@@ -120,7 +120,7 @@ public:
 
     void update()
     {
-        _gObject->scale(glm::vec3(0.502, 0.502, 0.502));
+        _gObject->scale(glm::vec3(0.50, 0.50, 0.50));
         _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.08, (2.0f * M_PI)));
     }
 };
@@ -416,6 +416,7 @@ Scene* SolarSystemSim()
     GameObject *mercury = getPlanet("../models/mercury/sphere.obj", "mercury");
 
     mercuryAux->addComponent(new MercuryAux());
+    mercuryAux->addComponent(new Camera());
     mercury->addComponent(new Mercury());
     mercuryAux->addChild(mercury);
 
@@ -424,6 +425,7 @@ Scene* SolarSystemSim()
     GameObject *venus = getPlanet("../models/venus/sphere.obj", "venus");
 
     venuxAux->addComponent(new VenusAux());
+    venuxAux->addComponent(new Camera());
     venus->addComponent(new Venus());
     venuxAux->addChild(venus);
 
@@ -436,29 +438,31 @@ Scene* SolarSystemSim()
     cloudsAux->addChild(clouds);
 
     GameObject *earth = getPlanet("../models/earth/sphere.obj", "earth");
-    GameObject* auxEarth = new GameObject("earthAux");
+    GameObject* earthAux = new GameObject("earthAux");
     
-    auxEarth->addComponent(new EarthAux());
+    earthAux->addComponent(new EarthAux());
+    earthAux->addComponent(new Camera());
     earth->addComponent(new Earth());
-    auxEarth->addComponent(new Camera());
-    auxEarth->addChild(earth);
+    earthAux->addChild(earth);
 
     // Add moon
     GameObject *moonAux = new GameObject("moonAux");
     GameObject *moon = getPlanet("../models/moon/sphere.obj", "moon");
 
     moonAux->addComponent(new MoonAux());
+    moonAux->addComponent(new Camera());
     moon->addComponent(new Moon());
 
     // Add moon to the Earth
     moonAux->addChild(moon);
-    auxEarth->addChild(moonAux);
+    earthAux->addChild(moonAux);
 
     // Add mars
     GameObject *marsAux = new GameObject("marsAux");
     GameObject *mars = getPlanet("../models/mars/sphere.obj", "mars");
 
     marsAux->addComponent(new MarsAux());
+    marsAux->addComponent(new Camera());
     mars->addComponent(new Mars());
     marsAux->addChild(mars);
 
@@ -467,6 +471,7 @@ Scene* SolarSystemSim()
     GameObject *jupiter = getPlanet("../models/jupiter/sphere.obj", "jupiter");
 
     jupiterAux->addComponent(new JupiterAux());
+    jupiterAux->addComponent(new Camera());
     jupiter->addComponent(new Jupiter());
     jupiterAux->addChild(jupiter);
 
@@ -476,6 +481,7 @@ Scene* SolarSystemSim()
     GameObject *saturnRing = getRing("../models/saturn/saturn_ring.obj", "saturnRing");
 
     saturnAux->addComponent(new SaturnAux());
+    saturnAux->addComponent(new Camera());
     saturn->addComponent(new Saturn());
     saturnRing->addComponent(new SaturnRing());
     saturnAux->addChild(saturn);
@@ -487,7 +493,7 @@ Scene* SolarSystemSim()
     scene->addChild(mercuryAux);
     scene->addChild(venuxAux);
     scene->addChild(cloudsAux);
-    scene->addChild(auxEarth);
+    scene->addChild(earthAux);
     scene->addChild(marsAux);
     scene->addChild(jupiterAux);
     scene->addChild(saturnAux);

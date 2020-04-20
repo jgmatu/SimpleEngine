@@ -35,10 +35,11 @@ void Camera::update()
     if (Keyboard::instance->isKeyPressed(GLFW_KEY_DOWN)) {
         _view->_model = glm::translate(_view->_model, glm::vec3(0, 0, -0.05));
     }
-
     // Tracker camera, de un gameObject
     _view->_gModel = _tfObj->_gModel * _view->_model;
     _view->_gModel = glm::inverse(_view->_gModel);
+
+
 }
 
 glm::vec3 Camera::viewPos()

@@ -20,7 +20,6 @@ public:
     void update();
 
     void addLigth(Light *ligth);
-
     Light* getLigth(std::string id);
 
     void addChild(GameObject *gameObject) {
@@ -31,11 +30,13 @@ public:
         _ligths = ilumination;
     }
 
+    void changeCamera();
+
 private:
 
     void eraseLigth(std::string id);
 
-    uint32_t _camera = 1;
+    uint32_t _camera = 0;
     GameObject *_root;
 
     std::vector<Light*> _ligths;

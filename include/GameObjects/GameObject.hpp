@@ -20,6 +20,7 @@
 #include "Drawers/Render.hpp"
 
 class Camera;
+class Scene;
 
 class GameObject {
 
@@ -45,6 +46,8 @@ public:
     std::vector<Light*> getLigths();
     Light* getLigth(std::string id);
 
+    Scene *_scene;
+
     friend std::ostream& operator<<(std::ostream&, const GameObject& gameObject);
 
 protected:
@@ -63,6 +66,7 @@ protected:
 
 private:
 
+    GameObject(Scene *scene, std::string id);
     GameObject();
 
     void init();
