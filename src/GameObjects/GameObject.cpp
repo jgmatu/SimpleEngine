@@ -8,13 +8,6 @@ GameObject::GameObject() :
     _components.push_back(_tf);
 }
 
-GameObject::GameObject(Scene *scene, std::string id) :
-    GameObject::GameObject()
-{
-    this->_scene = scene;
-    this->_id = id;
-}
-
 GameObject::GameObject(std::string id) :
     GameObject::GameObject()
 {
@@ -37,7 +30,6 @@ GameObject::~GameObject() {
     for (uint32_t i = 0; i < size; ++i) {
         delete _gameObjects[i];
     }
-    this->_scene = nullptr;
 }
 
 void GameObject::getCameras(std::vector<Camera*>& cameras)
@@ -135,7 +127,6 @@ void GameObject::init()
         _components[i]->start();
     }
     for (uint32_t i = 0; i < gameObjects_size; ++i) {
-        _gameObjects[i]->_scene = this->_scene;
         _gameObjects[i]->init();
     }
 }

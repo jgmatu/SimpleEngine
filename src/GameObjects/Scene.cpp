@@ -15,11 +15,6 @@ public:
 
     void update()
     {
-        Scene *scene = this->_gObject->_scene;
-        if (!scene) {
-            std::cerr << "Scene not found!" << std::endl;
-            throw;
-        }
         bool isPressed = Keyboard::instance->isKeyPressed("x");
         if (!wasPressed && isPressed) {
             this->changeCamera();
@@ -45,7 +40,7 @@ public:
 Scene::Scene() :
     _cameras()
 {
-    this->_root = new GameObject(this, "root");
+    this->_root = new GameObject("root");
     this->_root->_root = this->_root;
 
     // Add main camera

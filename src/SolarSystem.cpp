@@ -34,11 +34,6 @@ public:
 
     void update()
     {
-        Scene *scene = this->_gObject->_scene;
-        if (!scene) {
-            std::cerr << "Scene not found!" << std::endl;
-            throw;
-        }
         bool isPressed = Keyboard::instance->isKeyPressed("k");
         if (!wasPressed && isPressed) {
             this->changeCamera();
