@@ -6,6 +6,7 @@
 
 #include "GameObjects/GameObject.hpp"
 #include "Components/Camera.hpp"
+#include "Components/Controller.hpp"
 #include "Ligths/Light.hpp"
 
 class Scene {
@@ -31,6 +32,7 @@ public:
     }
 
     void changeCamera();
+    void addController(Controller *controller);
 
 private:
 
@@ -38,6 +40,7 @@ private:
 
     uint32_t _camera = 0;
     GameObject *_root;
+    Controller *_controller;
 
     std::vector<Light*> _ligths;
     std::vector<Camera*> _cameras;

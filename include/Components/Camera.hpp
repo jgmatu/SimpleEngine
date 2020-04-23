@@ -23,9 +23,8 @@ public:
     void start();
     void update();
 
-    // position vector is inverted since we eventually want to translate
-    // the world in the opposite direction of where we want to move.
-    glm::vec3 viewPos();
+    void translate(glm::vec3 vec3);
+    void rotate(glm::vec3 vec3, float angle);
 
     Transform *_view;
     glm::mat4 _projection;
@@ -34,6 +33,11 @@ public:
 
 private:
     friend class GameObject;
+    friend class Render;
+
+    // position vector is inverted since we eventually want to translate
+    // the world in the opposite direction of where we want to move.
+    glm::vec3 viewPos();
 
     // Trackers cameras...
     Transform *_tfObj;

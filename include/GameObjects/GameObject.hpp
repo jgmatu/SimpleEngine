@@ -32,6 +32,7 @@ public:
     void addChild(GameObject *gameObject);
 
     void addComponent(Component *component);
+    void deleteComponent(Component *component);
     void addDrawer(Drawer *drawer);
 
     void scale(glm::vec3 vec3);

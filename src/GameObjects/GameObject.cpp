@@ -86,6 +86,16 @@ void GameObject::addComponent(Component *component) {
     _components.push_back(component);
 }
 
+void GameObject::deleteComponent(Component *component)
+{
+    size_t size = _components.size();
+    for (uint32_t i = 0; i < size; ++i) {
+        if (_components[i] == component) {
+            _components.erase(_components.begin() + i);
+        }
+    }
+}
+
 void GameObject::addDrawer(Drawer *drawer)
 {
     _drawers.push_back(drawer);

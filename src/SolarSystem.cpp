@@ -19,6 +19,49 @@
 #include "Geometries/Sphere.hpp"
 #include "Geometries/Plane.hpp"
 
+class UserController : public Controller {
+
+private:
+
+    bool wasPressed;
+
+public: 
+
+    UserController()
+    {
+        wasPressed = false;
+    }
+
+    void update()
+    {
+        Scene *scene = this->_gObject->_scene;
+        if (!scene) {
+            std::cerr << "Scene not found!" << std::endl;
+            throw;
+        }
+        bool isPressed = Keyboard::instance->isKeyPressed("k");
+        if (!wasPressed && isPressed) {
+            this->changeCamera();
+        }
+        wasPressed = isPressed;
+
+        for (uint32_t i = 0; i < _cameras.size(); ++i) {
+            if (Keyboard::instance->isKeyPressed(GLFW_KEY_UP)) {
+                _cameras[i]->translate(glm::vec3(0, 0, 0.05));
+            }
+            if (Keyboard::instance->isKeyPressed(GLFW_KEY_RIGHT)) {
+                _cameras[i]->translate(glm::vec3(-0.05, 0, 0));
+            }
+            if (Keyboard::instance->isKeyPressed(GLFW_KEY_LEFT)) {
+                _cameras[i]->translate(glm::vec3(0.05, 0, 0));
+            }
+            if (Keyboard::instance->isKeyPressed(GLFW_KEY_DOWN)) {
+                _cameras[i]->translate(glm::vec3(0, 0, -0.05));
+            }
+        }
+    }
+};
+
 class MercuryAux : public Component {
 private:
     float angle;
@@ -497,5 +540,7 @@ Scene* SolarSystemSim()
     scene->addChild(marsAux);
     scene->addChild(jupiterAux);
     scene->addChild(saturnAux);
+
+    scene->addController(new UserController());
     return scene;
 }
