@@ -25,6 +25,20 @@ public:
             this->changeCamera();
         }
         wasPressed = isPressed;
+        for (uint32_t i = 0; i < _cameras.size(); ++i) {
+            if (Keyboard::instance->isKeyPressed(GLFW_KEY_UP)) {
+                _cameras[i]->translate(glm::vec3(0, 0, 0.05));
+            }
+            if (Keyboard::instance->isKeyPressed(GLFW_KEY_RIGHT)) {
+                _cameras[i]->translate(glm::vec3(-0.05, 0, 0));
+            }
+            if (Keyboard::instance->isKeyPressed(GLFW_KEY_LEFT)) {
+                _cameras[i]->translate(glm::vec3(0.05, 0, 0));
+            }
+            if (Keyboard::instance->isKeyPressed(GLFW_KEY_DOWN)) {
+                _cameras[i]->translate(glm::vec3(0, 0, -0.05));
+            }
+        }
     }
 };
 
