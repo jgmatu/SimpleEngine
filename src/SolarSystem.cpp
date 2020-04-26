@@ -53,6 +53,18 @@ public:
             if (Keyboard::instance->isKeyPressed(GLFW_KEY_DOWN)) {
                 _cameras[i]->translate(glm::vec3(0, 0, -0.05));
             }
+            if (Keyboard::instance->isKeyPressed("a")) {
+                _cameras[i]->rotate(glm::vec3(0.0, 1.0, 0.0), 0.05);
+            }
+            if (Keyboard::instance->isKeyPressed("d")) {
+                _cameras[i]->rotate(glm::vec3(0.0, 1.0, 0.0), -0.05);
+            }
+            if (Keyboard::instance->isKeyPressed("w")) {
+                _cameras[i]->rotate(glm::vec3(1.0, 0.0, 0.0), 0.05);
+            }
+            if (Keyboard::instance->isKeyPressed("s")) {
+                _cameras[i]->rotate(glm::vec3(1.0, 0.0, 0.0), -0.05);
+            }
         }
     }
 };
@@ -232,7 +244,7 @@ public:
     void update()
     {
         _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
-        _gObject->translate(glm::vec3(10.9, 0.0, 5));
+        _gObject->translate(glm::vec3(12, 0.0, 7.2));
     }
 };
 
@@ -317,7 +329,7 @@ public:
     void update()
     {
         _gObject->scale(glm::vec3(0.40, 0.40, 0.40));
-//        _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.05, (2.0f * M_PI)));
+        _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.05, (2.0f * M_PI)));
     }
 };
 
@@ -340,8 +352,7 @@ public:
 
     void update()
     {
-//        _gObject->rotate(glm::vec3(1.0, 1.0, 0.0), std::fmod(angle += 0.005, (M_PI / 12.0f)));
-        _gObject->rotate(glm::vec3(1.0, 1.0, 0.0), M_PI / 12.0f);
+        _gObject->rotate(glm::vec3(0.0, -1.0, 0.0), std::fmod(angle += 0.001, (2.0f * M_PI)));
     }
 };
 

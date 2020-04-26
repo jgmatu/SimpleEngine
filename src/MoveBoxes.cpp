@@ -45,18 +45,15 @@ public:
         ;
     }
 
-    void start()
-    {
-        _gObject->translate(glm::vec3(0.0, 0.0, 0.0));
-        if (GameObject *cube2 = _gObject->search("cube2")) {
-            cube2->translate(glm::vec3(2.0, 0.0, 0.0));
-        }
-    }
-
     void update()
     {
         bool isPressed[NUM_POINTS];
-        _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), 0.01);
+
+        _gObject->translate(glm::vec3(0.0, 0.0, 0.0));
+
+        if (GameObject *cube2 = _gObject->search("cube2")) {
+            cube2->translate(glm::vec3(2.0, 0.0, 0.0));
+        }
 
         for (uint32_t i = 0; i < NUM_POINTS; ++i) {
             isPressed[i] = Keyboard::getInstance()->isKeyPressed(std::to_string(i + 1));
@@ -77,6 +74,26 @@ public:
             point->setIntense(0.0);
         }
         p[idx] = !p[idx];
+    }
+};
+
+class Plane2 : public Component {
+
+public:
+    Plane2()
+    {
+        ;
+    }
+    ~Plane2()
+    {
+        ;
+    }
+
+    void update()
+    {
+         _gObject->translate(glm::vec3(0.0, -1.0, 0.0));
+         _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), M_PI / 2.0);
+         _gObject->scale(glm::vec3(10.0, 10.0, 10.0));
     }
 };
 
@@ -157,15 +174,32 @@ GameObject *generateCube(std::string id)
     return cube;
 }
 
+GameObject *generatePlane(std::string id)
+{
+    GameObject *plane = new GameObject(id);
+    Render *planeRender = new Render();
+    Model *model = new Model("../models/floor/plane.obj");
+    bool isFile = true;
+
+    planeRender->setProgram(new Program(cube_vs, cube_fs, !isFile));
+    planeRender->setModel(model);
+
+    plane->addDrawer(planeRender);
+    plane->addComponent(new Plane2());
+    return plane;
+}
+
 Scene* MoveBoxesSim()
 {
     Scene *scene = new Scene();
     GameObject *cube1 = generateCube("cube1");
     GameObject *cube2 = generateCube("cube2");
+    GameObject *plane = generatePlane("plane");
 
     cube2->addComponent(new Cube1());
     cube1->addComponent(new Cube1());
     scene->addLigths(getSceneLigths());
+    scene->addChild(plane);
     scene->addChild(cube1);
     scene->addChild(cube2);
 

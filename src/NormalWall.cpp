@@ -10,6 +10,7 @@
 #include "GameObjects/GameObject.hpp"
 #include "GameObjects/Scene.hpp"
 
+#include "Components/Controller.hpp"
 #include "Components/Camera.hpp"
 
 #include "Drawers/Skybox.hpp"
@@ -19,6 +20,66 @@
 #include "Geometries/Sphere.hpp"
 #include "Geometries/Plane.hpp"
 
+class WallController : public Controller {
+
+private:
+    bool wasPressed;
+
+public: 
+
+    WallController()
+    {
+        wasPressed = false;
+    }
+
+    ~WallController()
+    {
+        ;
+    }
+
+    void start()
+    {
+        for (uint32_t i = 0; i < _cameras.size(); ++i) {
+            _cameras[i]->translate(glm::vec3(0.0, 0.0, -5.0));
+        }
+    }
+
+    void update()
+    {
+        bool isPressed = Keyboard::instance->isKeyPressed("k");
+        if (!wasPressed && isPressed) {
+            this->changeCamera();
+        }
+        wasPressed = isPressed;
+
+        for (uint32_t i = 0; i < _cameras.size(); ++i) {
+            if (Keyboard::instance->isKeyPressed(GLFW_KEY_DOWN)) {
+                _cameras[i]->translate(glm::vec3(0, 0, 0.05));
+            }
+            if (Keyboard::instance->isKeyPressed(GLFW_KEY_LEFT)) {
+                _cameras[i]->translate(glm::vec3(-0.05, 0, 0));
+            }
+            if (Keyboard::instance->isKeyPressed(GLFW_KEY_RIGHT)) {
+                _cameras[i]->translate(glm::vec3(0.05, 0, 0));
+            }
+            if (Keyboard::instance->isKeyPressed(GLFW_KEY_UP)) {
+                _cameras[i]->translate(glm::vec3(0, 0, -0.05));
+            }
+            if (Keyboard::instance->isKeyPressed("a")) {
+                _cameras[i]->rotate(glm::vec3(0.0, 1.0, 0.0), 0.05);
+            }
+            if (Keyboard::instance->isKeyPressed("d")) {
+                _cameras[i]->rotate(glm::vec3(0.0, 1.0, 0.0), -0.05);
+            }
+            if (Keyboard::instance->isKeyPressed("w")) {
+                _cameras[i]->rotate(glm::vec3(1.0, 0.0, 0.0), 0.05);
+            }
+            if (Keyboard::instance->isKeyPressed("s")) {
+                _cameras[i]->rotate(glm::vec3(1.0, 0.0, 0.0), -0.05);
+            }
+        }
+    }
+};
 
 class Wall : public Component {
 
@@ -132,5 +193,6 @@ Scene* NormalWallSim()
 
     scene->addChild(getWall("wall"));
     scene->addLigth(getSunLigth());
+    scene->addController(new WallController());
     return scene;
 }

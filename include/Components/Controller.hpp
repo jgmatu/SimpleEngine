@@ -1,3 +1,6 @@
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
+
 #include "Components/Component.hpp"
 #include "Components/Camera.hpp"
 
@@ -28,3 +31,4 @@ private:
 
     friend class Scene;
 };
+#endif
