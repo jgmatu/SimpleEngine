@@ -47,8 +47,13 @@ void Render::setView(Camera *camera)
 
 void Render::setLigths(std::vector<Light*> ligths)
 {
-    for (uint32_t i = 0; i < ligths.size(); ++i) {
-        _uniforms->update(ligths[i]->getUniforms());
+    this->_ligths = ligths; 
+}
+
+void Render::updateIlumination(Uniforms *uniforms)
+{
+    for (uint32_t i = 0; i < _ligths.size(); ++i) {
+        _uniforms->update(_ligths[i]->getUniforms());
     }
 }
 
@@ -72,8 +77,10 @@ void Render::draw()
         std::cerr << "Update Render: Error invalid material or model" << '\n';
         throw;
     }
-    _program->use();
+    this->updateIlumination(_uniforms);
     _model->insertModelVariables(_uniforms);
+
+    _program->use();
     _program->update(_uniforms);
     _model->draw();
 }

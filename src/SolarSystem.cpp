@@ -442,9 +442,9 @@ GameObject *getStars(std::string id)
     GameObject *stars = new GameObject(id);
 
     SkyBox *skybox = new SkyBox(std::vector<std::string>({"../skybox/ame_nebula/right.tga", 
-    "../skybox/ame_nebula/front.tga", "../skybox/ame_nebula/bottom.tga", 
-    "../skybox/ame_nebula/back.tga", "../skybox/ame_nebula/top.tga", 
-    "../skybox/ame_nebula/left.tga"}));
+    "../skybox/ame_nebula/left.tga", "../skybox/ame_nebula/top.tga", 
+    "../skybox/ame_nebula/bottom.tga", "../skybox/ame_nebula/front.tga", 
+    "../skybox/ame_nebula/back.tga"}));
 
     stars->addDrawer(skybox);
     return stars;

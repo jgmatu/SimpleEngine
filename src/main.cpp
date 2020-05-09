@@ -1,6 +1,7 @@
 #include "MoveBoxes.cpp"
 #include "NormalWall.cpp"
 #include "SolarSystem.cpp"
+#include "Airport.cpp"
 #include "Engine.hpp"
 
 void help()
@@ -12,12 +13,14 @@ Scene* getArgsScene(int argc, char* argv[])
 {
     Scene *scene = nullptr; 
     if (argc == 3 && strncmp(argv[1], "-s", strlen(argv[1])) == 0) {
-        if (strncmp(argv[2], "Wall", strlen(argv[2])) == 0) {
+        if (strncmp(argv[2], "Wall", strlen("Wall")) == 0) {
             scene = NormalWallSim();
-        } else if (strncmp(argv[2], "Cube", strlen(argv[2])) == 0) {
+        } else if (strncmp(argv[2], "Cube", strlen("Cube")) == 0) {
             scene = MoveBoxesSim();
-        } else if (strncmp(argv[2], "Solar", strlen(argv[2])) == 0) {
+        } else if (strncmp(argv[2], "Solar", strlen("Solar")) == 0) {
             scene = SolarSystemSim();
+        } else if (strncmp(argv[2], "Airport", strlen("Airport")) == 0) {
+            scene = AirportSimulation();
         }
     }
     return scene;

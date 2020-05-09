@@ -21,9 +21,23 @@
 
 static const int NUM_POINTS = 3;
 
+class Cube2 : public Component {
 
-class Cube1 : public Component 
-{
+private:
+
+public:
+
+    Cube2()
+    {
+        ;
+    }
+
+    void update() {
+        _gObject->translate(glm::vec3(2.0, -0.5, 0.0));
+    }
+};
+
+class Cube1 : public Component  {
 
 private:
 
@@ -47,13 +61,13 @@ public:
 
     void update()
     {
+        _gObject->translate(glm::vec3(0.0, -0.5, 0.0));
+        switchIntensePointLigths();
+    }
+
+    void switchIntensePointLigths()
+    {
         bool isPressed[NUM_POINTS];
-
-        _gObject->translate(glm::vec3(0.0, 0.0, 0.0));
-
-        if (GameObject *cube2 = _gObject->search("cube2")) {
-            cube2->translate(glm::vec3(2.0, 0.0, 0.0));
-        }
 
         for (uint32_t i = 0; i < NUM_POINTS; ++i) {
             isPressed[i] = Keyboard::getInstance()->isKeyPressed(std::to_string(i + 1));
@@ -79,10 +93,15 @@ public:
 
 class Plane2 : public Component {
 
+private:
+
+    glm::vec3 ligth_position;
+
 public:
+
     Plane2()
     {
-        ;
+        this->ligth_position = glm::vec3(1.0, 1.0, 0.0);
     }
     ~Plane2()
     {
@@ -91,9 +110,32 @@ public:
 
     void update()
     {
-         _gObject->translate(glm::vec3(0.0, -1.0, 0.0));
-         _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), M_PI / 2.0);
-         _gObject->scale(glm::vec3(10.0, 10.0, 10.0));
+        _gObject->translate(glm::vec3(0.0, -1.0, 0.0));
+        _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), M_PI / 2.0);
+        _gObject->scale(glm::vec3(10.0, 10.0, 10.0));
+        moveLigth();
+    }
+
+    void moveLigth()
+    {
+        Light *point = _gObject->getLigth("p0");
+
+        if (Keyboard::instance->isKeyPressed("w")) {
+            this->ligth_position = this->ligth_position + glm::vec3(0.0, 0.0, 0.05);
+            point->setPosition(this->ligth_position);
+        }
+        if (Keyboard::instance->isKeyPressed("s")) {
+            this->ligth_position = this->ligth_position + glm::vec3(0.0, 0.0, -0.05);
+            point->setPosition(this->ligth_position);
+        }
+        if (Keyboard::instance->isKeyPressed("a")) {
+            this->ligth_position = this->ligth_position + glm::vec3(0.05, 0.0, 0.0);
+            point->setPosition(this->ligth_position);
+        }
+        if (Keyboard::instance->isKeyPressed("d")) {
+            this->ligth_position = this->ligth_position + glm::vec3(-0.05, 0.0, 0.00);
+            point->setPosition(this->ligth_position);
+        }
     }
 };
 
@@ -102,9 +144,9 @@ std::vector<Light*> getSceneLigths()
     std::vector<Light*> points(NUM_POINTS);
 
     std::vector<glm::vec3> positions = {
-        glm::vec3(1.0, 1.0, 0.0),
-        glm::vec3(0.0, 1.0, 1.0),
-        glm::vec3(-1.0, 1.0, 0.0),
+        glm::vec3(2.0, 2.0, 0.0),
+        glm::vec3(0.0, 2.0, 2.0),
+        glm::vec3(-2.0, 2.0, 0.0),
     };
 
     for (uint32_t i = 0; i < NUM_POINTS; ++i) {
@@ -196,8 +238,9 @@ Scene* MoveBoxesSim()
     GameObject *cube2 = generateCube("cube2");
     GameObject *plane = generatePlane("plane");
 
-    cube2->addComponent(new Cube1());
     cube1->addComponent(new Cube1());
+    cube2->addComponent(new Cube2());
+
     scene->addLigths(getSceneLigths());
     scene->addChild(plane);
     scene->addChild(cube1);

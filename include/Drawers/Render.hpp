@@ -28,8 +28,10 @@ private:
     void setMatrixModel(glm::mat4 model);
     bool isTransparentModel();
     void setLigths(std::vector<Light*> ligths);
+    void updateIlumination(Uniforms *uniforms);
 
     Model *_model;
+    std::vector<Light*> _ligths;
 };
 
 #endif // RENDER_H

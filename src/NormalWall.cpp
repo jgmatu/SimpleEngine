@@ -160,8 +160,6 @@ void main()\n\
 }\n\
 ";
 
-const std::string fpath = "../glsl/user/wall_fs.glsl";
-const std::string vpath = "../glsl/user/wall_vs.glsl";
 
 GameObject* getWall(std::string id)
 {
@@ -169,6 +167,9 @@ GameObject* getWall(std::string id)
     Render *wallRender = new Render();
     Model *model = new Model("../models/wall/plane.obj");
     bool isFile = true;
+
+    const std::string fpath = "../glsl/user/wall_fs.glsl";
+    const std::string vpath = "../glsl/user/wall_vs.glsl";
 
     wallRender->setProgram(new Program(vpath, fpath, isFile));
     wallRender->setModel(model);

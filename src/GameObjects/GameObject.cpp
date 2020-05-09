@@ -135,8 +135,7 @@ void GameObject::draw()
 {
     for (uint32_t i = 0; i < _drawers.size(); ++i) {
         if (Render *render = dynamic_cast<Render*>(_drawers[i])) {
-            render->setMatrixModel(_tf->_gModel);
-        
+            render->setMatrixModel(_tf->_gModel);   
         }
         _drawers[i]->setView(_camera);
         _drawers[i]->draw();

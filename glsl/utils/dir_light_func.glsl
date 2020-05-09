@@ -10,7 +10,7 @@ vec4 calcDirLight(Directional d, sampler2D texture_diffuse, sampler2D texture_sp
     vec3 lightDir = normalize(-d.direction);
 
     // Diffuse shading...
-    float diff = max(dot(normal, lightDir), 0.0);
+    float diff = max(dot(normal, lightDir), 0.15);
 
     // Specular shading...
     vec3 reflectDir = reflect(-lightDir, normal);
