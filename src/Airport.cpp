@@ -70,6 +70,10 @@ void main()\n\
 }\n\
 ";
 
+const std::vector<std::string> AIRPLANES = {
+    "a1", "a2", "a3", "a4", "a5", "a6"
+};
+
 class Sand : public Component {
 
 public:
@@ -79,11 +83,16 @@ public:
         ;
     }
 
-    void update()
+    void start()
     {
         _gObject->translate(glm::vec3(0.0, -1.0, 0.0));
         _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), M_PI / 2.0);
         _gObject->scale(glm::vec3(20.0, 20.0, 20.0));
+    }
+
+    void update()
+    {
+        ;
     }
 
 };
@@ -99,11 +108,16 @@ public:
         ;
     }
 
-    void update()
+    void start()
     {
         _gObject->translate(glm::vec3(0.0, -0.95, 0.0));
         _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), M_PI / 2.0);
-        _gObject->scale(glm::vec3(10.0, 1.0, 1.0));
+        _gObject->scale(glm::vec3(10.0, 1.0, 1.0));        
+    }
+
+    void update()
+    {
+        ;
     }
 
 };
@@ -119,18 +133,55 @@ public:
         ;
     }
 
-    void update()
+    void start()
     {
         _gObject->translate(glm::vec3(0.0, -1.0, -2.0));
         _gObject->scale(glm::vec3(0.3, 0.3, 0.3));
         _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), M_PI / 2.0);
     }
 
+    void update()
+    {
+        ;
+    }
+
 };
 
-class Airplane : public Component {
+class Parking : public Component {
 
 private:
+
+    const std::map<std::string, glm::vec3> parking_position = {
+        {"a1", glm::vec3(4.0,  -0.5, -2.0)},
+        {"a2", glm::vec3(6.0,  -0.5, -2.0)},
+        {"a3", glm::vec3(8.0,  -0.5, -2.0)},
+        {"a4", glm::vec3(-4.0, -0.5, -2.0)},
+        {"a5", glm::vec3(-6.0, -0.5, -2.0)},
+        {"a6", glm::vec3(-8.0, -0.5, -2.0)}
+    };
+    std::string _id;
+
+public: 
+
+    Parking(std::string id) 
+    {
+        this->_id = id;
+    }
+
+    void start()
+    {
+        GameObject *airplane = _gObject->search(this->_id);
+        std::map<std::string, glm::vec3>::const_iterator it;
+     
+        it = parking_position.find(this->_id);
+
+        airplane->translate(it->second);
+        airplane->scale(glm::vec3(0.005, 0.005, 0.005));
+    }
+};
+
+
+class Airplane : public Component {
 
 public:
 
@@ -138,12 +189,17 @@ public:
     {
         ;
     }
-
-    void update()
+ 
+    void start()
     {
         _gObject->translate(glm::vec3(-10.0, -0.5, 0.0));
         _gObject->scale(glm::vec3(0.005, 0.005, 0.005));
         _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), M_PI / 2.0);
+    }
+
+    void update()
+    {
+        ;
     }
 };
 
@@ -211,7 +267,7 @@ GameObject *generateRoad(std::string id)
 
 GameObject *generateAirplane(std::string id) 
 {
-    GameObject *road = new GameObject(id);
+    GameObject *airplane = new GameObject(id);
     Render *roadRender = new Render();
     Model *model = new Model("../models/airplane/airplane.obj");
     bool isFile = true;
@@ -223,10 +279,8 @@ GameObject *generateAirplane(std::string id)
     roadRender->setProgram(new Program(vpath, fpath, isFile));
     roadRender->setModel(model);
 
-    road->addDrawer(roadRender);
-    road->addComponent(new Camera());
-    road->addComponent(new Airplane());
-    return road;
+    airplane->addDrawer(roadRender);
+    return airplane;
 }
 
 GameObject *getMountainSky(std::string id)
@@ -242,6 +296,23 @@ GameObject *getMountainSky(std::string id)
     return stars;
 }
 
+void generateAirplanesParking(Scene *scene)
+{
+    for (uint32_t i = 0; i < AIRPLANES.size(); ++i) {
+        GameObject *airplane = generateAirplane(AIRPLANES[i]);
+        airplane->addComponent(new Parking(AIRPLANES[i]));
+        scene->addChild(airplane);
+    }
+}
+
+void generatePilotAirplane(Scene *scene)
+{
+    GameObject *airplane = generateAirplane("pilot");
+
+    scene->addChild(airplane);
+    airplane->addComponent(new Camera());
+    airplane->addComponent(new Airplane());
+}
 Scene* AirportSimulation()
 {
     Scene *scene = new Scene();
@@ -249,16 +320,18 @@ Scene* AirportSimulation()
     GameObject *sand = generateSand("sand");
     GameObject *road = generateRoad("road");
     GameObject *tower = generateTower("tower");
-    GameObject *airplane = generateAirplane("airplane");
     GameObject *mountainsSky = getMountainSky("sky"); 
 
     scene->addController(new UserController());
     scene->addLigth(getSunLightAirport());
 
+    generateAirplanesParking(scene);
+    generatePilotAirplane(scene);
+
     scene->addChild(mountainsSky);
-    scene->addChild(airplane);
     scene->addChild(tower);
     scene->addChild(road);
     scene->addChild(sand);
+
     return scene;
 }

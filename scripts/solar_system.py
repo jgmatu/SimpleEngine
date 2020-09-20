@@ -11,7 +11,7 @@ def timer(scene):
     fps = scene.render.fps  / scene.render.fps_base
     ms = 1000 * (t1 - t0)
     fps = min(fps, (1000 / ms))
-#    syslog.syslog(syslog.LOG_ERR, "Fps : {}".format(fps))
+    syslog.syslog(syslog.LOG_ERR, "Fps : {}".format(fps))
     t0 = t1
 
 def __earthAuxMove(_frame):
@@ -34,7 +34,7 @@ def __earthAuxMove(_frame):
 
 def __earthMove(_frame):
     earth = bpy.data.objects["Earth"]
-    
+
     # Generar el movimiento de rotación.
     angle = math.radians(_frame) * (-1)
     R = mathutils.Matrix.Rotation(angle, 4, 'Z')
@@ -61,7 +61,7 @@ def __moonMove(_frame):
     # Añadir la rotación e la tierra a la matriz local del objeto.
     moon.matrix_local = R
 
-    moon.scale = (0.25, 0.25, 0.25)
+    moon.scale = (1.0, 1.0, 1.0)
 
     # Añadir a la animación la rotación de la tierra.
     moon.keyframe_insert("rotation_euler", frame=_frame, index=-1)
@@ -72,7 +72,7 @@ def __moonMove(_frame):
 
 def __moonAuxMove(_frame):
     moonAux = bpy.data.objects["MoonAux"] 
-   
+
     # Generar el movimiento de traslación en dos pasos de rotación y traslación.
     angle = math.radians(_frame)
     R = mathutils.Matrix.Rotation(2.0 * angle, 4, 'Z')
@@ -92,7 +92,7 @@ syslog.syslog(syslog.LOG_ERR, "{}".format("********* START **************"))
 
 def __marsAuxMove(_frame):
     marsAux = bpy.data.objects["MarsAux"] 
-   
+
     # Generar el movimiento de traslación en dos pasos de rotación y traslación.
     angle = math.radians(_frame)
     R = mathutils.Matrix.Rotation(angle, 4, 'Z')
@@ -141,21 +141,26 @@ def __rotationPlanet(planet, rotation, scale, _frame):
     syslog.syslog(syslog.LOG_ERR, "Planet: {} -> Position: {}".format(planet.name, planet.matrix_local.to_translation()))
     syslog.syslog(syslog.LOG_ERR, "Planet: {} -> Angle: {}".format(planet.name, rotation))
 
-# Render loop
-for frame in range(1, 360):
-    # Earth Movement
-    __traslationPlanet(bpy.data.objects["EarthAux"], (0.0, 25.0, 0.0), math.radians(frame), frame)
-    __rotationPlanet(bpy.data.objects["Earth"], math.radians((-2.0) * frame), (1.00, 1.00, 1.00), frame)
-    
-    # Moon Movement
-    __traslationPlanet(bpy.data.objects["MoonAux"], (0.0, -3.0, 0.0), (-2) * math.radians(frame), frame)
-    __rotationPlanet(bpy.data.objects["Moon"], math.radians(frame), (0.25, 0.25, 0.25), frame)
-
-    # Movimiento de traslacion de marte
-    __traslationPlanet(bpy.data.objects["MarsAux"], (30.0, 30.0, 0.0), math.radians((5) * frame), frame)
-    __rotationPlanet(bpy.data.objects["Mars"], math.radians(frame), (1.00, 1.00, 1.00), frame)
+sun = bpy.data.objects["Sun"]
+sun.scale = (6.0, 6.0, 6.0)
 
 # Observer frame rate per seconds
 bpy.app.handlers.frame_change_post.append(timer)
 
+# Render loop
+for frame in range(1, 360):
+    # Earth Movement
+    __traslationPlanet(bpy.data.objects["EarthAux"], (0.0, 25.0, 0.0), math.radians(frame), frame)
+    __rotationPlanet(bpy.data.objects["Earth"], math.radians((-2.0) * frame), (3.00, 3.00, 3.00), frame)
+    
+    # Moon Movement
+    __traslationPlanet(bpy.data.objects["MoonAux"], (0.0, -6.0, 0.0), (-2) * math.radians(frame), frame)
+    __rotationPlanet(bpy.data.objects["Moon"], math.radians(frame), (1.25, 1.25, 1.25), frame)
+
+    # Movimiento de traslacion de marte
+    __traslationPlanet(bpy.data.objects["MarsAux"], (30.0, 30.0, 0.0), math.radians((5) * frame), frame)
+    __rotationPlanet(bpy.data.objects["Mars"], math.radians(frame), (3.00, 3.00, 3.00), frame)
+
 syslog.syslog(syslog.LOG_ERR, "{}".format("********* END **************"))
+
+

@@ -122,12 +122,38 @@ void GameObject::init()
 {
     size_t components_size  = _components.size();
     size_t gameObjects_size = _gameObjects.size();
+    Transform *tf = nullptr;
 
     for (uint32_t i = 0; i < components_size; ++i) {
+        if (!tf) {
+            if ((tf = dynamic_cast<Transform*>(_components[i])) != nullptr) {
+                continue;
+            }
+        }
         _components[i]->start();
     }
+    if (!tf) {
+        std::cerr << "TF NULL" << std::endl;
+        throw;
+    }
+    tf->start();
+
     for (uint32_t i = 0; i < gameObjects_size; ++i) {
         _gameObjects[i]->init();
+    }
+}
+
+void GameObject::update()
+{
+    size_t size = _components.size();
+
+    for (uint32_t i = 0; i < size; ++i) {
+        _components[i]->update();
+    }
+
+    size = _gameObjects.size();
+    for (uint32_t i = 0; i < size; ++i) {
+        _gameObjects[i]->update();
     }
 }
 
@@ -178,20 +204,6 @@ void GameObject::addTransparentQueue(std::map<float, std::vector<GameObject*>>& 
         transparents[distance] = aux;
     } else {
         it->second.push_back(this);
-    }
-}
-
-void GameObject::update()
-{
-    size_t size = _components.size();
-
-    for (uint32_t i = 0; i < size; ++i) {
-        _components[i]->update();
-    }
-
-    size = _gameObjects.size();
-    for (uint32_t i = 0; i < size; ++i) {
-        _gameObjects[i]->update();
     }
 }
 

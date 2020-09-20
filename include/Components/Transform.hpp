@@ -26,12 +26,13 @@ public:
     void addChild(Transform *tf);
     glm::vec3 position() const;
 
-
     friend std::ostream& operator<<(std::ostream&, const Transform& tf);
 
-    glm::mat4 _gModel, _model;
+    glm::mat4 _gModel, _model, _last_model;
 
 private:
+
+    bool isMove(glm::mat4 _model, glm::mat4 last_model);
 
     std::vector<Transform*> tfChilds;
 

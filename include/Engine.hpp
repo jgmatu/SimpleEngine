@@ -24,7 +24,7 @@
 
 #include "GameObjects/Scene.hpp"
 
-#define LOOP_INTERVAL_TIME_MS 10
+#define LOOP_INTERVAL_TIME_MS 20
 
 class Engine {
 
