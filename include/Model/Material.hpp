@@ -23,9 +23,6 @@ public:
     ~Material();
 
     void setTexture(std::string id_mesh, Texture *texture);
-    void setTransparent();
-    void setOpaque();
-    bool isTransparent() const;
 
     void drawTextures();
     void activeTextures(); 
@@ -42,7 +39,6 @@ private:
     void addNewTexture(Texture *texture);
  
     std::vector<Texture*> _textures;
-    bool _transparent;
 
     uint32_t _diffuseNr = 0;
     uint32_t _specularNr = 0;

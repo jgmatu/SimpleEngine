@@ -1,4 +1,3 @@
-
 struct Point {
     vec3 position;
 
@@ -20,7 +19,7 @@ vec4 calcPointLight(Point p, sampler2D texture_diffuse, sampler2D texture_specul
 
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0), 128.0);
+    float spec = pow(max(dot(viewDir, reflectDir), 0), 64.0);
 
     // attenuation
     float distance = length(p.position - fragPos);

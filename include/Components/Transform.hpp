@@ -28,7 +28,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream&, const Transform& tf);
 
-    glm::mat4 _gModel, _model, _last_model;
+    glm::mat4 _gModel, _model, _last_model, _inital_position;
 
 private:
 

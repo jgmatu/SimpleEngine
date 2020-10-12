@@ -126,8 +126,8 @@ void Scene::draw()
     }
 
     // Step 2: Pintar los objetos ordenados, por transparencia
-    std::map<float, std::vector<GameObject*>>::reverse_iterator it;
-    for (it = transparents.rbegin(); it != transparents.rend(); ++it) {
+    std::map<float, std::vector<GameObject*>>::iterator it;
+    for (it = transparents.begin(); it != transparents.end(); ++it) {
         std::vector<GameObject*> vObjs = it->second;
 
         for (uint32_t i = 0; i < vObjs.size(); ++i) {

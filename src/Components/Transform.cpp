@@ -3,7 +3,8 @@
 Transform::Transform() :
     _gModel(1.0f),
     _model(1.0f),
-    _last_model(1.0f)
+    _last_model(1.0f),
+    _inital_position(1.0f)
 {
     ;
 }
@@ -18,6 +19,7 @@ void Transform::start()
     for (uint32_t i = 0; i < tfChilds.size(); ++i) {
         tfChilds[i]->_gModel = _gModel * tfChilds[i]->_model;
     }
+    this->_inital_position = this->_model;
     this->_last_model = this->_model;
 }
 
@@ -30,7 +32,7 @@ bool Transform::isMove(glm::mat4 model, glm::mat4 last_model)
 {
     for (uint32_t i = 0; i < 4; ++i) {
         for (uint32_t j = 0; j < 4; ++j) {
-            if (fabs(model[i][j] - last_model[i][j]) > 0.1) {
+            if (fabs(model[i][j] - last_model[i][j]) > 0.01) {
                 return true;
             }
         }
@@ -43,9 +45,8 @@ void Transform::update()
     for (uint32_t i = 0; i < tfChilds.size(); ++i) {
         tfChilds[i]->_gModel = _gModel * tfChilds[i]->_model;
     }
-    // Reset relative matrix model to start new 
-    // dependency operations on next iterations...
-    if (isMove(this->_gModel, this->_last_model)) {
+    // Reset relative matrix model to start new dependency operations on next iterations.
+    if (isMove(this->_model, this->_last_model) || isMove(this->_gModel, this->_inital_position)) {
         this->_model = glm::mat4(1.0);
     }
     this->_last_model = this->_model;

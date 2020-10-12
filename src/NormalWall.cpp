@@ -81,17 +81,76 @@ public:
     }
 };
 
+const std::vector<std::string> TUNNEL = {
+    "w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9",
+    "w10", "w11", "w12", "w13", "w14", "w15", "w16", "w17", "w18"
+};
+
+
 class Wall : public Component {
 
 private:
 
+    struct Rotation {
+        Rotation() : r(), a(0) {}
+        Rotation(glm::vec3 rotation, float angle) :
+            r(rotation), a(angle) {} 
+
+        glm::vec3 r;
+        float a;
+    };
+
+    const std::map<std::string, Rotation> wall_rotate = {
+        {"w1", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w2", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w3", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w4", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w5", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w6", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w7", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w8", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w9", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w10", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w11", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w12", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w13", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w14", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w15", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w16", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w17", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+        {"w18", Rotation(glm::vec3(1.0, 0.0, 0.0), M_PI)},
+    };
+
+    const std::map<std::string, glm::vec3> wall_translate = {
+        {"w1", glm::vec3(-8.0, 0.0, 0.0)},
+        {"w2", glm::vec3(-7.0, 0.0, 0.0)},
+        {"w3", glm::vec3(-6.0, 0.0, 0.0)},
+        {"w4", glm::vec3(-5.0, 0.0, 0.0)},
+        {"w5", glm::vec3(-4.0, 0.0, 0.0)},
+        {"w6", glm::vec3(-3.0, 0.0, 0.0)},
+        {"w7", glm::vec3(-2.0, 0.0, 0.0)},
+        {"w8", glm::vec3(-1.0, 0.0, 0.0)},
+        {"w9", glm::vec3( 0.0, 0.0, 0.0)},
+        {"w10", glm::vec3(-8.0, 0.0, -1.0)},
+        {"w11", glm::vec3(-7.0, 0.0, -1.0)},
+        {"w12", glm::vec3(-6.0, 0.0, -1.0)},
+        {"w13", glm::vec3(-5.0, 0.0, -1.0)},
+        {"w14", glm::vec3(-4.0, 0.0, -1.0)},
+        {"w15", glm::vec3(-3.0, 0.0, -1.0)},
+        {"w16", glm::vec3(-2.0, 0.0, -1.0)},
+        {"w17", glm::vec3(-1.0, 0.0, -1.0)},
+        {"w18", glm::vec3( 0.0, 0.0, -1.0)},
+    };
+
+    std::string _id;
     float angle;
 
 public:
 
-    Wall() 
+    Wall(std::string id) 
     {
-        angle = 0;
+        angle = M_PI;
+        this->_id = id;
     }
     
     ~Wall()
@@ -101,12 +160,38 @@ public:
 
     void start()
     {
-        ;
+        // Translation each wall...
+        GameObject *wall = _gObject->search(this->_id);
+        std::map<std::string, glm::vec3>::const_iterator itTraslation;
+     
+        itTraslation = wall_translate.find(this->_id);
+
+        wall->translate(itTraslation->second);
+
+        // Rotation each wall...
+        std::map<std::string, Rotation>::const_iterator itRotation;
+        itRotation = wall_rotate.find(this->_id);
+
+        wall->rotate(itRotation->second.r, itRotation->second.a);
     }
 
     void update() 
     {
-        _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), std::fmod(angle += 0.01, (2.0f * M_PI)));
+        GameObject *wall = _gObject->search(this->_id);
+         
+        // Translate...
+        std::map<std::string, glm::vec3>::const_iterator itTraslation;
+        itTraslation = wall_translate.find(this->_id);
+        wall->translate(itTraslation->second);
+
+        // Rotate...
+        if (Keyboard::instance->isKeyPressed("1")) {
+            angle += 0.01;
+        } 
+        if (Keyboard::instance->isKeyPressed("2")) {
+            angle -= 0.01;
+        }
+        wall->rotate(glm::vec3(1.0, 0.0, 0.0), std::fmod(angle, (2.0f * M_PI)));
     }
 };
 
@@ -175,7 +260,7 @@ GameObject* getWall(std::string id)
     wallRender->setModel(model);
 
     wall->addDrawer(wallRender);
-    wall->addComponent(new Wall());
+    wall->addComponent(new Wall(id));
     return wall;
 }
 
@@ -188,12 +273,23 @@ Light* getSunLigth()
     return dir;
 }
 
+void generateTunel(Scene *scene)
+{
+    GameObject *wall = nullptr;
+
+    for (uint32_t i = 0; i < TUNNEL.size(); ++i) {
+        wall = getWall(TUNNEL[i]);
+        wall->addComponent(new Wall(TUNNEL[i]));
+        scene->addChild(wall);
+    }
+}
+
 Scene* NormalWallSim()
 {
     Scene *scene = new Scene();
 
-    scene->addChild(getWall("wall"));
     scene->addLigth(getSunLigth());
+    generateTunel(scene);
     scene->addController(new WallController());
     return scene;
 }

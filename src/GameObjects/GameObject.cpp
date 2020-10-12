@@ -259,6 +259,11 @@ void GameObject::rotate(glm::vec3 vec3, float angle)
     this->_tf->_model = glm::rotate(this->_tf->_model, angle, vec3);
 }
 
+glm::vec3 GameObject::getScale()
+{
+    return glm::vec3(this->_tf->_model[0].x, this->_tf->_model[1].y, this->_tf->_model[2].z);
+}
+
 float GameObject::distance(std::string id)
 {
     GameObject *gameObject = search(id);

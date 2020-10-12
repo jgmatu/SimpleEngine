@@ -46,6 +46,16 @@ public:
     void addLigths(std::vector<Light*> ligths);
     std::vector<Light*> getLigths();
     Light* getLigth(std::string id);
+    glm::vec3 getScale();
+
+    Camera* getCamera() {
+        for (uint32_t i = 0; i < _components.size(); ++i) {
+            if (Camera *camera = dynamic_cast<Camera*>(_components[i])) {
+                return camera;
+            }
+        }
+        return nullptr;
+    }
 
     friend std::ostream& operator<<(std::ostream&, const GameObject& gameObject);
 

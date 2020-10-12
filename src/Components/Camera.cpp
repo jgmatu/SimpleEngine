@@ -5,6 +5,9 @@ Camera::Camera() :
 {
     this->_view = new Transform();
     this->_projection = glm::perspective(glm::radians(60.0f), aspectRatio, 0.1f, 100.0f);
+
+    // Camera view model stay 5 meters away the object. :)
+    this->_view->_model = glm::translate(this->_view->_gModel, glm::vec3(0, 0, 6.0));
 }
 
 Camera::~Camera()
@@ -13,8 +16,9 @@ Camera::~Camera()
 }
 
 void Camera::start()
-{
-    this->_view->_gModel = glm::translate(this->_view->_gModel, glm::vec3(0, 0, 5.0));
+{    
+    _view->_gModel = _tfObj->_gModel * _view->_model;
+    _view->_gModel = glm::inverse(_view->_gModel);
 }
 
 void Camera::update()
@@ -32,11 +36,16 @@ void Camera::translate(glm::vec3 vec3)
 {
     this->_view->_model = glm::translate(this->_view->_model, vec3);
 }
+
 void Camera::rotate(glm::vec3 vec3, float angle)
 {
      this->_view->_model = glm::rotate(this->_view->_model, angle, vec3);
 }
 
+void Camera::scale(glm::vec3 vec3)
+{
+    this->_view->_model = glm::scale(this->_view->_model, vec3);
+}
 
 glm::vec3 Camera::viewPos()
 {

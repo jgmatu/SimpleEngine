@@ -74,6 +74,10 @@ const std::vector<std::string> AIRPLANES = {
     "a1", "a2", "a3", "a4", "a5", "a6"
 };
 
+const std::vector<std::string> WINDOWS = {
+    "w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9"
+};
+
 class Sand : public Component {
 
 public:
@@ -180,26 +184,143 @@ public:
     }
 };
 
+class Circuit : public Component {
 
-class Airplane : public Component {
+private:
+
+    struct Rotation {
+        Rotation() : r(), a(0) {}
+        Rotation(glm::vec3 rotation, float angle) :
+            r(rotation), a(angle) {} 
+
+        glm::vec3 r;
+        float a;
+    };
+
+    const std::map<std::string, Rotation> circuit_rotate = {
+        {"w1", Rotation(glm::vec3(1.0, 0.0, 1.0), M_PI)},
+        {"w2", Rotation(glm::vec3(1.0, 0.0, 1.0), M_PI)},
+        {"w3", Rotation(glm::vec3(1.0, 0.0, 1.0), M_PI)},
+        {"w4", Rotation(glm::vec3(1.0, 0.0, 1.0), M_PI)},
+        {"w5", Rotation(glm::vec3(1.0, 0.0, 1.0), M_PI)},
+        {"w6", Rotation(glm::vec3(1.0, 0.0, 1.0), M_PI)},
+        {"w7", Rotation(glm::vec3(1.0, 0.0, 1.0), M_PI)},
+        {"w8", Rotation(glm::vec3(1.0, 0.0, 1.0), M_PI)},
+        {"w9", Rotation(glm::vec3(1.0, 0.0, 1.0), M_PI)},
+    };
+
+    const std::map<std::string, glm::vec3> circuit_translate = {
+        {"w1", glm::vec3(-8.0, -0.5, 0.0)},
+        {"w2", glm::vec3(-6.0, -0.5, 0.0)},
+        {"w3", glm::vec3(-4.0, -0.5, 0.0)},
+        {"w4", glm::vec3(-2.0, -0.5, 0.0)},
+        {"w5", glm::vec3( 0.0, -0.5, 0.0)},
+        {"w6", glm::vec3( 2.0, -0.5, 0.0)},
+        {"w7", glm::vec3( 4.0, -0.5, 0.0)},
+        {"w8", glm::vec3( 6.0, -0.5, 0.0)},
+        {"w9", glm::vec3( 8.0, -0.5, 0.0)},
+    };
+
+    std::string _id;
 
 public:
 
-    Airplane()
+    Circuit(std::string id)
     {
-        ;
+        this->_id = id;
     }
- 
+
     void start()
     {
-        _gObject->translate(glm::vec3(-10.0, -0.5, 0.0));
-        _gObject->scale(glm::vec3(0.005, 0.005, 0.005));
-        _gObject->rotate(glm::vec3(0.0, 1.0, 0.0), M_PI / 2.0);
+        // Translation each window...
+        GameObject *window = _gObject->search(this->_id);
+        std::map<std::string, glm::vec3>::const_iterator itTraslation;
+     
+        itTraslation = circuit_translate.find(this->_id);
+
+        window->translate(itTraslation->second);
+
+        // Rotation each window...
+        std::map<std::string, Rotation>::const_iterator itRotation;
+        itRotation = circuit_rotate.find(this->_id);
+
+        window->rotate(itRotation->second.r, itRotation->second.a);
     }
 
     void update()
     {
         ;
+    }
+};
+
+class Airplane : public Component {
+
+private: 
+
+    glm::vec3 translation;
+    glm::vec3 rotation;
+    float angle;
+
+public:
+
+    Airplane()
+    {
+        translation = glm::vec3(-10.0, -0.5, 0.0);
+        rotation = glm::vec3(0.0, 1.0, 0.0);
+        angle =  M_PI / 2.0;
+    }
+ 
+    void start()
+    {
+        _gObject->translate(translation);
+        _gObject->scale(glm::vec3(0.005, 0.005, 0.005));
+        _gObject->rotate(rotation, angle);
+
+        // Resize camera matrix...
+        Camera *camera = _gObject->getCamera();
+        camera->scale(glm::vec3(500, 500, 500));
+    }
+
+    void update()
+    {
+        if (Keyboard::instance->isKeyPressed("a")) {
+            translation += glm::vec3(0, 0, 0.1);
+        }
+        if (Keyboard::instance->isKeyPressed("d")) {
+            translation += glm::vec3(0, 0, -0.1);
+        }
+        if (Keyboard::instance->isKeyPressed("s")) {
+            translation += glm::vec3(-0.1, 0, 0);
+        }
+        if (Keyboard::instance->isKeyPressed("w")) {
+            translation += glm::vec3(0.1, 0, 0);
+        }
+        if (Keyboard::instance->isKeyPressed(GLFW_KEY_UP)) {
+            translation += glm::vec3(0, 0.1, 0.0);
+        }
+        if (Keyboard::instance->isKeyPressed(GLFW_KEY_DOWN)) {
+            translation += glm::vec3(0, -0.1, 0.0);
+        }
+        if (Keyboard::instance->isKeyPressed(GLFW_KEY_RIGHT)) {
+            rotation += glm::vec3(0.0, 1.0, 0.0);
+            angle -= 0.01;
+        }
+        if (Keyboard::instance->isKeyPressed(GLFW_KEY_LEFT)) {
+            rotation += glm::vec3(0.0, 1.0, 0.0);
+            angle += 0.01;
+        }
+        if (Keyboard::instance->isKeyPressed("c")) {
+            rotation += glm::vec3(1.0, 0.0, 0.0);
+            angle += 0.01;
+        }
+        if (Keyboard::instance->isKeyPressed("z")) {
+            rotation += glm::vec3(1.0, 0.0, 0.0);
+            angle -= 0.01;
+        }
+
+        _gObject->translate(translation);
+        _gObject->rotate(rotation, angle);
+        _gObject->scale(glm::vec3(0.005, 0.005, 0.005));
     }
 };
 
@@ -298,8 +419,10 @@ GameObject *getMountainSky(std::string id)
 
 void generateAirplanesParking(Scene *scene)
 {
+    GameObject *airplane = nullptr;
+
     for (uint32_t i = 0; i < AIRPLANES.size(); ++i) {
-        GameObject *airplane = generateAirplane(AIRPLANES[i]);
+        airplane = generateAirplane(AIRPLANES[i]);
         airplane->addComponent(new Parking(AIRPLANES[i]));
         scene->addChild(airplane);
     }
@@ -313,6 +436,18 @@ void generatePilotAirplane(Scene *scene)
     airplane->addComponent(new Camera());
     airplane->addComponent(new Airplane());
 }
+
+void generateWindowCircuit(Scene *scene)
+{
+    GameObject *w = nullptr;
+
+    for (uint32_t i = 0; i < WINDOWS.size(); ++i) {
+        w = generateWindow(WINDOWS[i]);
+        w->addComponent(new Circuit(WINDOWS[i]));
+        scene->addChild(w);
+    }
+}
+
 Scene* AirportSimulation()
 {
     Scene *scene = new Scene();
@@ -327,6 +462,7 @@ Scene* AirportSimulation()
 
     generateAirplanesParking(scene);
     generatePilotAirplane(scene);
+    generateWindowCircuit(scene);
 
     scene->addChild(mountainsSky);
     scene->addChild(tower);

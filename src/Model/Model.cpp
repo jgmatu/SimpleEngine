@@ -164,11 +164,12 @@ std::vector<Texture*> Model::loadTextures(aiMaterial *mat, aiTextureType type, s
                 skip = true;
             }
         }
-        if (!skip) {   // if texture hasn't been loaded already, load it
+        if (!skip) {  
+            // if texture hasn't been loaded already, load it
             Texture *texture = new Texture(str.C_Str(), typeName);
             texture->_path = _directory + "/";
             textures.push_back(texture);
-            _textures_loaded.push_back(texture); // add to loaded textures
+            _textures_loaded.push_back(texture); 
         }
     }
     return textures;
@@ -210,7 +211,7 @@ void Model::draw() {
 
     for (it = _meshes.begin(); it != _meshes.end(); ++it) {
         Mesh *mesh = it->second;
-        mesh->setBlending();
+        mesh->setBlending(_isTransparentModel);
         mesh->draw();
     }
 }
@@ -222,16 +223,9 @@ void Model::setTransparentModel()
 
 bool Model::isTransparentModel()
 {
-    std::map<std::string, Mesh*>::const_iterator it;
-
-    for (it = _meshes.begin(); it != _meshes.end(); ++it) {
-        Mesh *mesh = it->second;
-        if (mesh->isTransparent()) {
-            return true;
-        }
-    }
     return _isTransparentModel;
 }
+
 std::ostream& operator<<(std::ostream& os, const Model& model) {
     std::map<std::string, Mesh*>::const_iterator it_mesh;
 

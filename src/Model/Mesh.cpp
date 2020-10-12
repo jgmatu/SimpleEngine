@@ -72,17 +72,11 @@ void Mesh::active()
     _material->activeTextures();
 }
 
-bool Mesh::isTransparent()
+void Mesh::setBlending(bool isTransparent)
 {
-    return _material->isTransparent();
-}
-
-void Mesh::setBlending()
-{
-    if (_material->isTransparent()) {
+    if (isTransparent) {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
     } else {
         glDisable(GL_BLEND);
     }

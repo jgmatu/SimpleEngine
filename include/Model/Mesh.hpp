@@ -63,8 +63,7 @@ public:
 
     void active();
     void draw();
-    void setBlending();
-    bool isTransparent();
+    void setBlending(bool isTransparent);
 
     void setMaterial(Material *material);
 

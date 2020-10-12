@@ -32,9 +32,16 @@ public:
         ;
     }
 
-    void update() {
+    void start()
+    {
         _gObject->translate(glm::vec3(2.0, -0.5, 0.0));
     }
+
+    void update() 
+    {
+        ;
+    }
+
 };
 
 class Cube1 : public Component  {
@@ -59,9 +66,13 @@ public:
         ;
     }
 
-    void update()
+    void start()
     {
         _gObject->translate(glm::vec3(0.0, -0.5, 0.0));
+    }
+
+    void update()
+    {
         switchIntensePointLigths();
     }
 
@@ -108,11 +119,15 @@ public:
         ;
     }
 
-    void update()
+    void start()
     {
         _gObject->translate(glm::vec3(0.0, -1.0, 0.0));
         _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), M_PI / 2.0);
         _gObject->scale(glm::vec3(10.0, 10.0, 10.0));
+    }
+
+    void update()
+    {
         moveLigth();
     }
 
@@ -136,6 +151,48 @@ public:
             this->ligth_position = this->ligth_position + glm::vec3(-0.05, 0.0, 0.00);
             point->setPosition(this->ligth_position);
         }
+    }
+};
+
+class Window : public Component {
+
+public:
+    Window()
+    {
+        ;
+    }
+
+    void start()
+    {
+        _gObject->translate(glm::vec3(0.0, 0.0, 5.0));
+        _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), M_PI);
+        _gObject->scale(glm::vec3(1.0, 1.0, 1.0));
+    }
+
+    void update()
+    {
+        ;
+    }
+};
+
+class Window2 : public Component {
+
+public:
+    Window2()
+    {
+        ;
+    }
+
+    void start()
+    {
+        _gObject->translate(glm::vec3(0.5, 0.0, 3.0));
+        _gObject->rotate(glm::vec3(1.0, 0.0, 0.0), M_PI);
+        _gObject->scale(glm::vec3(1.0, 1.0, 1.0));
+    }
+
+    void update()
+    {
+        ;
     }
 };
 
@@ -216,6 +273,29 @@ GameObject *generateCube(std::string id)
     return cube;
 }
 
+GameObject *generateWindow(std::string id)
+{
+    Plane* planeData = new Plane(id);
+    Mesh* windowMesh = planeData->getMesh();
+
+    Material *windowMaterial = new Material();
+    windowMaterial->setTexture(id, new Texture("../resources/blending_transparent_window.png", "texture_diffuse0"));
+    windowMaterial->setTexture(id, new Texture("../resources/blending_transparent_window.png", "texture_specular0"));
+    windowMesh->setMaterial(windowMaterial);
+    
+    GameObject *transparent = new GameObject(id);
+    Render *transparentRender = new Render();
+    Model *model = new Model(windowMesh);
+    bool isFile = true;
+
+    model->setTransparentModel();
+    transparentRender->setProgram(new Program("../glsl/user/window_vs.glsl", "../glsl/user/window_fs.glsl", isFile));
+    transparentRender->setModel(model);
+
+    transparent->addDrawer(transparentRender);
+    return transparent;
+}
+
 GameObject *generatePlane(std::string id)
 {
     GameObject *plane = new GameObject(id);
@@ -237,14 +317,21 @@ Scene* MoveBoxesSim()
     GameObject *cube1 = generateCube("cube1");
     GameObject *cube2 = generateCube("cube2");
     GameObject *plane = generatePlane("plane");
+    GameObject *w1 = generateWindow("w1");
+    GameObject *w2 = generateWindow("w2");
 
     cube1->addComponent(new Cube1());
     cube2->addComponent(new Cube2());
+    w1->addComponent(new Window());
+    w2->addComponent(new Window2());
 
     scene->addLigths(getSceneLigths());
     scene->addChild(plane);
     scene->addChild(cube1);
     scene->addChild(cube2);
+
+    scene->addChild(w1);
+    scene->addChild(w2);
 
     return scene;
 }

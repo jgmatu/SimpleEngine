@@ -25,6 +25,7 @@ public:
 
     void translate(glm::vec3 vec3);
     void rotate(glm::vec3 vec3, float angle);
+    void scale(glm::vec3 vec3);
 
     Transform *_view;
     glm::mat4 _projection;

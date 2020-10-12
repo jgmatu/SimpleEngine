@@ -1,8 +1,7 @@
 #include "Model/Material.hpp"
 
 Material::Material() :
-    _textures(),
-    _transparent(false)
+    _textures()
 {
     this->_uniforms = new Uniforms();
 }
@@ -43,21 +42,6 @@ void Material::setTexture(std::string id_mesh, Texture *texture)
     if (!isfound) {
         addNewTexture(texture);
     }
-}
-
-void Material::setTransparent()
-{
-    this->_transparent = true;
-}
-
-void Material::setOpaque()
-{
-    this->_transparent = false;
-}
-
-bool Material::isTransparent() const
-{
-    return this->_transparent;
 }
 
 void Material::activeTextures()

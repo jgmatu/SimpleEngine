@@ -40,8 +40,10 @@ uint32_t Texture::TextureFromFile(std::string directory, std::string filename) {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     if (channels == 4) {
+        std::cout << "FOUR CHANNELS!!!" << std::endl;
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, heigth, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     } else if (channels == 3) {
+        std::cout << "THREE CHANNELS!!!" << std::endl;
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, heigth, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
     }
     glGenerateMipmap(GL_TEXTURE_2D);

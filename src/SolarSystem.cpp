@@ -41,28 +41,34 @@ public:
         wasPressed = isPressed;
 
         for (uint32_t i = 0; i < _cameras.size(); ++i) {
-            if (Keyboard::instance->isKeyPressed(GLFW_KEY_UP)) {
+            if (Keyboard::instance->isKeyPressed("0")) {
                 _cameras[i]->translate(glm::vec3(0, 0, 0.05));
             }
-            if (Keyboard::instance->isKeyPressed(GLFW_KEY_RIGHT)) {
-                _cameras[i]->translate(glm::vec3(-0.05, 0, 0));
-            }
-            if (Keyboard::instance->isKeyPressed(GLFW_KEY_LEFT)) {
-                _cameras[i]->translate(glm::vec3(0.05, 0, 0));
-            }
-            if (Keyboard::instance->isKeyPressed(GLFW_KEY_DOWN)) {
+            if (Keyboard::instance->isKeyPressed("1")) {
                 _cameras[i]->translate(glm::vec3(0, 0, -0.05));
             }
-            if (Keyboard::instance->isKeyPressed("a")) {
+            if (Keyboard::instance->isKeyPressed("2")) {
+                _cameras[i]->translate(glm::vec3(0, 0.05, 0.0));
+            }
+            if (Keyboard::instance->isKeyPressed("3")) {
+                _cameras[i]->translate(glm::vec3(0, -0.05, 0.0));
+            }
+            if (Keyboard::instance->isKeyPressed("4")) {
+                _cameras[i]->translate(glm::vec3(-0.05, 0, 0));
+            }
+            if (Keyboard::instance->isKeyPressed("5")) {
+                _cameras[i]->translate(glm::vec3(0.05, 0, 0));
+            }
+            if (Keyboard::instance->isKeyPressed("6")) {
                 _cameras[i]->rotate(glm::vec3(0.0, 1.0, 0.0), 0.05);
             }
-            if (Keyboard::instance->isKeyPressed("d")) {
+            if (Keyboard::instance->isKeyPressed("7")) {
                 _cameras[i]->rotate(glm::vec3(0.0, 1.0, 0.0), -0.05);
             }
-            if (Keyboard::instance->isKeyPressed("w")) {
+            if (Keyboard::instance->isKeyPressed("8")) {
                 _cameras[i]->rotate(glm::vec3(1.0, 0.0, 0.0), 0.05);
             }
-            if (Keyboard::instance->isKeyPressed("s")) {
+            if (Keyboard::instance->isKeyPressed("9")) {
                 _cameras[i]->rotate(glm::vec3(1.0, 0.0, 0.0), -0.05);
             }
         }
